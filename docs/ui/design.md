@@ -1,17 +1,12 @@
-# Design Plan for `sysml2_editor`
+# UI Design
+
+UI-specific design for `sysml2_editor`, derived from the former `docs/design.md`.
 
 ## Product Vision
 
-[PRODUCT_VISION.md](../PRODUCT_VISION.md) is the central product intent and traceability source.
+[PRODUCT_VISION.md](../../PRODUCT_VISION.md) is the central product intent and traceability source.
 
 Design summary: `sysml2_editor` should be a Git-native SysML v2 architecture workbench where the diagram is easy to manipulate like PowerPoint, but the model remains precise, traceable, reviewable, and version-controlled as text.
-
-That direction is aligned with SysML v2: textual notation is intended to support precise model definition, large-model editing, Git-based configuration management, validation, generation, and CI workflows.
-
-Vision trace:
-
-- Supports: visual editing without making diagrams the source of truth; textual SysML in Git as durable source of truth; visible item, file, branch, repository, and workspace-context traceability.
-- Tradeoff: early design favors a structured engineering workbench over a generic diagramming tool.
 
 ## Suggested UI Concept
 
@@ -264,104 +259,6 @@ Recommended folder convention:
   settings.json
 ```
 
-## Git and Branch Model
-
-The app should treat Git as a visible modeling concept, not just a hidden backend.
-
-Key Git features:
-
-- Open local repo
-- Clone repo
-- Checkout branch
-- Show multiple branches simultaneously
-- Show multiple repos simultaneously
-- Edit multiple branches simultaneously when backed by separate safe worktrees or repository contexts
-- Edit multiple repositories simultaneously with isolated working-tree status and commit targets
-- Diff branches visually
-- Compare model elements between branches or repos
-- Commit from inside the app
-- Pull/push
-- Show file-level and model-element-level changes
-- Resolve merge conflicts at the model level where possible
-
-## Data / Model Architecture
-
-Recommended architecture:
-
-```text
-Git repo
-  -> Textual SysML files
-  -> Parser service
-  -> Internal model graph
-  -> View model
-  -> Canvas / tree / table / editor UI
-```
-
-The source of truth should be the textual SysML files in Git.
-
-Internally, maintain a graph database-like model:
-
-```text
-Node:
-  - id
-  - type
-  - name
-  - qualifiedName
-  - sourceFile
-  - sourceRange
-  - branch
-  - attributes
-
-Edge:
-  - source
-  - target
-  - relationshipType
-  - sourceFile
-  - sourceRange
-  - branch
-```
-
-Do not make the canvas the model. The canvas is just one projection of the model.
-
-For multi-context work, each model graph belongs to an explicit context:
-
-```text
-Workspace
-  -> Repository context
-     -> Branch/worktree context
-        -> Model graph
-        -> Source files
-        -> Trace links
-```
-
-Views may combine contexts through a multi-context projection, but edits must always target exactly one writable context. The projection keeps each graph, file, trace link, and diff artifact scoped to its originating workspace context.
-
-## Key Design Principles
-
-### 1. Text is truth, diagrams are views
-
-Never store important model semantics only in canvas coordinates.
-
-### 2. Make invalid modeling difficult
-
-The UI should guide users toward valid SysML.
-
-### 3. Separate and visualize changes compared to the committed model
-
-The editor should continuously compare the working model against the committed baseline.
-
-### 4. Make abstraction levels explicit
-
-Large systems fail visually when everything is shown at once.
-
-### 5. Make traceability a first-class part of the model hierarchy
-
-Traceability should appear in node badges, inspector, hover cards, source ownership view, impact view, matrix view, cross-repository dependency view, and commit summary.
-
-### 6. Make context explicit
-
-Every visible model item, source file, trace link, diff, save action, and commit action should make repository and branch context clear.
-
 ## Suggested Feature: Architecture Lens
 
 A custom view could be called a Lens.
@@ -388,7 +285,3 @@ A lens is basically:
 ```
 
 This would make the tool feel more powerful than a normal diagramming tool.
-
-## One-Sentence Product Definition
-
-`sysml2_editor` is a Git-native SysML v2 architecture editor that lets engineers model systems visually with PowerPoint-level ease while preserving textual precision, traceability, validation, and version control.

@@ -13,7 +13,7 @@ Vision trace:
 
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
-| `repo_scaffold_present` | Smoke | none | Prove the implementation skeleton exists | Root docs, `src/backend/Sysml2Editor.Api`, `src/frontend`, `src/shared/contracts/generated`, `tests/unit`, `tests/integration`, `tests/e2e`, `fixtures/`, and `scripts/` are checked in and match [project-structure.md](../implementation/project-structure.md) |
+| `repo_scaffold_present` | Smoke | none | Prove the implementation skeleton exists | Root docs, `src/backend/Sysml2Editor.Api`, `src/frontend`, `src/shared/contracts/generated`, `tests/unit`, `tests/integration`, `tests/e2e`, `fixtures/`, and `scripts/` are checked in and match [project-structure.md](../project-structure.md) |
 | `backend_starts_with_openapi` | Smoke | none | Prove backend scaffold and contract generation are wired | `dotnet run --project src/backend/Sysml2Editor.Api` exposes OpenAPI in development |
 | `frontend_starts` | Smoke | none | Prove frontend scaffold runs | `npm run dev` from `src/frontend` serves the app shell |
 

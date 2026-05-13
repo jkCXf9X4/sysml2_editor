@@ -12,7 +12,7 @@ The plan makes three things non-negotiable:
 
 ## Scope
 
-The strategy covers the product areas described in [plan.md](./plan.md):
+The strategy covers the product areas described in [docs/README.md](../README.md):
 
 - Repository open/clone/status/checkout flows
 - SysML file discovery, parsing, indexing, and validation

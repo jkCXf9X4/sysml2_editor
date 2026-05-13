@@ -1,22 +1,23 @@
 # Documentation
 
-This folder separates documentation by abstraction level.
+This folder contains all project documentation, organized by abstraction level to minimize duplication and improve navigation. The top-level [README.md](../README.md) links here as the single entry point.
 
-## Start Here
+## Folder Structure
 
-1. [Plan index](./plan.md)
-2. [Product and UX design](./design.md)
-3. [Architecture decisions](./architecture/README.md)
-4. [Implementation contracts](./implementation/README.md)
-5. [Test strategy](./test-strategy.md)
+| Folder | Purpose |
+|--------|---------|
+| [architecture/](./architecture/) | High-level system design decisions, architectural overviews, and key tradeoffs. Summary of decisions in `architecture/README.md`, with details in subfiles. |
+| [implementation/](./implementation/) | Implementation contracts, API specs, parser rules, syntax examples, and current build direction. Contains the moved `api-contract.md`, `parser-contract.md`, and `syntax-examples.md`. |
+| [roadmap/](./roadmap/) | Planning, integration order, reasoning, roadmaps, and project structure. Merged from the former `docs/plan.md`. |
+| [testing/](./testing/) | Test strategy, readiness gates, and test matrices. Includes the moved `test-strategy.md`. |
+| [ui/](./ui/) | User interface design, workflows, and feature specifications derived from the former `docs/design.md`. |
+| [ai/](./ai/) | Agent orientation, working rules, and context for AI-assisted development. |
+| [reference/](./reference/) | External standards (e.g., SysML v2) and source material. |
 
-## Abstraction Levels
+## Navigation
 
-- `design.md`: product-facing workflows, UX direction, and user-level model concepts.
-- `architecture/`: high-level system decisions that shape implementation but are not tied to one code artifact.
-- `implementation/`: concrete contracts, scaffold shape, API/parser details, syntax subset, and delivery roadmap.
-- `testing/`: readiness gates and test matrices.
-- `reference/`: external standards and source material.
-- `ai/`: agent orientation and working rules.
+1. Start here (docs/README.md)
+2. Follow links to the relevant subfolder for your needs
+3. Each subfolder's README.md provides detailed content and links to its files
 
-Keep new documents at the highest abstraction level that can accurately own the decision. Do not put architecture policy, API details, and fixture syntax in the same document unless the coupling is intentional and explained.
+Cross-reference between folders uses links, not content duplication.

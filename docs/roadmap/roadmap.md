@@ -53,19 +53,19 @@ Frontend responsibilities:
 
 Git integration should start with the `git` CLI wrapper.
 
-SysML parsing should start with the MVP custom subset parser described in [parser-contract.md](./parser-contract.md). External parser or language-server integrations can come later if the product needs broader language coverage.
-Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](./syntax-examples.md) as the local implementation subset.
+SysML parsing should start with the MVP custom subset parser described in [parser-contract.md](../implementation/parser-contract.md). External parser or language-server integrations can come later if the product needs broader language coverage.
+Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](../implementation/syntax-examples.md) as the local implementation subset.
 
 ## Implementation Inputs Required
 
 Before a feature slice starts, keep these decision docs current:
 
-- Structure: [project-structure.md](./project-structure.md)
+- Structure: [project-structure.md](../project-structure.md)
 - SysML reference: [sysml-v2.md](../reference/sysml-v2.md)
-- Syntax examples: [syntax-examples.md](./syntax-examples.md)
+- Syntax examples: [syntax-examples.md](../implementation/syntax-examples.md)
 - Runtime: [runtime.md](../architecture/runtime.md)
-- API contract: [api-contract.md](./api-contract.md)
-- Parser contract: [parser-contract.md](./parser-contract.md)
+- API contract: [api-contract.md](../implementation/api-contract.md)
+- Parser contract: [parser-contract.md](../implementation/parser-contract.md)
 - Model graph: [model-graph.md](../architecture/model-graph.md)
 - Write policy: [write-policy.md](../architecture/write-policy.md)
 - Starter test matrix: [starter-test-matrix.md](../testing/starter-test-matrix.md)
@@ -237,3 +237,16 @@ Features:
 Success criterion:
 
 > The tool becomes a serious MBSE workbench, not just a diagram editor.
+
+## Setup Order
+
+Project setup should follow this order:
+
+1. Create the repository root and documentation structure.
+2. Create the backend solution and projects.
+3. Create the frontend app shell.
+4. Add backend OpenAPI generation.
+5. Add test projects.
+6. Add fixture repositories and sample files.
+7. Wire the local dev command.
+8. Add the first smoke test and parser round-trip test.

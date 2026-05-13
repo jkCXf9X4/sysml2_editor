@@ -1,8 +1,6 @@
 # Project Structure Definition
 
-This document defines the intended repository layout for project setup and early implementation.
-
-Use this as the reference when scaffolding the codebase. The goal is to keep responsibilities separate from the start so the editor, parser, Git logic, and tests do not collapse into one undifferentiated application folder.
+This document defines the canonical repository layout for `sysml2_editor`. It is the source of truth for the project's folder structure.
 
 ## Structure Goals
 
@@ -12,7 +10,9 @@ Use this as the reference when scaffolding the codebase. The goal is to keep res
 - Keep fixtures checked in and deterministic
 - Keep architecture decisions under `docs/architecture`
 - Keep implementation contracts under `docs/implementation`
+- Keep roadmaps and planning under `docs/roadmap`
 - Keep test gates under `docs/testing`
+- Keep UI design under `docs/ui`
 - Keep external references under `docs/reference`
 - Keep AI navigation docs under `docs/ai`
 
@@ -23,7 +23,7 @@ Vision trace:
 
 ## Root Layout
 
-The implementation scaffold should use this top-level shape:
+The repository uses this top-level shape:
 
 ```text
 sysml2_editor/
@@ -31,14 +31,6 @@ sysml2_editor/
   PRODUCT_VISION.md
   LICENSE
   docs/
-    ai/
-    architecture/
-    implementation/
-    reference/
-    testing/
-    design.md
-    plan.md
-    test-strategy.md
   src/
     backend/
       Sysml2Editor.Api/
@@ -54,7 +46,7 @@ sysml2_editor/
   scripts/
 ```
 
-`docs/decisions` and `docs/setup` are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders for the first scaffold.
+`docs/decisions` and `docs/setup` are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders.
 
 ## Proposed Source Layout
 
@@ -112,7 +104,7 @@ Use this for:
 - serialized view definitions
 - stable frontend constants that mirror backend enums
 
-The backend C# DTOs are canonical for the first implementation slice. TypeScript API contracts should be generated from OpenAPI as described in [api-contract.md](./api-contract.md), not manually duplicated.
+The backend C# DTOs are canonical for the first implementation slice. TypeScript API contracts should be generated from OpenAPI as described in [api-contract.md](./implementation/api-contract.md), not manually duplicated.
 
 ## Test Layout
 
@@ -147,19 +139,6 @@ Fixture rules:
 - Keep fixtures small unless a test is explicitly performance-oriented
 - Prefer checked-in fixtures over generated ones for regression coverage
 - Pair each fixture with expected outputs when the test depends on exact text or graph shape
-
-## Setup Order
-
-Project setup should follow this order:
-
-1. Create the repository root and documentation structure.
-2. Create the backend solution and projects.
-3. Create the frontend app shell.
-4. Add backend OpenAPI generation.
-5. Add test projects.
-6. Add fixture repositories and sample files.
-7. Wire the local dev command.
-8. Add the first smoke test and parser round-trip test.
 
 ## Reference Rule
 

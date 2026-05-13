@@ -4,6 +4,7 @@ This folder contains testing strategy details and readiness gates.
 
 ## Documents
 
+- [Test strategy](./test-strategy.md)
 - [Starter test matrix](./starter-test-matrix.md)
 
-The broader testing strategy is [docs/test-strategy.md](../test-strategy.md).
+Implementation details belong under [docs/roadmap/README.md](../roadmap/README.md).
