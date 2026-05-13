@@ -4,6 +4,10 @@ src/frontend/*.tsbuildinfo
 src/backend/**/bin/
 src/backend/**/obj/
 
+tests/**/bin/
+tests/**/obj/
+
+
 node_modules/
 dist/
 *.tsbuildinfo

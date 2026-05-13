@@ -107,10 +107,17 @@ npm run typecheck
 npm run build
 ```
 
-Then start the backend and verify `/api/health` and `/swagger/v1/swagger.json` as shown above.
-
-Or run the backend smoke test script:
+Then run backend domain and smoke gates:
 
 ```bash
+dotnet run --project tests/integration/Sysml2Editor.Backend.Tests
 bash tests/integration/backend-smoke.sh
 ```
+
+Optionally run the frontend dev-server smoke gate:
+
+```bash
+bash tests/integration/frontend-smoke.sh
+```
+
+You can also start the backend manually and verify `/api/health` and `/swagger/v1/swagger.json` as shown above.

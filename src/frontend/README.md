@@ -57,5 +57,11 @@ Preview the production build:
 npm run preview
 ```
 
+Run the frontend dev-server smoke gate from the repository root:
+
+```bash
+bash tests/integration/frontend-smoke.sh
+```
+
 The dev server runs on Vite's default `http://localhost:5173` unless Vite selects another port.
 API calls under `/api` are proxied to the backend at `http://localhost:5087`.

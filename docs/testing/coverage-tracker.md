@@ -31,12 +31,26 @@ Run backend smoke gate:
 bash tests/integration/backend-smoke.sh
 ```
 
+Run backend domain gates:
+
+```bash
+dotnet run --project tests/integration/Sysml2Editor.Backend.Tests
+```
+
+Run frontend dev-server smoke gate:
+
+```bash
+bash tests/integration/frontend-smoke.sh
+```
+
 Latest local verification on 2026-05-13:
 
-- `npm test`: passed, 4 test files and 12 tests.
+- `npm test`: passed, 4 test files and 13 tests.
 - `npm run typecheck`: passed.
 - `npm run build`: passed.
 - `bash tests/integration/backend-smoke.sh`: passed.
+- `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests`: passed.
+- `bash tests/integration/frontend-smoke.sh`: passed.
 
 ## Current Automated Test Inventory
 
@@ -48,25 +62,27 @@ Latest local verification on 2026-05-13:
 | Frontend phase 3 | `npm test` | `src/frontend/tests/phase3-git-workflow.test.tsx` | Fixture-backed branch diff, scoped multi-context IDs, commit preview, conflict assistance |
 | Frontend type safety | `npm run typecheck` | TypeScript project references | Compile-time TS checks |
 | Frontend production build | `npm run build` | Vite build | Production bundle generation |
-| Backend API smoke | `bash tests/integration/backend-smoke.sh` | `tests/integration/backend-smoke.sh` | API starts, `/api/health` returns `{"status":"ok"}`, OpenAPI title is present |
+| Frontend dev-server smoke | `bash tests/integration/frontend-smoke.sh` | `tests/integration/frontend-smoke.sh` | Vite serves the React app shell |
+| Backend API smoke | `bash tests/integration/backend-smoke.sh` | `tests/integration/backend-smoke.sh` | API starts, health/OpenAPI work, graph/source/diff/multi-context endpoints respond |
+| Backend domain phase 1-3 | `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests` | `tests/integration/Sysml2Editor.Backend.Tests` | Parser, graph context, traceability, source preservation, writer, save policy, branch diff, multi-context view |
 
 ## MVP Feature Coverage
 
 | MVP feature | Frontend coverage | Backend coverage | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| Open local Git repo | Fixture-backed repository cards and contexts | No repo-open endpoint | phase 0-1 frontend tests | Partial |
-| Detect SysML files | Fixture-backed file paths | No filesystem scanner | fixtures under `fixtures/*/model` | Partial |
-| Basic textual editor | Read-only code panes and generated source preview | No source-file API | phase 1-2 frontend tests | Partial |
-| Parse a useful SysML v2 subset | Expected graph/diagnostic fixtures checked by frontend tests | No parser implementation | phase 1 frontend fixture assertions | Partial |
+| Open local Git repo | Fixture-backed repository cards and contexts | Fixture repository roots can be parsed by backend service | phase 0-1 frontend tests, backend domain tests | Partial |
+| Detect SysML files | Fixture-backed file paths | Backend scans `model/**/*.sysml` in fixture roots | backend domain tests | Covered |
+| Basic textual editor | Read-only code panes and generated source preview | Source-file endpoint preserves content/hash | phase 1-2 frontend tests, backend smoke | Covered |
+| Parse a useful SysML v2 subset | Expected graph/diagnostic fixtures checked by frontend tests | MVP parser maps fixture subset to graph/diagnostics | backend domain tests | Covered |
 | Show package/part hierarchy as tree | Render and selection tests | Not applicable | `phase1-browser.test.tsx` | Covered |
-| Show selected structure as graph | Render and graph-node selection tests | No graph API | `phase1-browser.test.tsx` | Partial |
-| Create/edit/delete basic elements | Draft UI tests | No backend writer/save | `phase2-editing.test.tsx` | Partial |
-| Save back to text | Generated source preview and save button only | No persistence | `phase2-editing.test.tsx` | Gap |
-| Show attributes of selected element | Inspector render and sync tests | No backend model source | phase 0-1 frontend tests | Partial |
+| Show selected structure as graph | Render and graph-node selection tests | Graph endpoint exposes parsed graph DTO | `phase1-browser.test.tsx`, backend smoke | Covered |
+| Create/edit/delete basic elements | Draft UI tests | Backend supports rename/write policy for parsed elements | `phase2-editing.test.tsx`, backend domain tests | Partial |
+| Save back to text | Generated source preview and save button only | Backend `SaveRename` persists owner-file rename in tests | backend domain tests | Partial |
+| Show attributes of selected element | Inspector render and sync tests | Backend graph carries node attributes/source metadata | phase 0-1 frontend tests, backend domain tests | Covered |
 | Commit changes | Commit preview only | No Git commit operation | `phase3-git-workflow.test.tsx` | Gap |
 | Store custom views as JSON | No implementation | No persistence | none | Future |
-| Visualize traceability between model items and source files | Fixture-backed trace UI | No trace derivation service | `phase1-browser.test.tsx` | Partial |
-| Preserve repository and branch context for every opened model graph | Fixture-backed context labels and branch comparison IDs | No backend graph context | phase 0-3 frontend tests | Partial |
+| Visualize traceability between model items and source files | Fixture-backed trace UI | Backend derives item-to-item, item-to-file, file-to-file, and branch trace links | frontend and backend domain tests | Covered |
+| Preserve repository and branch context for every opened model graph | Fixture-backed context labels and branch comparison IDs | Backend graph context and multi-context views preserve workspace IDs | phase 0-3 frontend tests, backend domain tests | Covered |
 
 ## Phase Coverage Matrix
 
@@ -77,24 +93,24 @@ Latest local verification on 2026-05-13:
 | Top-level shell, left rail, tiled workspace, inspector, status bar | Render test | Not applicable | `phase0-workbench.test.tsx` | Covered |
 | Pane-level repository, branch, file, mode, write-state labels | Render test | Not applicable | `phase0-workbench.test.tsx` | Covered |
 | Fixture-backed multiple repositories and branches | Fixture and render test | Not applicable | `fixtures/phase-0-workbench`, `phase0-workbench.test.tsx` | Covered |
-| Responsive fallback preserves context labels | CSS exists; no viewport automation | Not applicable | `styles.css`; no responsive test harness | Partial |
+| Responsive fallback preserves context labels | CSS rule test and render tests | Not applicable | `phase0-workbench.test.tsx` | Covered |
 | Backend OpenAPI scaffold starts | Not applicable | Smoke script | `tests/integration/backend-smoke.sh` | Smoke |
-| Frontend app starts | Build/test coverage; dev server is not automated | Not applicable | `npm test`, `npm run build`; no dev-server smoke script | Partial |
+| Frontend app starts | Dev-server smoke script | Not applicable | `tests/integration/frontend-smoke.sh` | Smoke |
 
 ### Phase 1: Read-only Model Browser
 
 | Roadmap item | Frontend coverage | Backend coverage | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| Open Git repo | Fixture-backed context only | No real repo-open endpoint | `phase1-browser.test.tsx` | Partial |
-| Create explicit workspace context | Fixture-backed context checks | No backend workspace context model | `fixtures/phase-1-browser/expected/browser-state.json` | Partial |
-| Parse SysML files | Expected graph/diagnostic fixtures checked | No backend parser implementation | `fixtures/tiny-single-file/expected/graph.json`, `fixtures/invalid-input/expected/diagnostics.json` | Partial |
+| Open Git repo | Fixture-backed context only | Backend parses repository roots from fixture paths | `phase1-browser.test.tsx`, backend domain tests | Partial |
+| Create explicit workspace context | Fixture-backed context checks | Backend `ModelContextDto` is emitted for parsed graphs | backend domain tests | Covered |
+| Parse SysML files | Expected graph/diagnostic fixtures checked | Backend MVP parser implemented | backend domain tests | Covered |
 | Show tree hierarchy | Render and interaction tests | Not applicable | `phase1-browser.test.tsx` | Covered |
-| Show text editor | Render tests | No source-file API | `phase1-browser.test.tsx` | Partial |
-| Show graph view | Render and selection tests | No graph projection API | `phase1-browser.test.tsx` | Partial |
-| Click graph node shows source and attributes | Render and selection tests | No backend source mapping | `phase1-browser.test.tsx` | Partial |
+| Show text editor | Render tests | Backend source endpoint preserves text/hash | `phase1-browser.test.tsx`, backend smoke | Covered |
+| Show graph view | Render and selection tests | Backend graph endpoint exposes nodes/edges | `phase1-browser.test.tsx`, backend smoke | Covered |
+| Click graph node shows source and attributes | Render and selection tests | Backend source ranges and metadata are present | frontend and backend domain tests | Covered |
 | Sync graph, tree, text pane, inspector | Render and interaction tests | Not applicable | `phase1-browser.test.tsx` | Covered |
-| Source ownership and item-to-item trace links | Fixture and render tests | No backend trace derivation | `phase1-browser.test.tsx`, `trace-links.json` | Partial |
-| File-to-file import traceability | Fixture assertion | No backend import resolver | `fixtures/multi-file-modular/expected/trace-links.json` | Partial |
+| Source ownership and item-to-item trace links | Fixture and render tests | Backend derives item-to-item and item-to-file links | backend domain tests | Covered |
+| File-to-file import traceability | Fixture assertion | Backend derives fixture file-to-file import traceability | backend domain tests | Covered |
 | Repository, branch, file, mode, read-only state visible | Render tests | Not applicable | `phase0-workbench.test.tsx`, `phase1-browser.test.tsx` | Covered |
 | Basic search | Interaction test | Not applicable | `phase1-browser.test.tsx` | Covered |
 
@@ -105,42 +121,42 @@ Latest local verification on 2026-05-13:
 | Type palette interaction | Interaction tests | Not applicable | `phase2-editing.test.tsx` | Covered |
 | Drag SysML type onto canvas | Simulated drag/drop test | Not applicable | `phase2-editing.test.tsx` | Covered |
 | Click type, then click canvas to place | Interaction test | Not applicable | `phase2-editing.test.tsx` | Covered |
-| Create part/package/requirement | Generated source assertions | No backend writer | `phase2-editing.test.tsx` | Partial |
-| Create relationship by dragging connector | Interaction and generated source assertions | No backend relationship writer | `phase2-editing.test.tsx` | Partial |
-| Add ports and features inline | Port generated source assertion | No backend writer | `phase2-editing.test.tsx` | Partial |
-| Rename inline | Interaction test | No backend stable-ID rename path | `phase2-editing.test.tsx` | Partial |
+| Create part/package/requirement | Generated source assertions | Backend writer currently covers rename/save, not arbitrary create | `phase2-editing.test.tsx` | Partial |
+| Create relationship by dragging connector | Interaction and generated source assertions | Backend writer currently covers rename/save, not relationship creation | `phase2-editing.test.tsx` | Partial |
+| Add ports and features inline | Port generated source assertion | Backend writer currently covers rename/save, not port creation | `phase2-editing.test.tsx` | Partial |
+| Rename inline | Interaction test | Backend rename preserves stable ID | frontend and backend domain tests | Covered |
 | Generated source preview visible in split mode | Render test | Not applicable | `phase2-editing.test.tsx` | Covered |
-| Intended save target before write | Render test | No backend save endpoint | `phase2-editing.test.tsx` | Partial |
+| Intended save target before write | Render test | Backend save policy identifies owner file | frontend and backend domain tests | Covered |
 | Auto-layout | Textual feedback only | No layout engine | `phase2-editing.test.tsx` | Partial |
-| Save generated SysML text | Save button/preview only | No backend persistence | `phase2-editing.test.tsx` | Gap |
+| Save generated SysML text | Save button/preview only | Backend save persists owner-file rename in temp fixture tests | backend domain tests | Partial |
 | Undo/redo | Interaction tests | Not applicable | `phase2-editing.test.tsx` | Covered |
-| Validation feedback | Pane/status/render tests | No backend validation | `phase2-editing.test.tsx` | Partial |
-| Parser/writer round trip | Fixture exists; no executable parser/writer test | No parser/writer | `fixtures/tiny-single-file/expected/graph.json` | Gap |
-| Save touches only owner | Fixture exists; no executable save test | No save implementation | `fixtures/multi-file-modular/expected/changed-files.json` | Gap |
-| Stable ID survives rename | No executable identity-policy test | No writer/identity policy | none | Gap |
-| Missing ID blocks write until backfill | No fixture or executable test | No writer/backfill policy | none | Gap |
+| Validation feedback | Pane/status/render tests | Backend parse/write diagnostics exist for malformed and missing-ID cases | frontend and backend domain tests | Covered |
+| Parser/writer round trip | Fixture exists | Backend parse -> write -> parse matches expected graph | backend domain tests | Covered |
+| Save touches only owner | Fixture exists | Backend temp-fixture save changes only owner file | backend domain tests | Covered |
+| Stable ID survives rename | Executable backend test | Backend rename preserves identity metadata | backend domain tests | Covered |
+| Missing ID blocks write until backfill | Executable backend test | Backend blocks writes for derived IDs | backend domain tests | Covered |
 
 ### Phase 3: Git-Native Workflow
 
 | Roadmap item | Frontend coverage | Backend coverage | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| Branch switcher | Interaction test | No backend branch switch endpoint | `phase3-git-workflow.test.tsx` | Partial |
-| Side-by-side branch contexts | Render and fixture tests | No backend multi-context API | `phase3-git-workflow.test.tsx`, `multi-context-view.json` | Partial |
-| Multi-context comparison projection | Fixture assertion and render test | No backend projection generation | `phase3-git-workflow.test.tsx` | Partial |
-| Compare selector in top app bar | Rendered shell; no behavior test | No backend compare endpoint | `phase0-workbench.test.tsx` | Partial |
+| Branch switcher | Interaction test | Backend exposes branch comparison contexts but no mutable switch operation | `phase3-git-workflow.test.tsx`, backend domain tests | Partial |
+| Side-by-side branch contexts | Render and fixture tests | Backend builds `MultiContextViewDto` | frontend and backend domain tests | Covered |
+| Multi-context comparison projection | Fixture assertion and render test | Backend projection generation matches fixture | backend domain tests | Covered |
+| Compare selector in top app bar | Rendered shell; no behavior test | Backend compare endpoint exists for fixture | frontend tests, backend smoke | Partial |
 | Commit panel | Interaction test for preview | No real commit operation | `phase3-git-workflow.test.tsx` | Partial |
-| Visual diff | Render test | No backend diff engine | `phase3-git-workflow.test.tsx` | Partial |
-| Text diff | Render test | No backend diff endpoint | `phase3-git-workflow.test.tsx` | Partial |
-| Split visual/text comparison panes | Interaction test | No backend diff endpoint | `phase3-git-workflow.test.tsx` | Partial |
-| Branch comparison | Fixture assertion and render test | No backend Git branch comparison | `branch-divergence/expected/diff.json` | Partial |
-| Branch-to-branch trace links | Fixture assertion and render test | No backend trace derivation | `phase3-git-workflow.test.tsx` | Partial |
-| Changed-node highlighting | Render test for added node | No backend model-status projection | `phase3-git-workflow.test.tsx` | Partial |
-| Changed-file highlighting | Render test for modified file | No backend changed-file computation | `phase3-git-workflow.test.tsx` | Partial |
+| Visual diff | Render test | Backend semantic diff endpoint exists for fixture | frontend tests, backend smoke | Covered |
+| Text diff | Render test | Backend semantic diff endpoint exists for fixture | frontend tests, backend smoke | Covered |
+| Split visual/text comparison panes | Interaction test | Backend semantic diff endpoint exists for fixture | frontend tests, backend smoke | Covered |
+| Branch comparison | Fixture assertion and render test | Backend branch comparison matches expected diff | backend domain tests | Covered |
+| Branch-to-branch trace links | Fixture assertion and render test | Backend branch trace links match expected diff | backend domain tests | Covered |
+| Changed-node highlighting | Render test for added node | Backend diff returns changed nodes | frontend and backend domain tests | Covered |
+| Changed-file highlighting | Render test for modified file | Backend diff returns changed files | frontend and backend domain tests | Covered |
 | Added/removed/modified/unchanged legend | Render test through phase 0 and phase 3 | Not applicable | `phase0-workbench.test.tsx`, `phase3-git-workflow.test.tsx` | Covered |
-| Local changes overlay | Render test | No backend working-tree status | `phase3-git-workflow.test.tsx` | Partial |
-| Basic merge conflict assistance | Render test only | No conflict detection engine | `phase3-git-workflow.test.tsx` | Partial |
-| Semantic branch diff fixture contract | Fixture assertion | No backend semantic diff engine | `phase3-git-workflow.test.tsx` | Partial |
-| Multi-context ID scoping | Fixture assertion | No backend projection generation | `phase3-git-workflow.test.tsx` | Partial |
+| Local changes overlay | Render test | No backend working-tree status beyond fixture diff | `phase3-git-workflow.test.tsx` | Partial |
+| Basic merge conflict assistance | Render test only | No real conflict detection engine | `phase3-git-workflow.test.tsx` | Partial |
+| Semantic branch diff fixture contract | Fixture assertion | Backend semantic diff matches expected fixture | backend domain tests | Covered |
+| Multi-context ID scoping | Fixture assertion | Backend multi-context view scopes IDs by workspace | backend domain tests | Covered |
 
 ### Phase 3b: Multi-Context Editing
 
@@ -186,26 +202,18 @@ Latest local verification on 2026-05-13:
 
 ## Highest-Risk Gaps
 
-1. Backend parser, graph mapping, writer, Git, and persistence are not implemented beyond the API health/OpenAPI scaffold.
-2. Phase 1-3 tests validate fixture-backed frontend behavior and JSON contracts, not real backend domain behavior.
-3. Phase 2 save and round-trip gates are not truly satisfied until parser/writer/save tests exist in backend or shared domain test projects.
-4. Phase 3 commit and Git operations are preview-only; no repository mutation is performed or tested.
-5. Responsive behavior is implemented in CSS but not verified through automated viewport tests.
+1. Backend functionality is implemented for the MVP fixture subset only; it is not a full SysML v2 parser, writer, Git client, or merge engine.
+2. Phase 2 creation of new backend elements is still narrower than the frontend draft UI; backend save currently proves owner-file rename and identity policy.
+3. Phase 3 commit and Git operations are preview-only; no repository commit mutation is performed or tested.
+4. Branch comparison is semantic over fixture repositories, not a general Git branch comparison adapter.
+5. Responsive behavior is checked by CSS contract assertions, not browser viewport screenshots.
 
 ## Required Next Test Additions
 
-Before treating the MVP as backend-ready, add automated backend/domain tests for:
+Before treating the MVP as production-ready, add automated tests for:
 
-- `parse_minimal_graph`
-- `model_graph_has_context`
-- `derive_item_to_file_traceability`
-- `derive_import_traceability`
-- `malformed_input_reports_diagnostic`
-- `get_source_file_preserves_text`
-- `parse_round_trip_minimal`
-- `save_touches_only_owner`
-- `stable_id_survives_rename`
-- `missing_id_blocks_write_until_backfill`
-- `semantic_branch_diff`
-- `branch_trace_links`
-- `multi_context_view_scopes_ids`
+- Backend creation of part/package/requirement/port/connection, not just rename.
+- Real Git repository open and SysML file discovery outside checked-in fixtures.
+- Real commit creation on a temporary Git repository.
+- Merge conflict detection using a `fixtures/merge-conflict/` repository.
+- Browser-level responsive smoke tests using a real viewport.

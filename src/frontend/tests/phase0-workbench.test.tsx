@@ -1,9 +1,13 @@
 import { render, screen, within } from '@testing-library/react';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { App } from '../src/App';
 import shellFixture from '../../../fixtures/phase-0-workbench/expected/workbench-shell.json';
 
 const paneModes = ['Visual', 'Text', 'Split'] as const;
+const testDirectory = dirname(fileURLToPath(import.meta.url));
 
 describe('phase 0 workbench shell', () => {
   it('defines the canonical shell fixture', () => {
@@ -82,5 +86,15 @@ describe('phase 0 workbench shell', () => {
     for (const pill of shellFixture.status.pills) {
       expect(screen.getByText(pill)).toBeInTheDocument();
     }
+  });
+
+  it('keeps responsive fallback rules for context-bearing panes', () => {
+    const css = readFileSync(resolve(testDirectory, '../src/styles.css'), 'utf8');
+
+    expect(css).toContain('@media (max-width: 1420px)');
+    expect(css).toContain('@media (max-width: 1120px)');
+    expect(css).toContain('.pane__context');
+    expect(css).toContain('grid-template-columns: 1fr');
+    expect(css).toContain('grid-template-rows: repeat(4, minmax(280px, 1fr))');
   });
 });

@@ -45,3 +45,24 @@ OpenAPI is available in development at:
 ```text
 http://127.0.0.1:5087/swagger/v1/swagger.json
 ```
+
+Run backend domain gates:
+
+```bash
+dotnet run --project tests/integration/Sysml2Editor.Backend.Tests
+```
+
+Run backend API smoke gates:
+
+```bash
+bash tests/integration/backend-smoke.sh
+```
+
+Current fixture-backed API endpoints include:
+
+- `GET /api/fixtures/{fixture}/graph`
+- `GET /api/fixtures/{fixture}/source/{path}`
+- `POST /api/fixtures/{fixture}/rename`
+- `GET /api/fixtures/multi-file-modular/save-preview/rename`
+- `GET /api/fixtures/branch-divergence/diff`
+- `GET /api/fixtures/branch-divergence/multi-context-view`

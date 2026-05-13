@@ -52,7 +52,57 @@ Implementation tracking:
 - [x] Phase 2 visual editing is implemented as the current fixture-backed draft editing slice and verified by `src/frontend/tests/phase2-editing.test.tsx`.
 - [x] Phase 3 Git-native workflow is implemented as the current fixture-backed branch comparison and commit-preview slice and verified by `src/frontend/tests/phase3-git-workflow.test.tsx`.
 - [x] Frontend phase gates are verified with `npm test`, `npm run typecheck`, and `npm run build` from `src/frontend`.
-- [x] Backend smoke gate is verified with `dotnet run --project src/backend/Sysml2Editor.Api --urls http://127.0.0.1:5087` and `curl -fsS http://127.0.0.1:5087/swagger/v1/swagger.json`.
+- [x] Frontend dev-server smoke gate is verified with `bash tests/integration/frontend-smoke.sh`.
+- [x] Backend domain gates are verified with `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests`.
+- [x] Backend smoke gate is verified with `bash tests/integration/backend-smoke.sh`.
+
+## Frontend Roadmap Track
+
+Use this track for UI tasks, frontend tests, and frontend fixture consumption.
+Backend/domain readiness is tracked separately in the next section.
+
+| Phase | Frontend functionality | Tests | Fixtures | Status |
+| --- | --- | --- | --- | --- |
+| Phase 0 | Workbench shell, panes, inspector, status bar, context labels, responsive fallback | `src/frontend/tests/phase0-workbench.test.tsx`, `tests/integration/frontend-smoke.sh` | `fixtures/phase-0-workbench`, `fixtures/tiny-single-file`, `fixtures/branch-divergence`, `fixtures/multi-file-modular` | [x] Complete for current UI slice |
+| Phase 1 | Fixture-backed model browser, tree/graph/source/inspector sync, source ownership, search | `src/frontend/tests/phase1-browser.test.tsx` | `fixtures/phase-1-browser`, `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [x] Complete for current UI slice |
+| Phase 2 | Draft visual editing, palette placement, generated source preview, save target display, validation feedback, undo/redo | `src/frontend/tests/phase2-editing.test.tsx` | `fixtures/phase-2-editing`, `fixtures/tiny-single-file`, `fixtures/multi-file-modular` | [x] Complete for current UI slice |
+| Phase 3 | Branch switcher, side-by-side context display, visual/text/split diff, commit preview, conflict assistance | `src/frontend/tests/phase3-git-workflow.test.tsx` | `fixtures/branch-divergence`, `fixtures/multi-file-modular`, `fixtures/merge-conflict` | [x] Complete for current UI slice |
+| Phase 3b | Multi-context editing across distinct writable worktrees | none yet | `fixtures/multi-context-editing` | [ ] Future |
+| Phase 4 | Saved views, trace matrix, impact analysis, view publishing | none yet | `fixtures/saved-views` | [ ] Future |
+| Phase 5 | Advanced SysML views, behavior/state/action UI, variants, reports, PowerPoint mode | none yet | `fixtures/advanced-sysml`, `fixtures/model-libraries`, `fixtures/variant-models` | [ ] Future |
+
+## Backend Roadmap Track
+
+Use this track for parser, graph, writer, API, filesystem, Git, and backend
+test tasks. It makes explicit which frontend capabilities are backed by real
+backend behavior versus fixture-only UI state.
+
+| Phase | Backend functionality | Tests | Fixtures | Status |
+| --- | --- | --- | --- | --- |
+| Phase 0 | ASP.NET API scaffold, health endpoint, OpenAPI document, CORS for frontend dev | `tests/integration/backend-smoke.sh` | none | [x] Complete |
+| Phase 1 | MVP parser, `ModelGraphDto`, context IDs, source preservation, diagnostics, item/file/import traceability, fixture graph/source API endpoints | `tests/integration/Sysml2Editor.Backend.Tests`, `tests/integration/backend-smoke.sh` | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [x] Complete for MVP subset |
+| Phase 2 | Writer round-trip, owner-file save policy, stable-ID-preserving rename, missing-ID write block | `tests/integration/Sysml2Editor.Backend.Tests` | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, missing-identity fixture to add | [x] Complete for rename/save subset |
+| Phase 3 | Semantic branch diff, branch trace links, multi-context view scoping, diff/multi-context API endpoints | `tests/integration/Sysml2Editor.Backend.Tests`, `tests/integration/backend-smoke.sh` | `fixtures/branch-divergence`, `fixtures/merge-conflict` | [x] Complete for fixture branch-diff subset |
+| Phase 3 gap | Real Git branch switching, working-tree status, commit creation, merge conflict detection | none yet | `fixtures/merge-conflict` | [ ] Not implemented |
+| Phase 3b | Explicit worktree creation, same-repo multi-branch writable context validation, cross-context write prevention | none yet | `fixtures/multi-context-editing` | [ ] Future |
+| Phase 4 | View persistence, saved view APIs, trace matrix, impact/query backend | none yet | `fixtures/saved-views`, `fixtures/multi-file-modular`, `fixtures/branch-divergence` | [ ] Future |
+| Phase 5 | Broader SysML parser support, validation engine, model libraries, CI/report generation | none yet | `fixtures/advanced-sysml`, `fixtures/model-libraries`, `fixtures/variant-models` | [ ] Future |
+
+## Full-Stack Roadmap Track
+
+Use this track for behavior that requires frontend, backend, API contracts,
+fixtures, and smoke/integration tests to work together. A phase is product-ready
+only when its frontend, backend, and full-stack gates are all complete.
+
+| Phase | Full-stack capability | Tests | Fixtures | Status |
+| --- | --- | --- | --- | --- |
+| Phase 0 | Start frontend and backend independently and inspect the generated API contract | `tests/integration/frontend-smoke.sh`, `tests/integration/backend-smoke.sh` | none | [x] Complete |
+| Phase 1 | Browser UI loads graph/source data from backend endpoints instead of only local fixture state | test to add: browser API integration smoke | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [ ] Not implemented |
+| Phase 2 | Editing UI submits create/rename/delete operations through backend write APIs and reloads the saved graph | test to add: edit-save-reload E2E | `fixtures/phase-2-editing`, backend creation/delete fixtures to add | [ ] Not implemented |
+| Phase 3 | Git workflow UI uses backend Git/diff/status/commit APIs against a real temporary Git repository | test to add: git-workflow E2E | `fixtures/branch-divergence`, `fixtures/merge-conflict`, temp real-Git fixture to add | [ ] Not implemented |
+| Phase 3b | Multi-context UI edits two validated writable backend contexts without cross-context writes | test to add: multi-context edit E2E | `fixtures/multi-context-editing`, two-worktree fixture to add | [ ] Future |
+| Phase 4 | Saved-view UI persists and reloads backend views with stable graph IDs and trace queries | test to add: saved-view E2E | `fixtures/saved-views`, cross-repository dependency fixture to add | [ ] Future |
+| Phase 5 | Advanced SysML UI, parser, validation, libraries, CI, and report generation operate through the same API path | test to add: advanced-model E2E | `fixtures/advanced-sysml`, `fixtures/model-libraries`, `fixtures/variant-models` | [ ] Future |
 
 Gate rule:
 
@@ -61,6 +111,18 @@ Gate rule:
 - Phase 1 gates must pass before save or visual editing is exposed.
 - Phase 2 gates must pass before visual editing is treated as implementation-ready.
 - Phase 3 gates must pass before branch comparison or commit summaries are exposed.
+- A task can be marked frontend-complete or backend-complete independently, but a phase cannot be marked product-ready until its full-stack gate passes.
+- Fixture-only UI behavior must be labeled as such until the same path is covered through backend APIs.
+- Backend fixture-only behavior must be labeled as such until the same path is covered against real filesystem or Git state where applicable.
+
+Recommended implementation order:
+
+1. Keep fixture-backed frontend slices in place for fast UI iteration.
+2. Implement the backend domain behavior and API contract for the same slice.
+3. Add backend unit/integration tests against fixtures.
+4. Connect the frontend slice to the backend API while preserving fixture fallback where useful for isolated UI tests.
+5. Add a full-stack smoke or E2E test for the user path.
+6. Only then promote the capability from slice-complete to product-ready.
 
 Platform coverage:
 
@@ -82,14 +144,14 @@ Initial setup order:
 
 Build the static workbench shape before deep interaction.
 
-Features:
+Frontend tasks:
 
 - [x] Top-level shell, left rail, tiled workspace, inspector, and status bar
 - [x] Pane-level context labels for repository, branch, file, mode, and write state
 - [x] Fixture-backed sample content that demonstrates multiple repositories and branches
 - [x] Responsive fallback that preserves context labels on narrower screens
 
-Test focus:
+Frontend tests:
 
 - [x] Shell rendering with top app bar, left rail, tiled workspace, inspector, and status bar
 - [x] Pane headers show repository, branch, file, mode, and write state
@@ -97,21 +159,42 @@ Test focus:
 - [x] Selected fixture state can populate the inspector
 - [x] Responsive fallback preserves context identity
 - [x] Dirty, read-only, and validation indicators render before editing exists
+- [x] `frontend_starts` through `tests/integration/frontend-smoke.sh`
 
-Minimum gate tests:
-
-| Test | Layer | Fixture | Purpose | Expected Result |
-| --- | --- | --- | --- | --- |
-| `repo_scaffold_present` | Smoke | none | Prove the implementation skeleton exists | Root docs, backend, frontend, shared contracts, tests, fixtures, and scripts match the repo layout in [README.md](../../README.md) |
-| `backend_starts_with_openapi` | Smoke | none | Prove backend scaffold and contract generation are wired | `dotnet run --project src/backend/Sysml2Editor.Api` exposes OpenAPI in development |
-| `frontend_starts` | Smoke | none | Prove frontend scaffold runs | `npm run dev` from `src/frontend` serves the app shell |
-
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/phase-0-workbench/`
 - `fixtures/tiny-single-file/`
 - `fixtures/branch-divergence/`
 - `fixtures/multi-file-modular/`
+
+Backend tasks:
+
+- [x] Repository skeleton for backend API project
+- [x] ASP.NET API scaffold
+- [x] Health endpoint
+- [x] OpenAPI document in development
+- [x] CORS policy for frontend development
+
+Backend tests:
+
+- [x] `repo_scaffold_present`
+- [x] `backend_starts_with_openapi` through `tests/integration/backend-smoke.sh`
+- [x] Health endpoint smoke check through `tests/integration/backend-smoke.sh`
+
+Backend fixtures:
+
+- None
+
+Full-stack tests:
+
+- [x] Frontend dev server starts and serves the app shell
+- [x] Backend starts and exposes health/OpenAPI endpoints
+- [ ] Frontend and backend start together from one documented local workflow
+
+Full-stack fixtures:
+
+- None
 
 Success criterion:
 
@@ -122,6 +205,7 @@ Exit criteria:
 - A user can identify the active repository, branch, file, selected model element, and write state from visible UI alone.
 - Visual, text, split, and diff panes can be represented with fixture data.
 - The shell is ready for parser, graph, inspector, and Git data integration.
+- The backend scaffold can be started and its contract can be inspected.
 
 Vision trace:
 
@@ -132,11 +216,12 @@ Vision trace:
 
 Build confidence in repo parsing and navigation.
 
-Features:
+Frontend tasks:
 
 - [x] Open Git repo using fixture-backed repository contexts
 - [x] Create one explicit workspace context for the opened repo and current branch
-- [x] Parse SysML files using checked-in expected graph and trace fixtures for the current slice
+- [ ] Load graph and source data from backend API endpoints
+- [ ] Preserve local fixture mode for isolated frontend tests
 - [x] Show tree hierarchy
 - [x] Show text editor
 - [x] Show graph view
@@ -148,33 +233,62 @@ Features:
 - [x] Keep repository, branch, file, mode, and read-only state visible on every pane
 - [x] Basic search
 
-Test focus:
+Frontend tests:
 
 - [x] Repo open and file discovery through fixture state
 - [x] Workspace context creation through fixture state
-- [x] Parse success and parse error reporting fixture coverage
 - [x] Tree hierarchy rendering
 - [x] Text editor view sync
 - [x] Graph view node/edge projection
 - [x] Source ownership and item-to-item trace links
 - [x] File-to-file import traceability
 - [x] Search and selection behavior
+- [x] `open_browse_select_smoke` through `src/frontend/tests/phase1-browser.test.tsx`
+- [ ] Browser API integration smoke test
 
-Minimum gate tests:
-
-| Test | Layer | Fixture | Purpose | Expected Result |
-| --- | --- | --- | --- | --- |
-| `parse_minimal_graph` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser maps the supported subset into the model graph | Matches `expected/graph.json` exactly, including schema-required fields |
-| `model_graph_has_context` | Unit/Integration | `fixtures/tiny-single-file` | Prove every graph is tied to repository and branch context | `ModelGraphDto.context` includes workspace ID, repository ID, branch, and writable state |
-| `derive_item_to_file_traceability` | Unit/Integration | `fixtures/tiny-single-file` | Prove source ownership is first-class traceability | `ModelGraphDto.traceLinks` includes item-to-file links for every structured node |
-| `derive_import_traceability` | Unit/Integration | `fixtures/multi-file-modular` | Prove file-to-file traceability starts in the read-only slice | Matches `expected/trace-links.json` for source ownership and resolved imports |
-| `malformed_input_reports_diagnostic` | Parser/Error | `fixtures/invalid-input` | Fail safely | Matches `expected/diagnostics.json`; valid files in the same repo still load |
-| `get_source_file_preserves_text` | Integration | `fixtures/tiny-single-file` | Prove source text can be displayed without rewriting | Returned content, line ending, and hash match the fixture |
-| `open_browse_select_smoke` | End-to-End | `fixtures/tiny-single-file` | Prove the first user path | A repo opens, the tree renders, and a selected node shows inspector data and source ownership from `expected/graph.json` |
-
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/phase-1-browser/`
+- `fixtures/tiny-single-file/`
+- `fixtures/multi-file-modular/`
+- `fixtures/invalid-input/`
+
+Backend tasks:
+
+- [x] Parse SysML files for the MVP subset
+- [x] Produce `ModelGraphDto`
+- [x] Preserve repository, branch, workspace, writable, and file context
+- [x] Preserve source file text for display
+- [x] Report parser diagnostics for malformed input
+- [x] Derive source ownership trace links
+- [x] Derive file-to-file import traceability
+- [x] Expose fixture graph API endpoint
+- [x] Expose fixture source API endpoint
+
+Backend tests:
+
+- [x] `parse_minimal_graph`
+- [x] `model_graph_has_context`
+- [x] `derive_item_to_file_traceability`
+- [x] `derive_import_traceability`
+- [x] `malformed_input_reports_diagnostic`
+- [x] `get_source_file_preserves_text`
+- [x] Graph/source endpoint checks through `tests/integration/backend-smoke.sh`
+
+Backend fixtures:
+
+- `fixtures/tiny-single-file/`
+- `fixtures/multi-file-modular/`
+- `fixtures/invalid-input/`
+
+Full-stack tests:
+
+- [ ] Browser opens `fixtures/tiny-single-file` through the backend graph endpoint
+- [ ] Browser displays source text from the backend source endpoint
+- [ ] Browser displays backend diagnostics for `fixtures/invalid-input`
+
+Full-stack fixtures:
+
 - `fixtures/tiny-single-file/`
 - `fixtures/multi-file-modular/`
 - `fixtures/invalid-input/`
@@ -199,7 +313,7 @@ Vision trace:
 
 Add PowerPoint-like editing.
 
-Features:
+Frontend tasks:
 
 - [x] Type palette interaction for supported SysML element creation
 - [x] Drag SysML type onto canvas
@@ -212,10 +326,12 @@ Features:
 - [x] Show intended save target before write
 - [x] Auto-layout feedback for draft nodes
 - [x] Save generated SysML text as a fixture-backed draft action
+- [ ] Submit supported edits through backend write API
+- [ ] Reload saved graph from backend after write
 - [x] Undo/redo
 - [x] Validation feedback in the pane header, editor, and bottom status bar
 
-Test focus:
+Frontend tests:
 
 - [x] Drag-to-create and click-to-create flows
 - [x] Inline rename
@@ -223,21 +339,55 @@ Test focus:
 - [x] Delete and undo/redo
 - [x] Auto-layout after edits
 - [x] Generated-source preview and save-target fixture coverage
+- [ ] Edit-save-reload E2E through backend API
 
-Minimum gate tests:
-
-| Test | Layer | Fixture | Purpose | Expected Result |
-| --- | --- | --- | --- | --- |
-| `parse_round_trip_minimal` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser and writer agree on the supported subset | Matches `expected/graph.json` after parse -> write -> parse |
-| `save_touches_only_owner` | Integration | `fixtures/multi-file-modular` | Prevent rewrite churn | Matches `expected/changed-files.json` |
-| `stable_id_survives_rename` | Integration | `fixtures/tiny-single-file` | Protect identity | Renaming an element keeps the same stable ID and preserves view bindings |
-| `missing_id_blocks_write_until_backfill` | Integration | fixture to add with missing identity metadata | Keep identity policy explicit | Read succeeds with diagnostics or read-only derived IDs; write is blocked until the backfill command is implemented |
-
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/phase-2-editing/`
 - `fixtures/tiny-single-file/`
 - `fixtures/multi-file-modular/`
+
+Backend tasks:
+
+- [x] Writer round-trip for the MVP subset
+- [x] Save only the owning source file for a changed model item
+- [x] Preserve stable IDs across rename
+- [x] Block writes when required identity metadata is missing
+- [ ] Create package/part/requirement directly through backend write API
+- [ ] Create ports/features directly through backend write API
+- [ ] Create relationships directly through backend write API
+- [ ] Delete model elements through backend write API
+
+Backend tests:
+
+- [x] `parse_round_trip_minimal`
+- [x] `save_touches_only_owner`
+- [x] `stable_id_survives_rename`
+- [x] `missing_id_blocks_write_until_backfill`
+- [ ] Backend create package/part/requirement test
+- [ ] Backend create port/feature test
+- [ ] Backend create relationship test
+- [ ] Backend delete element test
+
+Backend fixtures:
+
+- `fixtures/tiny-single-file/`
+- `fixtures/multi-file-modular/`
+- Fixture to add for missing identity metadata
+- Fixture to add for backend element creation
+- Fixture to add for backend delete operation
+
+Full-stack tests:
+
+- [ ] Create a supported element in the UI, save through backend, reload graph, and verify stable ID/source ownership
+- [ ] Rename in the UI, save through backend, reload graph, and verify only the owner file changed
+- [ ] Delete in the UI, save through backend, reload graph, and verify graph/source consistency
+
+Full-stack fixtures:
+
+- `fixtures/phase-2-editing/`
+- Fixture to add for backend element creation
+- Fixture to add for backend delete operation
 
 Success criterion:
 
@@ -248,6 +398,7 @@ Exit criteria:
 - Supported edits can be created visually and persisted safely.
 - Undo/redo restores the expected model state.
 - Generated text remains stable and reviewable.
+- Backend write operations preserve source ownership and stable IDs.
 
 Vision trace:
 
@@ -258,7 +409,7 @@ Vision trace:
 
 Make it useful in real engineering teams.
 
-Features:
+Frontend tasks:
 
 - [x] Branch switcher
 - [x] Side-by-side branch contexts for the same repository
@@ -275,30 +426,71 @@ Features:
 - [x] Added/removed/modified/unchanged legend
 - [x] Local changes overlay
 - [x] Basic merge conflict assistance
+- [ ] Load branch diff data from backend diff endpoint
+- [ ] Load multi-context comparison data from backend endpoint
+- [ ] Submit commit operation through backend Git API
 
-Test focus:
+Frontend tests:
 
-- [x] Branch switching
-- [x] Working tree status
+- [x] Branch switching through fixture state
+- [x] Working tree status through fixture state
 - [x] Commit creation preview
-- [x] Semantic diff
-- [x] Branch comparison
+- [x] Semantic diff display
+- [x] Branch comparison display
 - [x] Changed-node overlays
-- [x] Conflict detection and assistance
+- [x] Conflict detection and assistance UI
+- [ ] Backend-backed diff UI integration test
+- [ ] Backend-backed commit UI integration test
 
-Minimum gate tests:
-
-| Test | Layer | Fixture | Purpose | Expected Result |
-| --- | --- | --- | --- | --- |
-| `semantic_branch_diff` | Integration | `fixtures/branch-divergence` | Verify branch comparison | Matches `expected/diff.json` |
-| `branch_trace_links` | Integration | `fixtures/branch-divergence` | Preserve branch-to-branch traceability contract | Diff output includes changed files, changed items, and branch trace links |
-| `multi_context_view_scopes_ids` | Integration | `fixtures/branch-divergence` | Prevent ID ambiguity in side-by-side views | Matches `expected/multi-context-view.json`; every projected node, file, and trace-link ID is scoped by `workspaceId` |
-
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/branch-divergence/`
 - `fixtures/multi-file-modular/`
 - `fixtures/merge-conflict/`
+
+Backend tasks:
+
+- [x] Semantic branch diff for fixture branches
+- [x] Branch-to-branch trace links
+- [x] Multi-context view scoping
+- [x] Diff API endpoint for branch fixture
+- [x] Multi-context view API endpoint for branch fixture
+- [ ] Real Git branch switching
+- [ ] Working-tree status from a real Git repository
+- [ ] Commit creation in a real Git repository
+- [ ] Merge conflict detection from real Git state
+
+Backend tests:
+
+- [x] `semantic_branch_diff`
+- [x] `branch_trace_links`
+- [x] `multi_context_view_scopes_ids`
+- [x] Diff endpoint checks through `tests/integration/backend-smoke.sh`
+- [ ] Real Git branch switching test
+- [ ] Real Git working-tree status test
+- [ ] Real Git commit creation test
+- [ ] Real Git merge conflict detection test
+
+Backend fixtures:
+
+- `fixtures/branch-divergence/`
+- `fixtures/merge-conflict/`
+- Fixture to add for temp real-Git repository branch switching
+- Fixture to add for temp real-Git repository commit creation
+
+Full-stack tests:
+
+- [ ] UI compares two branches using backend diff data and displays changed nodes/files
+- [ ] UI shows backend working-tree status for a temporary Git repository
+- [ ] UI creates a commit through backend Git API and verifies repository state
+- [ ] UI displays backend merge-conflict diagnostics
+
+Full-stack fixtures:
+
+- `fixtures/branch-divergence/`
+- `fixtures/merge-conflict/`
+- Fixture to add for temp real-Git repository branch switching
+- Fixture to add for temp real-Git repository commit creation
 
 Success criterion:
 
@@ -319,37 +511,67 @@ Vision trace:
 
 Allow more than one writable context when each context has a distinct safe write location.
 
-Features:
+Frontend tasks:
 
-- Open two worktrees for different branches of the same repository
-- Create a worktree only through an explicit user-requested backend operation
-- Open multiple repositories in one workspace
-- Edit supported files in separate writable contexts
-- Keep save and commit targets scoped to one repository and branch
-- Show context labels on graph, source, trace, diff, save, and commit surfaces
-- Show writable, read-only, dirty, and validation state directly in pane headers
-- Prevent cross-context writes from shared comparison panes
+- [ ] Open two worktrees for different branches of the same repository
+- [ ] Open multiple repositories in one workspace
+- [ ] Edit supported files in separate writable contexts
+- [ ] Keep save and commit targets scoped to one repository and branch
+- [ ] Show context labels on graph, source, trace, diff, save, and commit surfaces
+- [ ] Show writable, read-only, dirty, and validation state directly in pane headers
+- [ ] Prevent cross-context writes from shared comparison panes
 
-Test focus:
+Frontend tests:
 
-- Opening two worktrees for different branches of the same repository
-- Explicit backend-validated worktree creation
-- Opening multiple repositories in one workspace
-- Editing files in separate writable contexts
-- Save and commit targets scoped to one repository and branch
-- Context labels on graph, source, trace, diff, save, and commit surfaces
+- [ ] Opening two worktrees for different branches of the same repository
+- [ ] Opening multiple repositories in one workspace
+- [ ] Editing files in separate writable contexts
+- [ ] Save and commit target labels scoped to one repository and branch
+- [ ] Context labels on graph, source, trace, diff, save, and commit surfaces
+- [ ] Cross-context write prevention UI
 
-Minimum gate tests:
-
-| Test | Layer | Fixture | Purpose | Expected Result |
-| --- | --- | --- | --- | --- |
-| `multi_context_identity` | Integration | fixture to add with two worktrees | Preserve same-repo multi-branch editing path | Two branch contexts have distinct workspace IDs, branch names, writable states, and non-ambiguous save targets |
-| `worktree_creation_is_explicit` | Integration | fixture to add with two worktrees | Prevent hidden writes during comparison | Branch comparison does not create a worktree; `POST /workspace-contexts/worktrees` is required before both branches are writable |
-
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/branch-divergence/`
 - `fixtures/multi-context-editing/`
+
+Backend tasks:
+
+- [ ] Create a worktree only through an explicit user-requested backend operation
+- [ ] Validate same-repository multi-branch writable contexts
+- [ ] Validate multiple-repository workspace contexts
+- [ ] Scope save targets to one repository, branch, and worktree
+- [ ] Scope commit targets to one repository, branch, and worktree
+- [ ] Reject writes from shared comparison panes
+- [ ] Preserve `MultiContextViewDto` IDs without collapsing contexts
+
+Backend tests:
+
+- [ ] `multi_context_identity`
+- [ ] `worktree_creation_is_explicit`
+- [ ] Multiple repository context test
+- [ ] Save target scoping test
+- [ ] Commit target scoping test
+- [ ] Cross-context write rejection test
+
+Backend fixtures:
+
+- `fixtures/branch-divergence/`
+- `fixtures/multi-context-editing/`
+- Fixture to add with two explicit Git worktrees
+- Fixture to add with two repositories in one workspace
+
+Full-stack tests:
+
+- [ ] UI opens two backend-validated writable contexts for the same repository
+- [ ] UI edits one context and backend rejects accidental writes to the comparison context
+- [ ] UI saves and commits to the correct repository, branch, and worktree
+
+Full-stack fixtures:
+
+- `fixtures/multi-context-editing/`
+- Fixture to add with two explicit Git worktrees
+- Fixture to add with two repositories in one workspace
 
 Success criterion:
 
@@ -372,35 +594,82 @@ Vision trace:
 
 Add the features that make it better than PowerPoint.
 
-Features:
+Frontend tasks:
 
-- Saved views
-- Shared repo views
-- Local private views
-- Trace matrix
-- Source ownership view
-- Cross-repository dependency view
-- Multi-context comparison view
-- Node-centered inspector trace view
-- Impact analysis
-- Query/filter system
-- View publishing
-- Visual indicators for requirements, satisfies, verifies, allocations, ports, connections, files, and changed contexts
+- [ ] Saved views UI
+- [ ] Shared repo views UI
+- [ ] Local private views UI
+- [ ] Trace matrix UI
+- [ ] Source ownership view
+- [ ] Cross-repository dependency view
+- [ ] Multi-context comparison view
+- [ ] Node-centered inspector trace view
+- [ ] Impact analysis UI
+- [ ] Query/filter UI
+- [ ] View publishing UI
+- [ ] Visual indicators for requirements, satisfies, verifies, allocations, ports, connections, files, and changed contexts
 
-Test focus:
+Frontend tests:
 
-- Shared and local view persistence
-- Stable ID based view restoration
-- Trace matrix generation
-- Impact analysis
-- Filter and query rules
-- View publishing and reloading
+- [ ] Saved view creation and restore
+- [ ] Shared and local view display
+- [ ] Trace matrix rendering
+- [ ] Impact analysis interaction
+- [ ] Query/filter interaction
+- [ ] View publishing and reload interaction
 
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/multi-file-modular/`
 - `fixtures/branch-divergence/`
 - `fixtures/saved-views/`
+
+Backend tasks:
+
+- [ ] Saved view persistence
+- [ ] Shared repo view storage
+- [ ] Local private view storage
+- [ ] Stable-ID based view restoration
+- [ ] Trace matrix generation
+- [ ] Source ownership query API
+- [ ] Cross-repository dependency query API
+- [ ] Multi-context comparison view API
+- [ ] Impact analysis query backend
+- [ ] Query/filter backend
+- [ ] View publishing backend
+
+Backend tests:
+
+- [ ] Shared view persistence test
+- [ ] Local view persistence test
+- [ ] Stable-ID view restoration test
+- [ ] Trace matrix generation test
+- [ ] Source ownership query test
+- [ ] Cross-repository dependency query test
+- [ ] Impact analysis test
+- [ ] Query/filter rules test
+- [ ] View publishing and reload test
+
+Backend fixtures:
+
+- `fixtures/multi-file-modular/`
+- `fixtures/branch-divergence/`
+- `fixtures/saved-views/`
+- Fixture to add for cross-repository dependencies
+- Fixture to add for view rename/move restoration
+
+Full-stack tests:
+
+- [ ] UI saves a view through backend persistence and reloads it in a new session
+- [ ] UI displays backend trace matrix and impact-analysis query results
+- [ ] UI publishes a shared view and another session resolves it by stable IDs
+
+Full-stack fixtures:
+
+- `fixtures/saved-views/`
+- `fixtures/multi-file-modular/`
+- Fixture to add for cross-repository dependencies
+- Fixture to add for view rename/move restoration
 
 Success criterion:
 
@@ -421,31 +690,83 @@ Vision trace:
 
 Expand language coverage.
 
-Features:
+Frontend tasks:
 
-- More SysML types
-- Behavior modeling
-- State/action views
-- Variant/product-line views
-- Validation rules
-- Model libraries
-- CI integration
-- Report generation
-- Advanced workspace layouts, saved pane arrangements, and optional simplified "PowerPoint mode"
+- [ ] UI for more SysML types
+- [ ] Behavior modeling views
+- [ ] State/action views
+- [ ] Variant/product-line views
+- [ ] Validation result UI
+- [ ] Model library browser
+- [ ] CI validation status UI
+- [ ] Report generation UI
+- [ ] Advanced workspace layouts
+- [ ] Saved pane arrangements
+- [ ] Optional simplified "PowerPoint mode"
 
-Test focus:
+Frontend tests:
 
-- New language constructs and validations
-- Model library imports
-- Behavioral modeling features
-- Variant/product-line views
-- CI validation and report generation
+- [ ] UI coverage for new language constructs
+- [ ] Behavior modeling interaction tests
+- [ ] State/action view tests
+- [ ] Variant/product-line view tests
+- [ ] Validation result rendering tests
+- [ ] Model library browser tests
+- [ ] CI validation status tests
+- [ ] Report generation UI tests
 
-Fixtures:
+Frontend fixtures:
 
 - `fixtures/advanced-sysml/`
 - `fixtures/model-libraries/`
 - `fixtures/variant-models/`
+
+Backend tasks:
+
+- [ ] Parser support for more SysML types
+- [ ] Behavior model parsing
+- [ ] State/action model parsing
+- [ ] Variant/product-line model parsing
+- [ ] Validation rules
+- [ ] Model library import resolution
+- [ ] CI integration
+- [ ] Report generation
+- [ ] Backward compatibility for the MVP supported subset
+
+Backend tests:
+
+- [ ] New language construct parser tests
+- [ ] Behavior model parser tests
+- [ ] State/action parser tests
+- [ ] Variant/product-line parser tests
+- [ ] Validation rule tests
+- [ ] Model library import tests
+- [ ] CI validation tests
+- [ ] Report generation tests
+- [ ] MVP subset regression tests
+
+Backend fixtures:
+
+- `fixtures/advanced-sysml/`
+- `fixtures/model-libraries/`
+- `fixtures/variant-models/`
+- Fixture to add for CI validation
+- Fixture to add for report generation
+
+Full-stack tests:
+
+- [ ] UI opens an advanced model through backend parser support and renders supported views
+- [ ] UI displays backend validation results for advanced SysML fixtures
+- [ ] UI triggers backend report generation and displays the generated report status
+- [ ] Existing MVP browser/edit/Git flows still pass against the expanded parser
+
+Full-stack fixtures:
+
+- `fixtures/advanced-sysml/`
+- `fixtures/model-libraries/`
+- `fixtures/variant-models/`
+- Fixture to add for CI validation
+- Fixture to add for report generation
 
 Success criterion:
 
