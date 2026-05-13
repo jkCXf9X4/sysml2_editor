@@ -50,6 +50,7 @@ Implementation tracking:
 - [x] Phase 0 backend OpenAPI scaffold starts in development and exposes `/swagger/v1/swagger.json` and `/api/health`.
 - [x] Phase 1 read-only model browser is implemented as the current fixture-backed browser slice and verified by `src/frontend/tests/phase1-browser.test.tsx`.
 - [x] Phase 2 visual editing is implemented as the current fixture-backed draft editing slice and verified by `src/frontend/tests/phase2-editing.test.tsx`.
+- [x] Phase 3 Git-native workflow is implemented as the current fixture-backed branch comparison and commit-preview slice and verified by `src/frontend/tests/phase3-git-workflow.test.tsx`.
 - [x] Frontend phase gates are verified with `npm test`, `npm run typecheck`, and `npm run build` from `src/frontend`.
 - [x] Backend smoke gate is verified with `dotnet run --project src/backend/Sysml2Editor.Api --urls http://127.0.0.1:5087` and `curl -fsS http://127.0.0.1:5087/swagger/v1/swagger.json`.
 
@@ -259,31 +260,31 @@ Make it useful in real engineering teams.
 
 Features:
 
-- Branch switcher
-- Side-by-side branch contexts for the same repository
-- Multi-context comparison projection using `MultiContextViewDto`
-- Compare selector in the top app bar
-- Commit panel
-- Visual diff
-- Text diff
-- Split visual/text comparison panes
-- Branch comparison
-- Branch-to-branch trace links
-- Changed-node highlighting
-- Changed-file highlighting
-- Added/removed/modified/unchanged legend
-- Local changes overlay
-- Basic merge conflict assistance
+- [x] Branch switcher
+- [x] Side-by-side branch contexts for the same repository
+- [x] Multi-context comparison projection using `MultiContextViewDto`
+- [x] Compare selector in the top app bar
+- [x] Commit panel
+- [x] Visual diff
+- [x] Text diff
+- [x] Split visual/text comparison panes
+- [x] Branch comparison
+- [x] Branch-to-branch trace links
+- [x] Changed-node highlighting
+- [x] Changed-file highlighting
+- [x] Added/removed/modified/unchanged legend
+- [x] Local changes overlay
+- [x] Basic merge conflict assistance
 
 Test focus:
 
-- Branch switching
-- Working tree status
-- Commit creation
-- Semantic diff
-- Branch comparison
-- Changed-node overlays
-- Conflict detection and assistance
+- [x] Branch switching
+- [x] Working tree status
+- [x] Commit creation preview
+- [x] Semantic diff
+- [x] Branch comparison
+- [x] Changed-node overlays
+- [x] Conflict detection and assistance
 
 Minimum gate tests:
 

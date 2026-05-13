@@ -1,6 +1,8 @@
 src/frontend/node_modules/
 src/frontend/dist/
 src/frontend/*.tsbuildinfo
+src/backend/**/bin/
+src/backend/**/obj/
 
 node_modules/
 dist/

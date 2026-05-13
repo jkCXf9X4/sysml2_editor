@@ -36,3 +36,81 @@ See [src/backend/README.md](./src/backend/README.md), [src/frontend/README.md](.
 ## Start Here
 
 - Documentation index: [docs/README.md](./docs/README.md)
+
+## Run The Application
+
+Prerequisites:
+
+- Node.js 22 or newer
+- npm
+- .NET SDK/runtime 10 for the backend scaffold
+
+Start the backend API:
+
+```bash
+dotnet run --project src/backend/Sysml2Editor.Api --urls http://127.0.0.1:5087
+```
+
+Verify the backend in another terminal:
+
+```bash
+curl -fsS http://127.0.0.1:5087/api/health
+curl -fsS http://127.0.0.1:5087/swagger/v1/swagger.json
+```
+
+Expected health response:
+
+```json
+{"status":"ok"}
+```
+
+Start the frontend:
+
+```bash
+cd src/frontend
+npm install
+npm run dev
+```
+
+Open the Vite URL printed by the command, normally `http://localhost:5173`.
+The frontend dev server proxies `/api` requests to `http://localhost:5087`.
+
+## Test And Verify
+
+Run the frontend test suite:
+
+```bash
+cd src/frontend
+npm test
+```
+
+Run TypeScript checks:
+
+```bash
+cd src/frontend
+npm run typecheck
+```
+
+Run a production build:
+
+```bash
+cd src/frontend
+npm run build
+```
+
+Current phase gate verification is:
+
+```bash
+cd src/frontend
+npm test
+npm run typecheck
+npm run build
+```
+
+Then start the backend and verify `/api/health` and `/swagger/v1/swagger.json` as shown above.
+
+Or run the backend smoke test script:
+
+```bash
+bash tests/integration/backend-smoke.sh
+```

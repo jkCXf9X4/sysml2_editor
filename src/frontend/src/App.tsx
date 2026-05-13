@@ -73,6 +73,15 @@ type DraftAction =
   | { type: 'redo' };
 
 type DraftDispatch = (action: DraftAction) => void;
+type BranchKey = 'base' | 'head' | 'main' | 'concept-ev';
+
+type BranchContext = {
+  workspaceId: string;
+  branch: BranchKey;
+  label: string;
+  rootPath: string;
+  writable: boolean;
+};
 
 const topMenus = ['File', 'Edit', 'View', 'Navigate', 'Model', 'Tools', 'Window', 'Help'] as const;
 
@@ -290,6 +299,71 @@ const statusPills = [
   ['0 deleted', 'muted'],
   ['Model is valid', 'warning'],
 ] as const;
+
+const branchContexts: Record<BranchKey, BranchContext> = {
+  base: {
+    workspaceId: 'workspace-branch-divergence-base',
+    branch: 'base',
+    label: 'branch-divergence / base',
+    rootPath: '/fixtures/branch-divergence/base',
+    writable: false,
+  },
+  head: {
+    workspaceId: 'workspace-branch-divergence-head',
+    branch: 'head',
+    label: 'branch-divergence / head',
+    rootPath: '/fixtures/branch-divergence/head',
+    writable: false,
+  },
+  main: {
+    workspaceId: 'workspace-main',
+    branch: 'main',
+    label: 'vehicle-platform / main',
+    rootPath: '/workspace/vehicle-platform',
+    writable: true,
+  },
+  'concept-ev': {
+    workspaceId: 'workspace-concept-ev',
+    branch: 'concept-ev',
+    label: 'vehicle-platform / concept-ev',
+    rootPath: '/workspace/vehicle-platform',
+    writable: false,
+  },
+};
+
+const phase3DiffSummary = {
+  baseWorkspaceId: 'workspace-branch-divergence-base',
+  headWorkspaceId: 'workspace-branch-divergence-head',
+  baseBranch: 'base',
+  headBranch: 'head',
+  viewId: 'view-branch-divergence-base-head',
+  changedFile: 'model/root.sysml',
+  changedFileStatus: 'Modified',
+  addedNode: 'ThermalMonitor',
+  addedNodeKind: 'PartDefinition',
+  branchTraceLink: '66666666-bbbb-4bbb-8bbb-666666666666',
+  branchTraceRelationship: 'AddsModelItem',
+  commitSummary: 'Add ThermalMonitor part definition to Vehicle architecture',
+} as const;
+
+const branchComparisonBaseLines = [
+  '@Sysml2EditorIdentity { id = "00000000-0000-4000-8000-000000000001"; }',
+  'package Vehicle {',
+  '  @Sysml2EditorIdentity { id = "55555555-5555-4555-8555-555555555555"; }',
+  '  part def BatteryPack;',
+  '}',
+];
+
+const branchComparisonHeadLines = [
+  '@Sysml2EditorIdentity { id = "00000000-0000-4000-8000-000000000001"; }',
+  'package Vehicle {',
+  '  @Sysml2EditorIdentity { id = "55555555-5555-4555-8555-555555555555"; }',
+  '  part def BatteryPack;',
+  '',
+  '  @Sysml2EditorIdentity { id = "66666666-6666-4666-8666-666666666666"; }',
+  '  part def ThermalMonitor;',
+  '}',
+];
 
 type BrowserModel = {
   id: string;
@@ -791,6 +865,8 @@ function draftReducer(timeline: DraftTimeline, action: DraftAction): DraftTimeli
 
 function App() {
   const [draftTimeline, dispatchDraft] = useReducer(draftReducer, initialDraftTimeline);
+  const [activeBranch, setActiveBranch] = useState<BranchKey>('head');
+  const [commitCreated, setCommitCreated] = useState(false);
   const [paneModes, setPaneModes] = useState<Record<PaneKey, PaneMode>>({
     architecture: 'Visual',
     comparison: 'Visual',
@@ -804,6 +880,7 @@ function App() {
     setPaneModes((current) => ({ ...current, [key]: mode }));
   };
   const selectedModel = browserModels[selectedModelId] ?? browserModels['battery-system'];
+  const activeBranchContext = branchContexts[activeBranch];
   const visibleTree = modelTree.filter((node) => {
     const query = treeQuery.trim().toLowerCase();
     if (!query) {
@@ -844,11 +921,27 @@ function App() {
                 detail={context.status}
               />
             ))}
+            <ContextPill label={`${branchContexts.base.label}`} tone="muted" detail="compare base" />
+            <ContextPill label={`${branchContexts.head.label}`} tone="accent" detail="compare head" />
           </div>
 
           <div className="command-strip">
             <Selector label="Repositories" value="4 selected" />
             <Selector label="Compare" value="vehicle-platform / main ↔ vehicle-platform / concept-ev" />
+            <div className="branch-switcher" aria-label="Branch switcher">
+              <span>Branch</span>
+              {(['base', 'head', 'main', 'concept-ev'] as const).map((branch) => (
+                <button
+                  key={branch}
+                  type="button"
+                  className={`branch-switcher__button ${activeBranch === branch ? 'is-active' : ''}`}
+                  aria-pressed={activeBranch === branch}
+                  onClick={() => setActiveBranch(branch)}
+                >
+                  {branch}
+                </button>
+              ))}
+            </div>
             <IconCommand label="Commit" icon="↥" />
             <IconCommand label="Pull" icon="↧" />
             <IconCommand label="Push" icon="⇡" />
@@ -976,6 +1069,7 @@ function App() {
               mode={paneModes.comparison}
               model={selectedModel}
               onSelectModel={setSelectedModelId}
+              activeBranch={activeBranch}
             />
           </WorkbenchPane>
 
@@ -1002,6 +1096,7 @@ function App() {
               mode={paneModes.diff}
               model={selectedModel}
               onSelectModel={setSelectedModelId}
+              activeBranch={activeBranch}
             />
           </WorkbenchPane>
         </section>
@@ -1060,6 +1155,8 @@ function App() {
             <InspectorSection title="Lifecycle">
               <KeyValueList rows={[['Last modified', 'Today, 10:24 AM'], ['Author', 'alex']] as const} />
             </InspectorSection>
+
+            <CommitPanel activeBranch={activeBranchContext} commitCreated={commitCreated} onCreateCommit={() => setCommitCreated(true)} />
           </section>
         </aside>
       </main>
@@ -1073,6 +1170,8 @@ function App() {
           {primaryWorkspaceStats.map(([label, value]) => (
             <ContextPill key={label} label={`${label}: ${value}`} tone="muted" />
           ))}
+          <ContextPill label={`Active branch: ${activeBranchContext.branch}`} tone={activeBranchContext.writable ? 'success' : 'accent'} />
+          <ContextPill label={`Compare: ${phase3DiffSummary.baseBranch} ↔ ${phase3DiffSummary.headBranch}`} tone="accent" />
         </div>
         <div className="statusbar__group statusbar__group--wrap">
           {statusPills.map(([label, tone]) => (
@@ -1187,6 +1286,7 @@ function PaneBody({
   onSelectModel,
   draftTimeline,
   onDraftAction,
+  activeBranch = 'head',
 }: {
   kind: PaneSpec['kind'];
   mode: PaneMode;
@@ -1194,6 +1294,7 @@ function PaneBody({
   onSelectModel: (id: BrowserModelId) => void;
   draftTimeline?: DraftTimeline;
   onDraftAction?: DraftDispatch;
+  activeBranch?: BranchKey;
 }) {
   if (kind === 'architecture') {
     const activeDraftTimeline = draftTimeline ?? initialDraftTimeline;
@@ -1222,9 +1323,9 @@ function PaneBody({
   if (kind === 'comparison') {
     return (
       <div className={`surface surface--${mode.toLowerCase()}`}>
-        {mode === 'Visual' ? <ComparisonDiagram model={model} onSelectModel={onSelectModel} /> : null}
-        {mode === 'Text' ? <ComparisonText model={model} /> : null}
-        {mode === 'Split' ? <SplitComparison model={model} onSelectModel={onSelectModel} /> : null}
+        {mode === 'Visual' ? <ComparisonDiagram model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} /> : null}
+        {mode === 'Text' ? <ComparisonText model={model} activeBranch={activeBranch} /> : null}
+        {mode === 'Split' ? <SplitComparison model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} /> : null}
       </div>
     );
   }
@@ -1241,9 +1342,9 @@ function PaneBody({
 
   return (
     <div className={`surface surface--${mode.toLowerCase()}`}>
-      {mode === 'Visual' ? <DiffSummary model={model} onSelectModel={onSelectModel} /> : null}
-      {mode === 'Text' ? <DiffText model={model} /> : null}
-      {mode === 'Split' ? <DiffSplit model={model} onSelectModel={onSelectModel} /> : null}
+      {mode === 'Visual' ? <DiffSummary model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} /> : null}
+      {mode === 'Text' ? <DiffText model={model} activeBranch={activeBranch} /> : null}
+      {mode === 'Split' ? <DiffSplit model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} /> : null}
     </div>
   );
 }
@@ -1316,12 +1417,33 @@ function ArchitectureDiagram({
 function ComparisonDiagram({
   model,
   onSelectModel,
+  activeBranch,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  activeBranch: BranchKey;
 }) {
+  const activeContext = branchContexts[activeBranch];
+
   return (
     <div className="diagram diagram--comparison">
+      <div className="comparison-contexts" aria-label="Multi-context comparison projection">
+        <div className="comparison-context comparison-context--base">
+          <span>Base context</span>
+          <strong>{branchContexts.base.workspaceId}</strong>
+          <small>{branchContexts.base.label}</small>
+        </div>
+        <div className="comparison-context comparison-context--head">
+          <span>Head context</span>
+          <strong>{branchContexts.head.workspaceId}</strong>
+          <small>{branchContexts.head.label}</small>
+        </div>
+        <div className="comparison-context comparison-context--active">
+          <span>Active branch</span>
+          <strong>{activeContext.branch}</strong>
+          <small>{activeContext.writable ? 'writable working tree' : 'read-only comparison context'}</small>
+        </div>
+      </div>
       <DiagramNode
         label={browserModels.vehicle.label}
         kind={browserModels.vehicle.kind}
@@ -1351,9 +1473,13 @@ function ComparisonDiagram({
       </div>
       <DiagramConnector label="concept-ev adds" />
       <div className="diagram__stack">
+        <DiagramNode label={phase3DiffSummary.addedNode} kind={phase3DiffSummary.addedNodeKind} tone="accent" />
         <DiagramNode label="OnboardCharger" kind="Part Definition" tone="accent" />
         <DiagramNode label="DC-DCConverter" kind="Part Definition" tone="accent" />
         <DiagramNode label="coolant" kind="flow port" tone="warning" />
+      </div>
+      <div className="trace-map__footer">
+        MultiContextViewDto {phase3DiffSummary.viewId}; branch trace {phase3DiffSummary.branchTraceRelationship} via {phase3DiffSummary.branchTraceLink}
       </div>
     </div>
   );
@@ -1395,9 +1521,11 @@ function SourceTraceMap({
 function DiffSummary({
   model,
   onSelectModel,
+  activeBranch,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  activeBranch: BranchKey;
 }) {
   return (
     <div className="diff-summary">
@@ -1406,6 +1534,28 @@ function DiffSummary({
         <span className="legend-chip legend-chip--removed">Removed</span>
         <span className="legend-chip legend-chip--changed">Modified</span>
         <span className="legend-chip">Unchanged</span>
+      </div>
+      <div className="diff-summary__cards" aria-label="Branch comparison summary">
+        <div className="summary-card summary-card--changed">
+          <strong>{phase3DiffSummary.changedFile}</strong>
+          <span>{phase3DiffSummary.changedFileStatus} file in {phase3DiffSummary.headWorkspaceId}</span>
+        </div>
+        <div className="summary-card summary-card--added">
+          <strong>{phase3DiffSummary.addedNode}</strong>
+          <span>Added node highlighted in branch {phase3DiffSummary.headBranch}; active branch is {activeBranch}</span>
+        </div>
+        <div className="summary-card summary-card--changed">
+          <strong>Branch-to-branch trace</strong>
+          <span>{phase3DiffSummary.branchTraceRelationship}: {phase3DiffSummary.baseBranch} -&gt; {phase3DiffSummary.headBranch}</span>
+        </div>
+        <div className="summary-card summary-card--changed">
+          <strong>Local changes overlay</strong>
+          <span>1 staged semantic change, 0 conflicts, commit target {branchContexts[activeBranch].label}</span>
+        </div>
+        <div className="summary-card">
+          <strong>Merge conflict assistance</strong>
+          <span>No blocking conflict; if both sides edit model/root.sysml, choose base, choose head, or open split text comparison.</span>
+        </div>
       </div>
       <div className="diff-summary__cards">
         <button type="button" className="summary-card summary-card--added" onClick={() => onSelectModel('powertrain')}>
@@ -1429,15 +1579,22 @@ function DiffSummary({
   );
 }
 
-function DiffText({ model }: { model: BrowserModel }) {
+function DiffText({ model, activeBranch }: { model: BrowserModel; activeBranch: BranchKey }) {
   return (
     <CodeEditor
-      title={`${model.label} diff`}
-      lines={model.diffLines.map((line) => {
-        if (line.kind === 'added') return `+ ${line.text}`;
-        if (line.kind === 'removed') return `- ${line.text}`;
-        return `  ${line.text}`;
-      })}
+      title={`${model.label} semantic branch diff`}
+      lines={[
+        `diff --semantic ${phase3DiffSummary.baseWorkspaceId}:${phase3DiffSummary.baseBranch} ${phase3DiffSummary.headWorkspaceId}:${phase3DiffSummary.headBranch}`,
+        `active branch: ${activeBranch}`,
+        `changed file: ${phase3DiffSummary.changedFile} (${phase3DiffSummary.changedFileStatus})`,
+        `trace link: ${phase3DiffSummary.branchTraceLink} ${phase3DiffSummary.branchTraceRelationship}`,
+        '',
+        ...model.diffLines.map((line) => {
+          if (line.kind === 'added') return `+ ${line.text}`;
+          if (line.kind === 'removed') return `- ${line.text}`;
+          return `  ${line.text}`;
+        }),
+      ]}
       annotateLines
     />
   );
@@ -1446,23 +1603,35 @@ function DiffText({ model }: { model: BrowserModel }) {
 function DiffSplit({
   model,
   onSelectModel,
+  activeBranch,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  activeBranch: BranchKey;
 }) {
   return (
     <div className="split-view">
-      <CodeEditor title="main" lines={model.sourceLines} dense />
-      <CodeEditor title="concept-ev" lines={model.comparisonLines} dense />
+      <CodeEditor title={`${branchContexts.base.workspaceId} / ${phase3DiffSummary.baseBranch}`} lines={branchComparisonBaseLines} dense />
+      <CodeEditor title={`${branchContexts.head.workspaceId} / ${phase3DiffSummary.headBranch} / active ${activeBranch}`} lines={branchComparisonHeadLines} dense />
     </div>
   );
 }
 
-function ComparisonText({ model }: { model: BrowserModel }) {
+function ComparisonText({ model, activeBranch }: { model: BrowserModel; activeBranch: BranchKey }) {
   return (
     <CodeEditor
-      title={`${model.label} comparison`}
-      lines={model.comparisonLines}
+      title={`${model.label} multi-context comparison`}
+      lines={[
+        `viewId: ${phase3DiffSummary.viewId}`,
+        `base: ${branchContexts.base.workspaceId} (${branchContexts.base.rootPath})`,
+        `head: ${branchContexts.head.workspaceId} (${branchContexts.head.rootPath})`,
+        `active: ${activeBranch}`,
+        `projected node: ${phase3DiffSummary.addedNode}`,
+        `projected file: ${phase3DiffSummary.changedFile}`,
+        `projected trace: ${phase3DiffSummary.branchTraceLink}`,
+        '',
+        ...model.comparisonLines,
+      ]}
     />
   );
 }
@@ -1634,19 +1803,71 @@ function DraftWorkbench({
 function SplitComparison({
   model,
   onSelectModel,
+  activeBranch,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  activeBranch: BranchKey;
 }) {
   return (
     <div className="split-view">
-      <ComparisonDiagram model={model} onSelectModel={onSelectModel} />
+      <ComparisonDiagram model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} />
       <CodeEditor
         title="Semantic diff"
-        lines={model.diffLines.map((line) => `${line.kind.toUpperCase()}: ${line.text}`)}
+        lines={[
+          `${phase3DiffSummary.changedFileStatus.toUpperCase()}: ${phase3DiffSummary.changedFile}`,
+          `ADDED: ${phase3DiffSummary.addedNode} (${phase3DiffSummary.addedNodeKind})`,
+          `TRACE: ${phase3DiffSummary.branchTraceRelationship} ${phase3DiffSummary.branchTraceLink}`,
+          'CONFLICT ASSISTANCE: no blocking conflict detected',
+          '',
+          ...model.diffLines.map((line) => `${line.kind.toUpperCase()}: ${line.text}`),
+        ]}
         dense
       />
     </div>
+  );
+}
+
+function CommitPanel({
+  activeBranch,
+  commitCreated,
+  onCreateCommit,
+}: {
+  activeBranch: BranchContext;
+  commitCreated: boolean;
+  onCreateCommit: () => void;
+}) {
+  return (
+    <InspectorSection title="Commit">
+      <div className="commit-panel" aria-label="Commit panel">
+        <div className="commit-panel__row">
+          <span>Target</span>
+          <strong>{activeBranch.label}</strong>
+        </div>
+        <div className="commit-panel__row">
+          <span>Working tree</span>
+          <strong>1 modified file, 1 semantic addition</strong>
+        </div>
+        <div className="commit-panel__row">
+          <span>Summary</span>
+          <strong>{phase3DiffSummary.commitSummary}</strong>
+        </div>
+        <div className="commit-panel__row">
+          <span>Files</span>
+          <strong>{phase3DiffSummary.changedFile}</strong>
+        </div>
+        <div className="commit-panel__row">
+          <span>Conflict assistance</span>
+          <strong>No blocking conflict detected; split diff is ready for review.</strong>
+        </div>
+        <button type="button" className="commit-panel__button" onClick={onCreateCommit}>
+          Create Commit
+        </button>
+        <div className="commit-panel__result" aria-live="polite">
+          {commitCreated ? `Commit prepared: ${phase3DiffSummary.commitSummary}` : 'Commit preview only; repository state is unchanged.'}
+        </div>
+      </div>
+    </InspectorSection>
   );
 }
 

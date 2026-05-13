@@ -190,6 +190,38 @@ input:focus-visible {
   color: var(--text);
 }
 
+.branch-switcher {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 4px 6px 4px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: linear-gradient(180deg, var(--surface-1), var(--surface-0));
+}
+
+.branch-switcher span {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.branch-switcher__button {
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.branch-switcher__button.is-active {
+  color: var(--text);
+  background: var(--blue-soft);
+  box-shadow: inset 0 0 0 1px rgba(92, 168, 255, 0.28);
+}
+
 .icon-command,
 .status-indicator {
   height: 34px;
@@ -733,6 +765,47 @@ input:focus-visible {
   background: linear-gradient(90deg, transparent, rgba(155, 181, 205, 0.3), transparent);
 }
 
+.comparison-contexts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.comparison-context {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.comparison-context span,
+.comparison-context small,
+.commit-panel__row span {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.comparison-context strong,
+.comparison-context small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comparison-context--head {
+  border-color: rgba(92, 168, 255, 0.32);
+  background: var(--blue-soft);
+}
+
+.comparison-context--active {
+  border-color: rgba(53, 208, 181, 0.28);
+}
+
 .diagram__legend,
 .diff-summary__legend {
   display: flex;
@@ -1244,6 +1317,39 @@ input:focus-visible {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+}
+
+.commit-panel {
+  display: grid;
+  gap: 10px;
+}
+
+.commit-panel__row {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.commit-panel__row strong,
+.commit-panel__result {
+  line-height: 1.45;
+}
+
+.commit-panel__button {
+  min-height: 34px;
+  border-radius: 8px;
+  border: 1px solid rgba(53, 208, 181, 0.32);
+  background: var(--teal-soft);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.commit-panel__result {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .key-value-list {
