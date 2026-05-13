@@ -11,6 +11,7 @@ The repo should maintain a small fixture library that grows with the product.
 - `invalid-input`: syntax errors and partial writes
 - `large-model`: enough data to exercise search and layout performance
 - `cross-platform-paths`: spaces, Unicode, and line-ending sensitive paths
+- `phase-0-workbench`: visual workbench shell and multi-context UI snapshots
 
 Concrete fixtures live under [fixtures](../fixtures).
 

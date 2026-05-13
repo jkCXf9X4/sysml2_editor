@@ -629,9 +629,9 @@ function App() {
         </div>
       </header>
 
-      <main className="workspace">
+      <main className="workspace" aria-label="Workbench layout">
         <aside className="rail rail-left">
-          <section className="rail-section">
+          <section className="rail-section" aria-label="Repositories panel">
             <SectionHeader title="Repositories" meta="3 open" />
             <input className="search-box" type="search" placeholder="Search repositories..." />
             <div className="repo-list">
@@ -656,7 +656,7 @@ function App() {
             </div>
           </section>
 
-          <section className="rail-section">
+          <section className="rail-section" aria-label="Model tree panel">
             <SectionHeader title="Model Tree" meta={selectedModel.owner} />
             <input
               className="search-box"
@@ -688,7 +688,7 @@ function App() {
             </div>
           </section>
 
-          <section className="rail-section">
+          <section className="rail-section" aria-label="Type palette panel">
             <SectionHeader title="Type Palette" meta="SysML types" />
             <input className="search-box" type="search" placeholder="Search types..." />
             <div className="palette-list">
@@ -763,7 +763,7 @@ function App() {
         </section>
 
         <aside className="rail rail-right">
-          <section className="inspector">
+          <section className="inspector" aria-label="Inspector panel">
             <SectionHeader title="Inspector" meta={selectedModel.label} />
             <div className="inspector__name">
               <div className="inspector__title">{selectedModel.label}</div>
@@ -903,7 +903,7 @@ function WorkbenchPane({
   children: ReactNode;
 }) {
   return (
-    <article className={`pane pane--${spec.tone}`}>
+      <article className={`pane pane--${spec.tone}`} aria-label={spec.title}>
       <header className="pane__header">
         <div className="pane__header-copy">
           <div className="pane__title-row">

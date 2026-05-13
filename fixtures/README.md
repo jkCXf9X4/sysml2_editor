@@ -10,6 +10,7 @@ Checked-in test data used by unit, integration, and e2e tests.
 - `invalid-input/` — syntax errors and partial writes
 - `merge-conflict/` — overlapping edits and a resolvable conflict
 - `cross-platform-paths/` — spaces, Unicode, and line-ending sensitive paths
+- `phase-0-workbench/` — visual workbench shell and multi-context UI snapshots
 
 ## Rules
 
