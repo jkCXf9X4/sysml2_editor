@@ -6,16 +6,19 @@ Read these files in order when setting up or changing the project:
 
 1. [Product vision](../../PRODUCT_VISION.md)
 2. [Architecture overview](../architecture/README.md)
-3. [project-structure.md](../project-structure.md)
-4. [starter-test-matrix.md](../testing/starter-test-matrix.md)
-5. [runtime.md](../architecture/runtime.md)
-6. [api-contract.md](../implementation/api-contract.md)
-7. [parser-contract.md](../implementation/parser-contract.md)
-8. [model-graph.md](../architecture/model-graph.md)
-9. [write-policy.md](../architecture/write-policy.md)
-10. [sysml-v2.md](../reference/sysml-v2.md)
-11. [syntax-examples.md](../implementation/syntax-examples.md)
-12. [roadmap.md](./roadmap.md)
+3. [Root layout](../../README.md) — repository top-level shape
+4. [Backend layout](../../src/backend/README.md)
+5. [Frontend layout](../../src/frontend/README.md)
+6. [Shared contracts layout](../../src/shared/README.md)
+7. [starter-test-matrix.md](../testing/starter-test-matrix.md)
+8. [runtime.md](../architecture/runtime.md)
+9. [api-contract.md](../implementation/api-contract.md)
+10. [parser-contract.md](../implementation/parser-contract.md)
+11. [model-graph.md](../architecture/model-graph.md)
+12. [write-policy.md](../architecture/write-policy.md)
+13. [sysml-v2.md](../reference/sysml-v2.md)
+14. [syntax-examples.md](../implementation/syntax-examples.md)
+15. [roadmap.md](./roadmap.md)
 
 ## Documentation Traceability
 
@@ -23,7 +26,8 @@ Read these files in order when setting up or changing the project:
 - Use [../implementation/README.md](../implementation/README.md) for implementation details and contracts.
 - Use [../ui/design.md](../ui/design.md) for UI/UX direction derived from the product vision.
 - Use [../architecture/README.md](../architecture/README.md) for cross-cutting system decisions.
-- Use [project-structure.md](../project-structure.md) during repo scaffolding and project setup.
+- Use individual source area READMEs ([../../src/backend/README.md](../../src/backend/README.md), [../../src/frontend/README.md](../../src/frontend/README.md), [../../src/shared/README.md](../../src/shared/README.md)) for repo structure during scaffolding and project setup.
+- If the repository layout diverges from these READMEs, update the relevant source area README first so the setup path stays accurate.
 
 ## Readiness Source
 

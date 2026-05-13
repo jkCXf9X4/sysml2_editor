@@ -60,7 +60,7 @@ Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference a
 
 Before a feature slice starts, keep these decision docs current:
 
-- Structure: [project-structure.md](../project-structure.md)
+- Structure: [root layout](../../README.md) and source area READMEs
 - SysML reference: [sysml-v2.md](../reference/sysml-v2.md)
 - Syntax examples: [syntax-examples.md](../implementation/syntax-examples.md)
 - Runtime: [runtime.md](../architecture/runtime.md)

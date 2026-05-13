@@ -11,6 +11,28 @@ The workbench is intended to support multiple branches of the same repository an
 
 All material design and implementation decisions should trace back to the product vision.
 
+## Repository Layout
+
+```text
+sysml2_editor/
+  README.md
+  PRODUCT_VISION.md
+  LICENSE
+  docs/                     -- documentation index
+  src/
+    backend/                -- ASP.NET Core backend
+    frontend/               -- React frontend
+    shared/                 -- shared contracts, generated API clients
+  tests/
+    unit/                   -- parser, graph, write-policy unit tests
+    integration/            -- backend + filesystem + Git integration tests
+    e2e/                    -- full-stack user workflow tests
+  fixtures/                 -- checked-in test repos and models
+  scripts/                  -- dev and CI utilities
+```
+
+See [src/backend/README.md](./src/backend/README.md), [src/frontend/README.md](./src/frontend/README.md), and [src/shared/README.md](./src/shared/README.md) for details on each source area.
+
 ## Start Here
 
 - Documentation index: [docs/README.md](./docs/README.md)

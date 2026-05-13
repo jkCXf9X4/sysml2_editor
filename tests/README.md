@@ -1,8 +1,9 @@
 # Tests
 
-The initial test layout follows [docs/implementation/project-structure.md](../docs/implementation/project-structure.md).
+Tests are organized by scope:
 
-- `unit/` for parser, graph, and write-policy logic
-- `integration/` for backend, filesystem, and Git interactions
-- `e2e/` for full user workflows
-- `../fixtures/` for checked-in test data and snapshots
+- `unit/` — parser logic, graph rules, write policy, and pure helpers
+- `integration/` — backend + filesystem + Git + parser interactions
+- `e2e/` — user workflows across the full application stack
+
+Test data lives in [fixtures/](../fixtures/) at the repository root.

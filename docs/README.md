@@ -2,6 +2,13 @@
 
 This folder contains all project documentation, organized by abstraction level to minimize duplication and improve navigation. The top-level [README.md](../README.md) links here as the single entry point.
 
+## Principles
+
+- Frontend and backend boundaries are explicit
+- Domain logic is separate from transport and UI
+- Tests live close to the behavior they verify
+- Fixtures are checked in and deterministic
+
 ## Folder Structure
 
 | Folder | Purpose |
@@ -13,6 +20,8 @@ This folder contains all project documentation, organized by abstraction level t
 | [ui/](./ui/) | User interface design, workflows, and feature specifications derived from the former `docs/design.md`. |
 | [ai/](./ai/) | Agent orientation, working rules, and context for AI-assisted development. |
 | [reference/](./reference/) | External standards (e.g., SysML v2) and source material. |
+
+The `decisions` and `setup` folders are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders.
 
 ## Navigation
 
