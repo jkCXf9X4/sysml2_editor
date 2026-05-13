@@ -8,6 +8,7 @@ Tests are split by slice so the first read-only branch is not blocked by writer,
 
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
+| `repo_scaffold_present` | Smoke | none | Prove the implementation skeleton exists | Root docs, `src/backend/Sysml2Editor.Api`, `src/frontend`, `src/shared/contracts/generated`, `tests/unit`, `tests/integration`, `tests/e2e`, `fixtures/`, and `scripts/` are checked in and match [project-structure.md](./project-structure.md) |
 | `backend_starts_with_openapi` | Smoke | none | Prove backend scaffold and contract generation are wired | `dotnet run --project src/backend/Sysml2Editor.Api` exposes OpenAPI in development |
 | `frontend_starts` | Smoke | none | Prove frontend scaffold runs | `npm run dev` from `src/frontend` serves the app shell |
 
@@ -15,7 +16,7 @@ Tests are split by slice so the first read-only branch is not blocked by writer,
 
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
-| `parse_minimal_graph` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser maps the supported subset into the model graph | Matches `expected/graph.json` after parse |
+| `parse_minimal_graph` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser maps the supported subset into the model graph | Matches `expected/graph.json` exactly, including schema-required fields |
 | `malformed_input_reports_diagnostic` | Parser/Error | `fixtures/invalid-input` | Fail safely | Matches `expected/diagnostics.json`; valid files in the same repo still load |
 | `get_source_file_preserves_text` | Integration | `fixtures/tiny-single-file` | Prove source text can be displayed without rewriting | Returned content, line ending, and hash match the fixture |
 | `open_browse_select_smoke` | End-to-End | `fixtures/tiny-single-file` | Prove the first user path | A repo opens, the tree renders, and a selected node shows inspector data from `expected/graph.json` |
@@ -37,6 +38,7 @@ Tests are split by slice so the first read-only branch is not blocked by writer,
 
 ## Gating Rule
 
+- Slice 0 must pass before any runtime behavior is treated as implementation-ready.
 - Any change to parsing, model mapping, save logic, or diff logic must update this matrix if it changes the minimum safe test set.
 - Slice 1 must pass before save or visual editing is exposed.
 - Slice 2 must pass before visual editing is exposed.

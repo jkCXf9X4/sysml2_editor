@@ -28,7 +28,16 @@ sysml2_editor/
     ai/
     implementation/
   src/
+    backend/
+      Sysml2Editor.Api/
+    frontend/
+    shared/
+      contracts/
+        generated/
   tests/
+    unit/
+    integration/
+    e2e/
   fixtures/
   scripts/
 ```

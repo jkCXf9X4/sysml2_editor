@@ -37,6 +37,23 @@ http://localhost:5173
 }
 ```
 
+### OpenRepositoryResponseDto
+
+```json
+{
+  "repositoryId": "local-vehicle-demo",
+  "rootPath": "/absolute/path/to/repo",
+  "branch": "main",
+  "graph": {
+    "nodes": [],
+    "edges": [],
+    "files": [],
+    "opaqueSpans": [],
+    "diagnostics": []
+  }
+}
+```
+
 ### ModelNodeDto
 
 ```json
@@ -50,11 +67,22 @@ http://localhost:5173
   "sourceRange": {
     "startLine": 3,
     "startColumn": 3,
-    "endLine": 3,
+    "endLine": 4,
     "endColumn": 24
   },
   "attributes": {},
   "modelStatus": "Committed"
+}
+```
+
+### SourceFileDto
+
+```json
+{
+  "path": "model/root.sysml",
+  "content": "package Vehicle { }",
+  "lineEnding": "LF",
+  "contentHash": "sha256:..."
 }
 ```
 
@@ -63,12 +91,13 @@ http://localhost:5173
 ```json
 {
   "severity": "Error",
+  "code": "ExpectedElementName",
   "message": "Expected element name.",
   "sourceFile": "model/root.sysml",
   "sourceRange": {
-    "startLine": 2,
+    "startLine": 3,
     "startColumn": 12,
-    "endLine": 2,
+    "endLine": 3,
     "endColumn": 13
   }
 }
@@ -137,7 +166,13 @@ Response:
   "repositoryId": "local-vehicle-demo",
   "rootPath": "/absolute/path/to/repo",
   "branch": "main",
-  "graph": {}
+  "graph": {
+    "nodes": [],
+    "edges": [],
+    "files": [],
+    "opaqueSpans": [],
+    "diagnostics": []
+  }
 }
 ```
 
@@ -172,16 +207,7 @@ Errors:
 GET /repositories/{repositoryId}/files?path={repoRelativePath}
 ```
 
-Response:
-
-```json
-{
-  "path": "model/root.sysml",
-  "content": "package Vehicle { }",
-  "lineEnding": "LF",
-  "contentHash": "sha256:..."
-}
-```
+Response: `SourceFileDto`
 
 Behavior:
 

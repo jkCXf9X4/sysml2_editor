@@ -93,7 +93,7 @@ Minimal node JSON:
   "sourceRange": {
     "startLine": 3,
     "startColumn": 3,
-    "endLine": 3,
+    "endLine": 4,
     "endColumn": 24
   },
   "attributes": {},
@@ -112,6 +112,12 @@ public sealed record ModelGraphDto(
     IReadOnlyList<ModelFileDto> Files,
     IReadOnlyList<OpaqueSpanDto> OpaqueSpans,
     IReadOnlyList<DiagnosticDto> Diagnostics);
+
+public sealed record OpenRepositoryResponseDto(
+    string RepositoryId,
+    string RootPath,
+    string Branch,
+    ModelGraphDto Graph);
 
 public sealed record ModelNodeDto(
     Guid StableId,
@@ -146,6 +152,12 @@ public sealed record ModelFileDto(
     string ContentHash,
     FileRole Role,
     bool IsDirty);
+
+public sealed record SourceFileDto(
+    string Path,
+    string Content,
+    LineEndingKind LineEnding,
+    string ContentHash);
 
 public sealed record DiagnosticDto(
     DiagnosticSeverity Severity,

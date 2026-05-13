@@ -1,9 +1,14 @@
 [
   {
     "severity": "Error",
-    "messageContains": "Expected element name",
+    "code": "ExpectedElementName",
+    "message": "Expected element name.",
     "sourceFile": "model/root.sysml",
-    "startLine": 2,
-    "startColumn": 12
+    "sourceRange": {
+      "startLine": 3,
+      "startColumn": 12,
+      "endLine": 3,
+      "endColumn": 13
+    }
   }
 ]
