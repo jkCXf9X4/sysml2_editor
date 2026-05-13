@@ -21,7 +21,20 @@ Instead:
 - Keep fixture syntax close to SysML v2 textual notation where practical.
 - Mark deliberate simplifications in [syntax-examples.md](./syntax-examples.md).
 
+## Identity Metadata Decision
+
+Stable model identity should be represented with SysML-native metadata annotations, not tool-owned comments.
+
+The initial project metadata is:
+
+```sysml
+metadata def Sysml2EditorIdentity {
+  attribute id : String;
+}
+```
+
+The MVP parser recognizes `@Sysml2EditorIdentity { id = "..."; }` immediately above editable element definitions. This keeps identity in the model text using the SysML metadata mechanism while leaving room to migrate if a standard SysML identity metadata definition is adopted later.
+
 ## Conformance Rule
 
 If a local parser decision conflicts with the OMG specification, document the difference in [syntax-examples.md](./syntax-examples.md) before implementation continues.
-

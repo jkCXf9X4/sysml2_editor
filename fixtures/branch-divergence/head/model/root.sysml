@@ -1,7 +1,8 @@
+@Sysml2EditorIdentity { id = "00000000-0000-4000-8000-000000000001"; }
 package Vehicle {
-  // sysml2_editor:id: 55555555-5555-4555-8555-555555555555
+  @Sysml2EditorIdentity { id = "55555555-5555-4555-8555-555555555555"; }
   part def BatteryPack;
 
-  // sysml2_editor:id: 66666666-6666-4666-8666-666666666666
+  @Sysml2EditorIdentity { id = "66666666-6666-4666-8666-666666666666"; }
   part def ThermalMonitor;
 }

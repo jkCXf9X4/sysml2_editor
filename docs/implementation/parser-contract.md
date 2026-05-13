@@ -20,7 +20,7 @@ The parser must recognize the following semantic constructs:
 - Requirement declarations/usages
 - Satisfy and trace relationships
 - Imports and file-level references
-- Editor-owned stable ID comment markers immediately above element definitions
+- SysML-native `@Sysml2EditorIdentity` metadata annotations immediately above editable element definitions
 
 The accepted concrete forms are defined by [syntax-examples.md](./syntax-examples.md).
 
@@ -41,7 +41,28 @@ The parser must produce:
 - A model graph for supported constructs
 - Source ranges for every structured element
 - Diagnostics for malformed or unsupported sections
-- Raw text spans for content the parser does not understand structurally
+- `OpaqueSpanDto` records for content the parser does not understand structurally
+
+## Identity Rules
+
+- Supported semantic elements with `@Sysml2EditorIdentity` metadata use its `id` attribute as `stableId`.
+- Packages are supported semantic elements and must have identity metadata to be editable.
+- In the read-only first slice, elements missing identity metadata may be loaded with deterministic derived IDs and a `MissingStableId` warning diagnostic.
+- Missing-identity elements are read-only until a later explicit backfill operation adds persisted identity metadata.
+- Relationship edges use deterministic derived IDs unless the source text later introduces explicit relationship identity.
+
+## Import Ownership
+
+Imports are file-level model items in the MVP parser.
+
+Rules:
+
+- Each import produces an `Import` node.
+- Each import node uses the import declaration source range.
+- Each import node's `owningPackageId` is `null`.
+- The parser creates an `Imports` edge from the file-level import node.
+- If the imported target resolves to a model node, `targetId` is that node ID.
+- If the imported target is unresolved, `targetId` is `null` and `attributes["unresolvedTarget"]` contains the imported qualified name.
 
 ## Round-Trip Invariants
 
@@ -58,7 +79,8 @@ Additional invariants:
 - Formatting changes must not create semantic changes.
 - The parser must not reorder unrelated declarations.
 - The parser must preserve file boundaries and imports.
-- Stable ID markers must be preserved when a supported element is rewritten.
+- Stable identity metadata must be preserved when a supported element is rewritten.
+- In the first read-only slice, no writer exists and round-trip invariants are verified only once writer support begins.
 
 ## Error Handling
 

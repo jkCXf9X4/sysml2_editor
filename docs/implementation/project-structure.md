@@ -15,7 +15,7 @@ Use this as the reference when scaffolding the codebase. The goal is to keep res
 
 ## Root Layout
 
-The repository should start with this top-level shape:
+The implementation scaffold should use this top-level shape:
 
 ```text
 sysml2_editor/
@@ -27,14 +27,13 @@ sysml2_editor/
   docs/
     ai/
     implementation/
-    architecture/
-    decisions/
-    setup/
   src/
   tests/
   fixtures/
   scripts/
 ```
+
+`docs/architecture`, `docs/decisions`, and `docs/setup` are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders for the first scaffold.
 
 ## Proposed Source Layout
 

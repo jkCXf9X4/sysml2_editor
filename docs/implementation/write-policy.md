@@ -6,6 +6,8 @@ The editor should use deterministic file ownership rules so that a save changes 
 
 The write policy is part of the implementation contract, not an afterthought.
 
+This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the writer gate in [starter-test-matrix.md](./starter-test-matrix.md) is active.
+
 ## File Convention
 
 The first implementation slice should use this repository layout:
@@ -41,7 +43,8 @@ When the user creates or edits an element:
 - Never rewrite untouched files.
 - Treat file moves as explicit operations, not hidden side effects.
 - If the parser cannot round-trip the file safely, do not write.
-- Preserve editor-owned stable ID comment markers.
+- Preserve SysML-native stable identity metadata.
+- Block writes for editable elements that do not have persisted identity metadata, unless the operation is an explicit identity backfill.
 
 ## Transactional Save Flow
 

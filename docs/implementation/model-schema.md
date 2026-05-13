@@ -49,7 +49,10 @@ Required fields:
 - `targetId`: UUID string, required when resolved
 - `sourceFile`: repo-relative path, required
 - `sourceRange`: `SourceRange`, required
+- `attributes`: string-keyed JSON object, required
 - `modelStatus`: `ModelStatus`, required
+
+Edge IDs are derived by the backend for relationships that do not have source-level identity. The first implementation uses UUID v5-style deterministic IDs derived from repository-relative source file, edge kind, source node ID, target node ID or unresolved target text, and source range. If a relationship later gets explicit source identity, that explicit ID replaces the derived ID only through a migration rule.
 
 Recommended `kind` values for the MVP:
 
@@ -70,6 +73,8 @@ Fields:
 - `startColumn`: integer, required
 - `endLine`: integer, required
 - `endColumn`: integer, required
+
+For file-level synthetic nodes and edges, use the smallest source range that identifies the declaration that caused the model item. Do not use zero values.
 
 ## API Serialization
 
@@ -105,6 +110,7 @@ public sealed record ModelGraphDto(
     IReadOnlyList<ModelNodeDto> Nodes,
     IReadOnlyList<ModelEdgeDto> Edges,
     IReadOnlyList<ModelFileDto> Files,
+    IReadOnlyList<OpaqueSpanDto> OpaqueSpans,
     IReadOnlyList<DiagnosticDto> Diagnostics);
 
 public sealed record ModelNodeDto(
@@ -125,6 +131,7 @@ public sealed record ModelEdgeDto(
     Guid? TargetId,
     string SourceFile,
     SourceRangeDto SourceRange,
+    IReadOnlyDictionary<string, object?> Attributes,
     ModelStatus ModelStatus);
 
 public sealed record SourceRangeDto(
@@ -132,6 +139,26 @@ public sealed record SourceRangeDto(
     int StartColumn,
     int EndLine,
     int EndColumn);
+
+public sealed record ModelFileDto(
+    string Path,
+    LineEndingKind LineEnding,
+    string ContentHash,
+    FileRole Role,
+    bool IsDirty);
+
+public sealed record DiagnosticDto(
+    DiagnosticSeverity Severity,
+    string Code,
+    string Message,
+    string SourceFile,
+    SourceRangeDto SourceRange);
+
+public sealed record OpaqueSpanDto(
+    string SourceFile,
+    SourceRangeDto SourceRange,
+    string Reason,
+    bool BlocksWrite);
 ```
 
 ## Generated TypeScript Shape
@@ -156,20 +183,25 @@ export interface ModelNodeDto {
 
 ## Stable ID Rule
 
-Stable IDs are persisted in the source text using an editor-owned comment marker immediately above the element definition.
+Stable IDs for supported semantic elements are persisted in the source text using a SysML-native metadata annotation immediately above the element definition.
 
 Example:
 
-```text
-// sysml2_editor:id: 3c4c3f6a-5d49-4ec7-8d5f-0d792df0a8f1
+```sysml
+@Sysml2EditorIdentity { id = "3c4c3f6a-5d49-4ec7-8d5f-0d792df0a8f1"; }
 ```
 
 Rules:
 
+- Every editable supported semantic element, including packages, must have `@Sysml2EditorIdentity` metadata.
+- The identity value is the metadata attribute `id`.
 - IDs are generated once when the element is created.
 - IDs do not change on rename.
 - IDs do not change when a node moves within the same owning file.
-- If a file lacks IDs, the first save backfills them.
+- In the read-only first slice, elements without identity metadata may be loaded with deterministic derived IDs, but they are marked read-only with a diagnostic.
+- Writer support must not silently save a file with missing identity metadata. A later explicit backfill operation may add metadata annotations and then enable editing.
+
+Derived read-only IDs use a deterministic UUID v5-style hash of repository-relative source file, node kind, qualified name, and source range. They are process-stable but not a substitute for persisted IDs.
 
 ## File-Level Records
 
@@ -183,12 +215,44 @@ Required file metadata:
 - `role`
 - `isDirty`
 
+`contentHash` is `sha256:` plus the lowercase hex SHA-256 hash of exact file bytes.
+
 Recommended `role` values:
 
 - `Model`
 - `View`
 - `Config`
 - `ImportedFragment`
+
+Recommended `lineEnding` values:
+
+- `LF`
+- `CRLF`
+- `Mixed`
+- `Unknown`
+
+## Opaque Spans
+
+Unsupported but preservable text is represented as `OpaqueSpanDto`.
+
+Rules:
+
+- `sourceFile` and `sourceRange` identify the exact unsupported span.
+- `reason` explains why the parser did not structure the span.
+- `blocksWrite` is `true` when editing or saving could damage the span.
+- The first read-only slice may display opaque spans only as diagnostics/source annotations.
+
+## Diagnostics
+
+Diagnostics are structured and stable enough for tests.
+
+Recommended `severity` values:
+
+- `Info`
+- `Warning`
+- `Error`
+
+`code` should be a stable value such as `MissingStableId`, `UnsupportedSyntax`, or `ExpectedElementName`.
 
 ## Lifecycle State
 

@@ -1,24 +1,48 @@
 # Starter Test Matrix
 
-This is the minimum test set that should pass before the first implementation slice is considered healthy.
+This is the minimum test set for the initial implementation path.
 
-## Required Smoke Tests
+Tests are split by slice so the first read-only branch is not blocked by writer, diff, or editing behavior. Later slices inherit earlier gates.
+
+## Slice 0: Scaffold Gate
+
+| Test | Layer | Fixture | Purpose | Expected Result |
+| --- | --- | --- | --- | --- |
+| `backend_starts_with_openapi` | Smoke | none | Prove backend scaffold and contract generation are wired | `dotnet run --project src/backend/Sysml2Editor.Api` exposes OpenAPI in development |
+| `frontend_starts` | Smoke | none | Prove frontend scaffold runs | `npm run dev` from `src/frontend` serves the app shell |
+
+## Slice 1: Read-Only Browser Gate
+
+| Test | Layer | Fixture | Purpose | Expected Result |
+| --- | --- | --- | --- | --- |
+| `parse_minimal_graph` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser maps the supported subset into the model graph | Matches `expected/graph.json` after parse |
+| `malformed_input_reports_diagnostic` | Parser/Error | `fixtures/invalid-input` | Fail safely | Matches `expected/diagnostics.json`; valid files in the same repo still load |
+| `get_source_file_preserves_text` | Integration | `fixtures/tiny-single-file` | Prove source text can be displayed without rewriting | Returned content, line ending, and hash match the fixture |
+| `open_browse_select_smoke` | End-to-End | `fixtures/tiny-single-file` | Prove the first user path | A repo opens, the tree renders, and a selected node shows inspector data from `expected/graph.json` |
+
+## Slice 2: Writer And Identity Gate
 
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
 | `parse_round_trip_minimal` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser and writer agree on the supported subset | Matches `expected/graph.json` after parse -> write -> parse |
 | `save_touches_only_owner` | Integration | `fixtures/multi-file-modular` | Prevent rewrite churn | Matches `expected/changed-files.json` |
 | `stable_id_survives_rename` | Integration | `fixtures/tiny-single-file` | Protect identity | Renaming an element keeps the same stable ID and preserves view bindings |
+| `missing_id_blocks_write_until_backfill` | Integration | fixture to add with missing identity metadata | Keep identity policy explicit | Read succeeds with diagnostics or read-only derived IDs; write is blocked until the backfill command is implemented |
+
+## Slice 3: Git Diff Gate
+
+| Test | Layer | Fixture | Purpose | Expected Result |
+| --- | --- | --- | --- | --- |
 | `semantic_branch_diff` | Integration | `fixtures/branch-divergence` | Verify branch comparison | Matches `expected/diff.json` |
-| `malformed_input_reports_diagnostic` | Parser/Error | `fixtures/invalid-input` | Fail safely | Matches `expected/diagnostics.json` |
-| `open_browse_select_smoke` | End-to-End | `fixtures/tiny-single-file` | Prove the first user path | A repo opens, the tree renders, and a selected node shows inspector data from `expected/graph.json` |
 
 ## Gating Rule
 
 - Any change to parsing, model mapping, save logic, or diff logic must update this matrix if it changes the minimum safe test set.
-- The first implementation branch should not add editing features until the first four rows pass.
+- Slice 1 must pass before save or visual editing is exposed.
+- Slice 2 must pass before visual editing is exposed.
+- Slice 3 must pass before branch comparison or commit summaries are exposed.
 
 ## Platform Coverage
 
-- The parser and save tests should run on both Windows and Linux.
+- Parser and save tests should run on both Windows and Linux.
 - The smoke E2E test may start on one platform and expand to both once the harness is stable.
