@@ -64,7 +64,7 @@ Latest local verification on 2026-05-13:
 | Frontend production build | `npm run build` | Vite build | Production bundle generation |
 | Frontend dev-server smoke | `bash tests/integration/frontend-smoke.sh` | `tests/integration/frontend-smoke.sh` | Vite serves the React app shell |
 | Backend API smoke | `bash tests/integration/backend-smoke.sh` | `tests/integration/backend-smoke.sh` | API starts, health/OpenAPI work, graph/source/diff/multi-context endpoints respond |
-| Backend domain phase 1-3 | `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests` | `tests/integration/Sysml2Editor.Backend.Tests` | Parser, graph context, traceability, source preservation, writer, save policy, branch diff, multi-context view |
+| Backend domain phase 1-3 | `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests` | `tests/integration/Sysml2Editor.Backend.Tests` | Parser, graph context, traceability, source preservation, writer, save policy, create/delete, Git status, commit, merge preview, branch diff, multi-context view |
 
 ## MVP Feature Coverage
 
@@ -76,10 +76,10 @@ Latest local verification on 2026-05-13:
 | Parse a useful SysML v2 subset | Expected graph/diagnostic fixtures checked by frontend tests | MVP parser maps fixture subset to graph/diagnostics | backend domain tests | Covered |
 | Show package/part hierarchy as tree | Render and selection tests | Not applicable | `phase1-browser.test.tsx` | Covered |
 | Show selected structure as graph | Render and graph-node selection tests | Graph endpoint exposes parsed graph DTO | `phase1-browser.test.tsx`, backend smoke | Covered |
-| Create/edit/delete basic elements | Draft UI tests | Backend supports rename/write policy for parsed elements | `phase2-editing.test.tsx`, backend domain tests | Partial |
-| Save back to text | Generated source preview and save button only | Backend `SaveRename` persists owner-file rename in tests | backend domain tests | Partial |
+| Create/edit/delete basic elements | Draft UI tests | Backend supports rename/save/create/delete for supported elements | `phase2-editing.test.tsx`, backend domain tests | Partial |
+| Save back to text | Generated source preview and save button only | Backend `SaveRename` and `CreateElement`/`DeleteElement` persist owner-file changes in tests | backend domain tests | Partial |
 | Show attributes of selected element | Inspector render and sync tests | Backend graph carries node attributes/source metadata | phase 0-1 frontend tests, backend domain tests | Covered |
-| Commit changes | Commit preview only | No Git commit operation | `phase3-git-workflow.test.tsx` | Gap |
+| Commit changes | Commit preview only | Backend can create commits in temporary Git repos, frontend remains preview-only | `phase3-git-workflow.test.tsx`, backend domain tests | Partial |
 | Store custom views as JSON | No implementation | No persistence | none | Future |
 | Visualize traceability between model items and source files | Fixture-backed trace UI | Backend derives item-to-item, item-to-file, file-to-file, and branch trace links | frontend and backend domain tests | Covered |
 | Preserve repository and branch context for every opened model graph | Fixture-backed context labels and branch comparison IDs | Backend graph context and multi-context views preserve workspace IDs | phase 0-3 frontend tests, backend domain tests | Covered |
@@ -202,18 +202,17 @@ Latest local verification on 2026-05-13:
 
 ## Highest-Risk Gaps
 
-1. Backend functionality is implemented for the MVP fixture subset only; it is not a full SysML v2 parser, writer, Git client, or merge engine.
-2. Phase 2 creation of new backend elements is still narrower than the frontend draft UI; backend save currently proves owner-file rename and identity policy.
-3. Phase 3 commit and Git operations are preview-only; no repository commit mutation is performed or tested.
-4. Branch comparison is semantic over fixture repositories, not a general Git branch comparison adapter.
+1. Backend functionality is implemented for the MVP fixture subset plus temp-Git status/commit/merge-preview; it is still not a full SysML v2 parser, writer, or merge engine.
+2. The frontend still uses fixture-backed slices for most workflows; backend integration is visible only through the health/status handshake and backend test coverage.
+3. Phase 2 and 3 frontend interactions are still preview-oriented and not yet wired to backend write/Git APIs.
+4. Branch comparison is semantic over fixture repositories and temporary Git repos, not a generalized repository browser.
 5. Responsive behavior is checked by CSS contract assertions, not browser viewport screenshots.
 
 ## Required Next Test Additions
 
 Before treating the MVP as production-ready, add automated tests for:
 
-- Backend creation of part/package/requirement/port/connection, not just rename.
-- Real Git repository open and SysML file discovery outside checked-in fixtures.
-- Real commit creation on a temporary Git repository.
-- Merge conflict detection using a `fixtures/merge-conflict/` repository.
+- Frontend browser/API integration for phase 1 graph and source loading.
+- Frontend save-save-reload integration for phase 2 create/rename/delete.
+- Frontend Git workflow integration for phase 3 commit and merge-preview operations.
 - Browser-level responsive smoke tests using a real viewport.

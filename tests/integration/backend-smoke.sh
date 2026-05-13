@@ -12,6 +12,7 @@ cleanup() {
     wait "${SERVER_PID}" 2>/dev/null || true
   fi
   rm -f "${LOG_FILE}"
+  rm -rf "${temp_diff_root:-}" "${temp_commit_root:-}"
 }
 
 trap cleanup EXIT
@@ -38,6 +39,36 @@ graph_response="$(curl -fsS "${BASE_URL}/api/fixtures/tiny-single-file/graph")"
 source_response="$(curl -fsS "${BASE_URL}/api/fixtures/tiny-single-file/source/model/root.sysml")"
 diff_response="$(curl -fsS "${BASE_URL}/api/fixtures/branch-divergence/diff")"
 multi_context_response="$(curl -fsS "${BASE_URL}/api/fixtures/branch-divergence/multi-context-view")"
+
+temp_diff_root="$(mktemp -d)"
+temp_commit_root="$(mktemp -d)"
+
+setup_git_repo() {
+  local repo_root="$1"
+  mkdir -p "${repo_root}/model"
+  cp "${ROOT_DIR}/fixtures/tiny-single-file/model/root.sysml" "${repo_root}/model/root.sysml"
+  git -C "${repo_root}" init -b main >/dev/null
+  git -C "${repo_root}" config user.name "Sysml2Editor" >/dev/null
+  git -C "${repo_root}" config user.email "sysml2editor@example.com" >/dev/null
+}
+
+setup_git_repo "${temp_diff_root}"
+git -C "${temp_diff_root}" add . >/dev/null
+git -C "${temp_diff_root}" commit -m "Initial commit" >/dev/null
+git -C "${temp_diff_root}" checkout -b concept-ev >/dev/null
+printf '\n  @Sysml2EditorIdentity { id = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa"; }\n  part def ThermalMonitor;\n' >> "${temp_diff_root}/model/root.sysml"
+git -C "${temp_diff_root}" commit -am "Add ThermalMonitor" >/dev/null
+git -C "${temp_diff_root}" checkout main >/dev/null
+
+temp_git_status="$(curl -fsS "${BASE_URL}/api/workspaces/git/status?rootPath=${temp_diff_root}")"
+temp_git_diff="$(curl -fsS "${BASE_URL}/api/workspaces/git/diff?rootPath=${temp_diff_root}&baseBranch=main&headBranch=concept-ev")"
+
+setup_git_repo "${temp_commit_root}"
+git -C "${temp_commit_root}" add . >/dev/null
+git -C "${temp_commit_root}" commit -m "Initial commit" >/dev/null
+printf '\n  @Sysml2EditorIdentity { id = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb"; }\n  part def CoolingBar;\n' >> "${temp_commit_root}/model/root.sysml"
+temp_commit_response="$(curl -fsS -X POST -H 'Content-Type: application/json' -d "{\"rootPath\":\"${temp_commit_root}\",\"summary\":\"Add CoolingBar part definition\"}" "${BASE_URL}/api/workspaces/git/commit")"
+temp_commit_status="$(curl -fsS "${BASE_URL}/api/workspaces/git/status?rootPath=${temp_commit_root}")"
 
 if [[ "${health_response}" != '{"status":"ok"}' ]]; then
   echo "Unexpected health response: ${health_response}" >&2
@@ -66,6 +97,26 @@ fi
 
 if [[ "${multi_context_response}" != *'"viewId":"view-branch-divergence-base-head"'* ]]; then
   echo "Multi-context response did not include expected view ID." >&2
+  exit 1
+fi
+
+if [[ "${temp_git_status}" != *'"branch":"main"'* || "${temp_git_status}" != *'"isDirty":false'* ]]; then
+  echo "Git status response did not report a clean main branch." >&2
+  exit 1
+fi
+
+if [[ "${temp_git_diff}" != *'"name":"ThermalMonitor"'* || "${temp_git_diff}" != *'"relationship":"AddsModelItem"'* ]]; then
+  echo "Git diff response did not include the expected branch comparison." >&2
+  exit 1
+fi
+
+if [[ "${temp_commit_response}" != *'"succeeded":true'* || "${temp_commit_response}" != *'"commitSha"'* ]]; then
+  echo "Git commit response did not report a successful commit." >&2
+  exit 1
+fi
+
+if [[ "${temp_commit_status}" != *'"isDirty":false'* ]]; then
+  echo "Git status after commit did not report a clean repository." >&2
   exit 1
 fi
 

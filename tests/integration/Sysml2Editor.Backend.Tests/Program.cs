@@ -1,5 +1,7 @@
+using System.Diagnostics;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text;
 using Sysml2Editor.Domain;
 
 var root = FindRepositoryRoot();
@@ -127,6 +129,29 @@ Run("missing_id_blocks_write_until_backfill", () =>
     }
 });
 
+Run("create_and_delete_supported_element", () =>
+{
+    var tempRoot = CopyFixtureToTemp("phase-2-editing");
+    try
+    {
+        var create = service.CreateElement(tempRoot, "model/BatterySystem.sysml", "PartDefinition", "ThermalBarrier");
+        AssertTrue(create.Succeeded);
+        var createdGraph = service.ParseRepository(tempRoot);
+        AssertTrue(createdGraph.Nodes.Any(node => node.Name == "ThermalBarrier" && node.Kind == "PartDefinition"));
+
+        var createdNode = createdGraph.Nodes.First(node => node.Name == "ThermalBarrier" && node.Kind == "PartDefinition");
+        var delete = service.DeleteElement(tempRoot, createdNode.StableId);
+        AssertTrue(delete.Succeeded);
+
+        var deletedGraph = service.ParseRepository(tempRoot);
+        AssertTrue(deletedGraph.Nodes.All(node => node.Name != "ThermalBarrier"));
+    }
+    finally
+    {
+        Directory.Delete(tempRoot, recursive: true);
+    }
+});
+
 Run("semantic_branch_diff", () =>
 {
     var diff = service.CompareBranches(Path.Combine(fixtures, "branch-divergence/base"), Path.Combine(fixtures, "branch-divergence/head"));
@@ -145,6 +170,73 @@ Run("multi_context_view_scopes_ids", () =>
 {
     var view = service.BuildMultiContextView(Path.Combine(fixtures, "branch-divergence/base"), Path.Combine(fixtures, "branch-divergence/head"));
     AssertJsonEquals(ReadFixture("branch-divergence/expected/multi-context-view.json"), ToJson(view));
+});
+
+Run("git_branch_diff_and_status", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var diff = service.CompareGitBranches(repoRoot, "main", "concept-ev");
+        AssertEqual("ThermalMonitor", diff.Added.Single().Name);
+        AssertEqual("model/root.sysml", diff.ChangedFiles.Single().Path);
+
+        var status = service.GetGitStatus(repoRoot);
+        AssertEqual("main", status.Branch);
+        AssertTrue(!status.IsDirty);
+        AssertTrue(!string.IsNullOrWhiteSpace(status.HeadSha));
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("git_commit_persists_changes", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        File.AppendAllText(Path.Combine(repoRoot, "model/root.sysml"), "\n  part def CoolingBar;\n");
+        var statusBefore = service.GetGitStatus(repoRoot);
+        AssertTrue(statusBefore.IsDirty);
+        AssertEqual("model/root.sysml", statusBefore.ChangedFiles.Single().Path);
+
+        var commit = service.CommitAll(repoRoot, "Add CoolingBar part definition");
+        AssertTrue(commit.Succeeded);
+        AssertTrue(!string.IsNullOrWhiteSpace(commit.CommitSha));
+
+        var statusAfter = service.GetGitStatus(repoRoot);
+        AssertTrue(!statusAfter.IsDirty);
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("merge_conflict_preview_detects_conflict", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        RunGit(repoRoot, "checkout", "-b", "left");
+        File.WriteAllText(Path.Combine(repoRoot, "model/root.sysml"), GitBranchContent("LeftMonitor"));
+        RunGit(repoRoot, "commit", "-am", "Left branch edit");
+
+        RunGit(repoRoot, "checkout", "main");
+        RunGit(repoRoot, "checkout", "-b", "right");
+        File.WriteAllText(Path.Combine(repoRoot, "model/root.sysml"), GitBranchContent("RightMonitor"));
+        RunGit(repoRoot, "commit", "-am", "Right branch edit");
+
+        var preview = service.PreviewMergeConflict(repoRoot, "left", "right");
+        AssertTrue(preview.HasConflicts);
+        AssertTrue(preview.ConflictingFiles.Contains("model/root.sysml"));
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
 });
 
 if (failures.Count > 0)
@@ -193,6 +285,72 @@ string CopyFixtureToTemp(string fixture)
     }
 
     return target;
+}
+
+string CreateTemporaryGitRepo()
+{
+    var root = Path.Combine(Path.GetTempPath(), $"sysml2-editor-git-{Guid.NewGuid():N}");
+    Directory.CreateDirectory(Path.Combine(root, "model"));
+    File.WriteAllText(Path.Combine(root, "model/root.sysml"), GitBranchContent("BatteryPack"));
+
+    RunGit(root, "init", "-b", "main");
+    RunGit(root, "config", "user.name", "Sysml2Editor");
+    RunGit(root, "config", "user.email", "sysml2editor@example.com");
+    RunGit(root, "add", ".");
+    RunGit(root, "commit", "-m", "Initial commit");
+
+    RunGit(root, "checkout", "-b", "concept-ev");
+    File.WriteAllText(Path.Combine(root, "model/root.sysml"), GitBranchContent("ThermalMonitor"));
+    RunGit(root, "commit", "-am", "Add ThermalMonitor");
+    RunGit(root, "checkout", "main");
+
+    return root;
+}
+
+string GitBranchContent(string extraPart)
+{
+    var lines = new List<string>
+    {
+        "@Sysml2EditorIdentity { id = \"00000000-0000-4000-8000-000000000001\"; }",
+        "package Vehicle {",
+        "  @Sysml2EditorIdentity { id = \"55555555-5555-4555-8555-555555555555\"; }",
+        "  part def BatteryPack;",
+    };
+
+    if (!string.IsNullOrWhiteSpace(extraPart))
+    {
+        lines.Add(string.Empty);
+        lines.Add($"  @Sysml2EditorIdentity {{ id = \"{Guid.NewGuid():N}\"; }}");
+        lines.Add($"  part def {extraPart};");
+    }
+
+    lines.Add("}");
+    return string.Join("\n", lines) + "\n";
+}
+
+void RunGit(string repositoryRoot, params string[] arguments)
+{
+    var startInfo = new ProcessStartInfo("git")
+    {
+        WorkingDirectory = repositoryRoot,
+        RedirectStandardOutput = true,
+        RedirectStandardError = true,
+        UseShellExecute = false,
+    };
+
+    foreach (var argument in arguments)
+    {
+        startInfo.ArgumentList.Add(argument);
+    }
+
+    using var process = Process.Start(startInfo) ?? throw new InvalidOperationException("Failed to start git.");
+    var stdout = process.StandardOutput.ReadToEnd();
+    var stderr = process.StandardError.ReadToEnd();
+    process.WaitForExit();
+    if (process.ExitCode != 0)
+    {
+        throw new InvalidOperationException($"git {string.Join(" ", arguments)} failed: {stderr.Trim()}");
+    }
 }
 
 string ToJson<T>(T value) => JsonSerializer.Serialize(value, jsonOptions);

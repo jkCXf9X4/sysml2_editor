@@ -1,4 +1,4 @@
-import { useReducer, useState, type DragEvent, type ReactNode } from 'react';
+import { useEffect, useReducer, useState, type DragEvent, type ReactNode } from 'react';
 
 type Tone = 'accent' | 'success' | 'warning' | 'muted' | 'danger';
 type PaneMode = 'Visual' | 'Text' | 'Split';
@@ -867,6 +867,7 @@ function App() {
   const [draftTimeline, dispatchDraft] = useReducer(draftReducer, initialDraftTimeline);
   const [activeBranch, setActiveBranch] = useState<BranchKey>('head');
   const [commitCreated, setCommitCreated] = useState(false);
+  const [backendStatus, setBackendStatus] = useState<'checking' | 'connected' | 'offline'>('checking');
   const [paneModes, setPaneModes] = useState<Record<PaneKey, PaneMode>>({
     architecture: 'Visual',
     comparison: 'Visual',
@@ -875,6 +876,33 @@ function App() {
   });
   const [selectedModelId, setSelectedModelId] = useState<BrowserModelId>('battery-system');
   const [treeQuery, setTreeQuery] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    if (typeof fetch !== 'function') {
+      setBackendStatus('offline');
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    fetch('/api/health')
+      .then((response) => {
+        if (!cancelled) {
+          setBackendStatus(response.ok ? 'connected' : 'offline');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setBackendStatus('offline');
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const setMode = (key: PaneKey, mode: PaneMode) => {
     setPaneModes((current) => ({ ...current, [key]: mode }));
@@ -1177,6 +1205,7 @@ function App() {
           {statusPills.map(([label, tone]) => (
             <ContextPill key={label} label={label} tone={tone} />
           ))}
+          <ContextPill label={`Backend: ${backendStatus}`} tone={backendStatus === 'connected' ? 'success' : 'warning'} />
           <ContextPill label={`Drafts: ${draftTimeline.present.elements.length}`} tone={draftTimeline.present.elements.length ? 'success' : 'muted'} />
           <ContextPill label={draftTimeline.present.elements.length ? 'Validation: draft valid' : 'Validation: source valid'} tone="success" />
         </div>

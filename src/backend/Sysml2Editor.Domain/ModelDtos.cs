@@ -103,3 +103,24 @@ public sealed record ProjectionDto(
 
 public sealed record WriteResult(bool Succeeded, string? Content, List<DiagnosticDto> Diagnostics);
 
+public sealed record GitStatusEntryDto(string Status, string Path);
+
+public sealed record GitStatusDto(
+    string RepositoryRoot,
+    string Branch,
+    string HeadSha,
+    bool IsDirty,
+    List<GitStatusEntryDto> ChangedFiles);
+
+public sealed record GitCommitResultDto(
+    bool Succeeded,
+    string? CommitSha,
+    string Summary,
+    List<DiagnosticDto> Diagnostics);
+
+public sealed record MergeConflictPreviewDto(
+    string BaseBranch,
+    string HeadBranch,
+    bool HasConflicts,
+    List<string> ConflictingFiles,
+    string Summary);

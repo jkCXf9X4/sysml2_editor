@@ -94,6 +94,54 @@ app.MapGet("/api/fixtures/branch-divergence/multi-context-view", (SysmlMvpServic
 })
     .WithName("GetBranchDivergenceMultiContextView");
 
+app.MapGet("/api/workspaces/git/graph", (string rootPath, string branch, bool? writable, SysmlMvpService service) =>
+{
+    return Directory.Exists(rootPath)
+        ? Results.Ok(service.ParseGitRepository(rootPath, branch, writable ?? true))
+        : Results.NotFound(new { message = $"Repository root '{rootPath}' was not found." });
+})
+    .WithName("GetGitWorkspaceGraph");
+
+app.MapGet("/api/workspaces/git/source", (string rootPath, string branch, string path, SysmlMvpService service) =>
+{
+    return Directory.Exists(rootPath)
+        ? Results.Ok(service.GetGitSourceFile(rootPath, branch, path))
+        : Results.NotFound(new { message = $"Repository root '{rootPath}' was not found." });
+})
+    .WithName("GetGitWorkspaceSourceFile");
+
+app.MapGet("/api/workspaces/git/status", (string rootPath, SysmlMvpService service) =>
+{
+    return Directory.Exists(rootPath)
+        ? Results.Ok(service.GetGitStatus(rootPath))
+        : Results.NotFound(new { message = $"Repository root '{rootPath}' was not found." });
+})
+    .WithName("GetGitWorkspaceStatus");
+
+app.MapPost("/api/workspaces/git/commit", (GitCommitRequest request, SysmlMvpService service) =>
+{
+    return Directory.Exists(request.RootPath)
+        ? Results.Ok(service.CommitAll(request.RootPath, request.Summary))
+        : Results.NotFound(new { message = $"Repository root '{request.RootPath}' was not found." });
+})
+    .WithName("CommitGitWorkspace");
+
+app.MapGet("/api/workspaces/git/diff", (string rootPath, string baseBranch, string headBranch, SysmlMvpService service) =>
+{
+    return Directory.Exists(rootPath)
+        ? Results.Ok(service.CompareGitBranches(rootPath, baseBranch, headBranch))
+        : Results.NotFound(new { message = $"Repository root '{rootPath}' was not found." });
+})
+    .WithName("CompareGitWorkspaceBranches");
+
+app.MapGet("/api/workspaces/git/merge-preview", (string rootPath, string baseBranch, string headBranch, SysmlMvpService service) =>
+{
+    return Directory.Exists(rootPath)
+        ? Results.Ok(service.PreviewMergeConflict(rootPath, baseBranch, headBranch))
+        : Results.NotFound(new { message = $"Repository root '{rootPath}' was not found." });
+})
+    .WithName("PreviewGitMergeConflict");
+
 app.Run();
 
 static string ResolveFixtureRoot(string fixture)
@@ -119,3 +167,4 @@ static string FindRepositoryRoot()
 }
 
 public sealed record RenameRequest(string StableId, string Name);
+public sealed record GitCommitRequest(string RootPath, string Summary);
