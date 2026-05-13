@@ -159,6 +159,7 @@ Features:
 
 - Branch switcher
 - Side-by-side branch contexts for the same repository
+- Multi-context comparison projection using `MultiContextViewDto`
 - Commit panel
 - Visual diff
 - Branch comparison
@@ -179,6 +180,7 @@ Allow more than one writable context when each context has a distinct safe write
 Features:
 
 - Open two worktrees for different branches of the same repository
+- Create a worktree only through an explicit user-requested backend operation
 - Open multiple repositories in one workspace
 - Edit supported files in separate writable contexts
 - Keep save and commit targets scoped to one repository and branch
@@ -187,6 +189,14 @@ Features:
 Success criterion:
 
 > A user can edit two branches or related repositories side by side without ambiguity about where each change will be written.
+
+Implementation decisions:
+
+- `ModelGraphDto` remains a single-context graph. Side-by-side branch or repository screens use `MultiContextViewDto`.
+- Opening a repository path or existing worktree creates a workspace context.
+- Creating a new worktree is explicit and backend-owned; the UI requests it, but the backend validates branch, path, and write safety.
+- Closing a workspace context only removes the in-memory context. It does not delete a worktree.
+- Save and commit actions are disabled from combined views until the selected change resolves to exactly one writable `workspaceId`.
 
 ### Phase 4: Custom Views and Traceability
 

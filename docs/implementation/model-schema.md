@@ -112,8 +112,10 @@ Required fields:
 - `stableId`: UUID string, required
 - `kind`: `TraceLinkKind`, required
 - `sourceKind`: `TraceEndpointKind`, required
+- `sourceWorkspaceId`: workspace ID for the source endpoint, required when the source endpoint belongs to an open context
 - `sourceId`: string, required
 - `targetKind`: `TraceEndpointKind`, required
+- `targetWorkspaceId`: workspace ID for the target endpoint, required when the target endpoint belongs to an open context
 - `targetId`: string, required
 - `relationship`: string, required
 - `sourceFile`: repo-relative path or `null`
@@ -135,6 +137,30 @@ Recommended `sourceKind` and `targetKind` values:
 - `Branch`
 - `Repository`
 - `WorkspaceContext`
+
+### Multi-Context View
+
+`ModelGraphDto` always represents exactly one workspace context. Combined branch, worktree, or repository views use a separate projection so context identity cannot be lost.
+
+Required fields:
+
+- `viewId`: backend-local view ID, required
+- `kind`: `MultiContextViewKind`, required
+- `title`: display title, required
+- `contexts`: ordered `ModelContext` list, required
+- `graphs`: ordered `ModelGraph` list, required
+- `projections`: ordered `ContextProjection` list, required
+- `crossContextTraceLinks`: `TraceLink` list, required
+- `diagnostics`: `Diagnostic` list, required
+
+Rules:
+
+- A combined view must never merge nodes, files, or trace links into a context-free collection.
+- `graphs` contains the single-context graph snapshots used by the view so the frontend can render the view without guessing which graph owns a projected ID.
+- `contexts` and `graphs` are ordered together; each graph's `context.workspaceId` must match one listed context.
+- Every projected node, edge, file, and trace link must carry the `workspaceId` it came from.
+- Cross-context trace links use `WorkspaceContext`, `Branch`, or `Repository` endpoints when the relationship is between contexts instead of inside one graph.
+- The first implementation may expose no combined views, but the first branch/repository comparison feature must use this projection instead of overloading `ModelGraphDto`.
 
 ## API Serialization
 
@@ -185,6 +211,24 @@ public sealed record OpenRepositoryResponseDto(
 public sealed record TraceLinksResponseDto(
     IReadOnlyList<TraceLinkDto> TraceLinks);
 
+public sealed record MultiContextViewDto(
+    string ViewId,
+    MultiContextViewKind Kind,
+    string Title,
+    IReadOnlyList<ModelContextDto> Contexts,
+    IReadOnlyList<ModelGraphDto> Graphs,
+    IReadOnlyList<ContextProjectionDto> Projections,
+    IReadOnlyList<TraceLinkDto> CrossContextTraceLinks,
+    IReadOnlyList<DiagnosticDto> Diagnostics);
+
+public sealed record ContextProjectionDto(
+    string WorkspaceId,
+    IReadOnlyList<Guid> NodeIds,
+    IReadOnlyList<Guid> EdgeIds,
+    IReadOnlyList<string> FilePaths,
+    IReadOnlyList<Guid> TraceLinkIds,
+    IReadOnlyDictionary<string, object?> Attributes);
+
 public sealed record ModelContextDto(
     string WorkspaceId,
     string RepositoryId,
@@ -226,8 +270,10 @@ public sealed record TraceLinkDto(
     Guid StableId,
     TraceLinkKind Kind,
     TraceEndpointKind SourceKind,
+    string? SourceWorkspaceId,
     string SourceId,
     TraceEndpointKind TargetKind,
+    string? TargetWorkspaceId,
     string TargetId,
     string Relationship,
     string? SourceFile,
@@ -288,12 +334,38 @@ export interface TraceLinkDto {
   stableId: string;
   kind: TraceLinkKind;
   sourceKind: TraceEndpointKind;
+  sourceWorkspaceId?: string | null;
   sourceId: string;
   targetKind: TraceEndpointKind;
+  targetWorkspaceId?: string | null;
   targetId: string;
   relationship: string;
   sourceFile?: string | null;
   sourceRange?: SourceRangeDto | null;
+  attributes: Record<string, unknown>;
+}
+```
+
+Expected generated multi-context view shape:
+
+```typescript
+export interface MultiContextViewDto {
+  viewId: string;
+  kind: MultiContextViewKind;
+  title: string;
+  contexts: ModelContextDto[];
+  graphs: ModelGraphDto[];
+  projections: ContextProjectionDto[];
+  crossContextTraceLinks: TraceLinkDto[];
+  diagnostics: DiagnosticDto[];
+}
+
+export interface ContextProjectionDto {
+  workspaceId: string;
+  nodeIds: string[];
+  edgeIds: string[];
+  filePaths: string[];
+  traceLinkIds: string[];
   attributes: Record<string, unknown>;
 }
 ```
@@ -352,7 +424,15 @@ The first implementation slice may open one context. Later slices must be able t
 - Different repositories, independently writable contexts.
 - Related repositories used as dependencies or supplier/library models.
 
-Combined views must not collapse IDs across contexts. When a view contains data from multiple contexts, UI and API projections must include context identity so duplicate stable IDs from different branches or repositories are not ambiguous.
+Combined views must not collapse IDs across contexts. When a view contains data from multiple contexts, the API must return `MultiContextViewDto` and UI projections must include context identity so duplicate stable IDs from different branches or repositories are not ambiguous.
+
+Recommended `MultiContextViewKind` values:
+
+- `BranchComparison`
+- `RepositoryComparison`
+- `TraceMatrix`
+- `ImpactAnalysis`
+- `CustomWorkspaceView`
 
 Recommended `lineEnding` values:
 
@@ -375,7 +455,7 @@ Later slices extend trace links for:
 - Repo-to-repo links from imported libraries, supplier models, shared views, or related engineering repositories.
 - Context-to-context links from side-by-side branch and repository views.
 
-Trace link IDs are deterministic UUID v5-style IDs derived from kind, source endpoint, target endpoint, relationship, and source range when present.
+Trace link IDs are deterministic UUID v5-style IDs derived from kind, source workspace, source endpoint, target workspace, target endpoint, relationship, and source range when present.
 
 Trace links are read-only derived data. Edits update the model graph or files; trace links are recomputed from the resulting graph, file records, Git state, and repository dependency metadata.
 

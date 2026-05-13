@@ -40,6 +40,8 @@ The runtime must distinguish repository identity from workspace context identity
 - Two branches of the same repository may be open at the same time only as distinct workspace contexts.
 - Two writable branches of the same repository require distinct safe write locations, such as separate Git worktrees.
 - Multiple repositories may be open at the same time as separate workspace contexts.
+- Multi-context comparison views are derived projections over workspace contexts, not replacement model graphs.
+- Worktree creation is an explicit backend operation requested by the user. The runtime must not create or delete worktrees as hidden side effects of comparison or context close.
 
 ## Development Command Shape
 

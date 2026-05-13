@@ -44,7 +44,9 @@ Vision trace:
 | --- | --- | --- | --- | --- |
 | `semantic_branch_diff` | Integration | `fixtures/branch-divergence` | Verify branch comparison | Matches `expected/diff.json` |
 | `branch_trace_links` | Integration | `fixtures/branch-divergence` | Preserve branch-to-branch traceability contract | Diff output includes changed files, changed items, and branch trace links |
+| `multi_context_view_scopes_ids` | Integration | `fixtures/branch-divergence` | Prevent ID ambiguity in side-by-side views | Matches `expected/multi-context-view.json`; every projected node, file, and trace-link ID is scoped by `workspaceId` |
 | `multi_context_identity` | Integration | fixture to add with two worktrees | Preserve same-repo multi-branch editing path | Two branch contexts have distinct workspace IDs, branch names, writable states, and non-ambiguous save targets |
+| `worktree_creation_is_explicit` | Integration | fixture to add with two worktrees | Prevent hidden writes during comparison | Branch comparison does not create a worktree; `POST /workspace-contexts/worktrees` is required before both branches are writable |
 
 ## Gating Rule
 

@@ -172,6 +172,8 @@ Rules:
 - A context is the combination of repository, branch or worktree, commit state, and writable status.
 - Editing is allowed only in contexts with a distinct safe write location.
 - Read-only comparison contexts should still support navigation, traceability, source viewing, and diff overlays.
+- Combined branch or repository screens are projections over contexts, not merged graphs.
+- Creating a worktree is an explicit user-requested backend operation, not a side effect of opening a comparison.
 - Save and commit UI must always show the target repository and branch before writing.
 
 ### Workflow 2: Create Architecture Visually
@@ -332,7 +334,7 @@ Workspace
         -> Trace links
 ```
 
-Views may combine contexts, but edits must always target exactly one writable context.
+Views may combine contexts through a multi-context projection, but edits must always target exactly one writable context. The projection keeps each graph, file, trace link, and diff artifact scoped to its originating workspace context.
 
 ## Key Design Principles
 

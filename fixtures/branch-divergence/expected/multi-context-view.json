@@ -1,0 +1,154 @@
+{
+  "viewId": "view-branch-divergence-base-head",
+  "kind": "BranchComparison",
+  "title": "base vs head",
+  "contexts": [
+    {
+      "workspaceId": "workspace-branch-divergence-base",
+      "repositoryId": "fixture-branch-divergence",
+      "repositoryAlias": "branch-divergence",
+      "rootPath": "/fixtures/branch-divergence/base",
+      "branch": "base",
+      "commitSha": null,
+      "isWritable": false,
+      "writableReason": "Comparison context is read-only."
+    },
+    {
+      "workspaceId": "workspace-branch-divergence-head",
+      "repositoryId": "fixture-branch-divergence",
+      "repositoryAlias": "branch-divergence",
+      "rootPath": "/fixtures/branch-divergence/head",
+      "branch": "head",
+      "commitSha": null,
+      "isWritable": false,
+      "writableReason": "Comparison context is read-only."
+    }
+  ],
+  "graphs": [
+    {
+      "context": {
+        "workspaceId": "workspace-branch-divergence-base",
+        "repositoryId": "fixture-branch-divergence",
+        "repositoryAlias": "branch-divergence",
+        "rootPath": "/fixtures/branch-divergence/base",
+        "branch": "base",
+        "commitSha": null,
+        "isWritable": false,
+        "writableReason": "Comparison context is read-only."
+      },
+      "nodes": [],
+      "edges": [],
+      "files": [
+        {
+          "path": "model/root.sysml",
+          "lineEnding": "LF",
+          "contentHash": "sha256:fixture-base",
+          "role": "Model",
+          "isDirty": false
+        }
+      ],
+      "traceLinks": [],
+      "opaqueSpans": [],
+      "diagnostics": []
+    },
+    {
+      "context": {
+        "workspaceId": "workspace-branch-divergence-head",
+        "repositoryId": "fixture-branch-divergence",
+        "repositoryAlias": "branch-divergence",
+        "rootPath": "/fixtures/branch-divergence/head",
+        "branch": "head",
+        "commitSha": null,
+        "isWritable": false,
+        "writableReason": "Comparison context is read-only."
+      },
+      "nodes": [
+        {
+          "stableId": "66666666-6666-4666-8666-666666666666",
+          "kind": "PartDefinition",
+          "name": "ThermalMonitor",
+          "qualifiedName": "Vehicle::ThermalMonitor",
+          "owningPackageId": "00000000-0000-4000-8000-000000000001",
+          "sourceFile": "model/root.sysml",
+          "sourceRange": {
+            "startLine": 6,
+            "startColumn": 3,
+            "endLine": 7,
+            "endColumn": 27
+          },
+          "attributes": {},
+          "modelStatus": "Added"
+        }
+      ],
+      "edges": [],
+      "files": [
+        {
+          "path": "model/root.sysml",
+          "lineEnding": "LF",
+          "contentHash": "sha256:fixture-head",
+          "role": "Model",
+          "isDirty": false
+        }
+      ],
+      "traceLinks": [],
+      "opaqueSpans": [],
+      "diagnostics": []
+    }
+  ],
+  "projections": [
+    {
+      "workspaceId": "workspace-branch-divergence-base",
+      "nodeIds": [],
+      "edgeIds": [],
+      "filePaths": [
+        "model/root.sysml"
+      ],
+      "traceLinkIds": [],
+      "attributes": {
+        "side": "base"
+      }
+    },
+    {
+      "workspaceId": "workspace-branch-divergence-head",
+      "nodeIds": [
+        "66666666-6666-4666-8666-666666666666"
+      ],
+      "edgeIds": [],
+      "filePaths": [
+        "model/root.sysml"
+      ],
+      "traceLinkIds": [
+        "66666666-bbbb-4bbb-8bbb-666666666666"
+      ],
+      "attributes": {
+        "side": "head"
+      }
+    }
+  ],
+  "crossContextTraceLinks": [
+    {
+      "stableId": "66666666-bbbb-4bbb-8bbb-666666666666",
+      "kind": "BranchToBranch",
+      "sourceKind": "Branch",
+      "sourceWorkspaceId": "workspace-branch-divergence-base",
+      "sourceId": "base",
+      "targetKind": "Branch",
+      "targetWorkspaceId": "workspace-branch-divergence-head",
+      "targetId": "head",
+      "relationship": "AddsModelItem",
+      "sourceFile": "model/root.sysml",
+      "sourceRange": {
+        "startLine": 6,
+        "startColumn": 3,
+        "endLine": 7,
+        "endColumn": 27
+      },
+      "attributes": {
+        "stableId": "66666666-6666-4666-8666-666666666666",
+        "kind": "PartDefinition",
+        "name": "ThermalMonitor"
+      }
+    }
+  ],
+  "diagnostics": []
+}

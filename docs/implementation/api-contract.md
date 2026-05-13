@@ -136,8 +136,10 @@ http://localhost:5173
   "stableId": "66666666-6666-4666-8666-666666666666",
   "kind": "ItemToFile",
   "sourceKind": "ModelItem",
+  "sourceWorkspaceId": "workspace-main",
   "sourceId": "11111111-1111-4111-8111-111111111111",
   "targetKind": "File",
+  "targetWorkspaceId": "workspace-main",
   "targetId": "model/root.sysml",
   "relationship": "DefinedIn",
   "sourceFile": "model/root.sysml",
@@ -150,6 +152,107 @@ http://localhost:5173
   "attributes": {}
 }
 ```
+
+### MultiContextViewDto
+
+Multi-context screens use this projection instead of merging several `ModelGraphDto` responses into one context-free graph.
+
+```json
+{
+  "viewId": "view-branch-main-vs-experiment",
+  "kind": "BranchComparison",
+  "title": "main vs experiment",
+  "contexts": [
+    {
+      "workspaceId": "workspace-main",
+      "repositoryId": "local-vehicle-demo",
+      "repositoryAlias": "vehicle-demo",
+      "rootPath": "/absolute/path/to/repo",
+      "branch": "main",
+      "commitSha": null,
+      "isWritable": true,
+      "writableReason": "Current working tree is writable."
+    },
+    {
+      "workspaceId": "workspace-experiment",
+      "repositoryId": "local-vehicle-demo",
+      "repositoryAlias": "vehicle-demo",
+      "rootPath": "/absolute/path/to/repo-experiment-worktree",
+      "branch": "experiment",
+      "commitSha": null,
+      "isWritable": true,
+      "writableReason": "Backed by a distinct writable worktree."
+    }
+  ],
+  "graphs": [
+    {
+      "context": {
+        "workspaceId": "workspace-main",
+        "repositoryId": "local-vehicle-demo",
+        "repositoryAlias": "vehicle-demo",
+        "rootPath": "/absolute/path/to/repo",
+        "branch": "main",
+        "commitSha": null,
+        "isWritable": true,
+        "writableReason": "Current working tree is writable."
+      },
+      "nodes": [],
+      "edges": [],
+      "files": [],
+      "traceLinks": [],
+      "opaqueSpans": [],
+      "diagnostics": []
+    },
+    {
+      "context": {
+        "workspaceId": "workspace-experiment",
+        "repositoryId": "local-vehicle-demo",
+        "repositoryAlias": "vehicle-demo",
+        "rootPath": "/absolute/path/to/repo-experiment-worktree",
+        "branch": "experiment",
+        "commitSha": null,
+        "isWritable": true,
+        "writableReason": "Backed by a distinct writable worktree."
+      },
+      "nodes": [],
+      "edges": [],
+      "files": [],
+      "traceLinks": [],
+      "opaqueSpans": [],
+      "diagnostics": []
+    }
+  ],
+  "projections": [
+    {
+      "workspaceId": "workspace-main",
+      "nodeIds": [],
+      "edgeIds": [],
+      "filePaths": [],
+      "traceLinkIds": [],
+      "attributes": {}
+    },
+    {
+      "workspaceId": "workspace-experiment",
+      "nodeIds": [],
+      "edgeIds": [],
+      "filePaths": [],
+      "traceLinkIds": [],
+      "attributes": {}
+    }
+  ],
+  "crossContextTraceLinks": [],
+  "diagnostics": []
+}
+```
+
+Rules:
+
+- `ModelGraphDto` represents one context only.
+- `MultiContextViewDto` represents a view over two or more contexts.
+- `contexts` and `graphs` are ordered together; every graph context must match one listed context by `workspaceId`.
+- Projected IDs are resolved by pairing the ID with the projection `workspaceId`.
+- Trace links include source and target workspace IDs so endpoint IDs remain unambiguous across branches and repositories.
+- Cross-context links must use explicit `WorkspaceContext`, `Branch`, or `Repository` endpoints and source/target workspace IDs when those endpoints belong to open contexts.
 
 ### DiagnosticDto
 
@@ -204,6 +307,26 @@ Rules:
 - Save and commit operations must always target one writable `workspaceId`.
 - Read-only contexts may still expose model graph, source files, trace links, and comparisons.
 
+## Multi-Context View Model
+
+The backend exposes multi-context comparison as derived projections, not as mutable graphs.
+
+Rules:
+
+- `ModelGraphDto` is never used for more than one context.
+- Branch comparison, repository comparison, trace matrices, and impact views use `MultiContextViewDto`.
+- A multi-context view includes the single-context graph snapshots it projects, and every projected reference is scoped by `workspaceId`.
+- Editing from a multi-context view must first resolve to exactly one writable `workspaceId`, one file path, and one intended operation.
+- The first implementation slice may skip this endpoint entirely; the first branch comparison implementation must add it before exposing side-by-side comparison in the UI.
+
+Recommended view kinds:
+
+- `BranchComparison`
+- `RepositoryComparison`
+- `TraceMatrix`
+- `ImpactAnalysis`
+- `CustomWorkspaceView`
+
 ## Path Rules
 
 - All file paths in API DTOs are repository-relative paths using `/`.
@@ -220,7 +343,7 @@ Rules:
 - `422 Unprocessable Entity`: the repository or SysML content was readable but failed validation/parsing rules.
 - `500 Internal Server Error`: unexpected backend failure.
 
-## First-Slice Endpoints
+## Endpoint Contracts
 
 ### Open Repository
 
@@ -333,6 +456,53 @@ Behavior:
 - The first implementation slice may return one context.
 - Later slices use this endpoint to drive side-by-side branch and repository views.
 
+### Create Worktree Context
+
+```text
+POST /workspace-contexts/worktrees
+```
+
+Request:
+
+```json
+{
+  "repositoryId": "local-vehicle-demo",
+  "branch": "experiment",
+  "path": "/absolute/path/to/repo-experiment-worktree",
+  "createBranch": false
+}
+```
+
+Response: `ModelContextDto`
+
+Behavior:
+
+- The backend creates or opens a Git worktree at the requested absolute path.
+- The operation is explicit and user-initiated; opening a comparison must not create a worktree implicitly.
+- The response marks the context writable only when the worktree root is distinct from every other writable context for the same repository and passes filesystem/Git validation.
+
+Errors:
+
+- `400 Bad Request` when the path is relative, the branch name is invalid, or the requested worktree would overlap an existing context root.
+- `404 Not Found` when `repositoryId` is unknown.
+- `409 Conflict` when the branch is already checked out in another writable context and no distinct worktree can be created.
+
+### Close Workspace Context
+
+```text
+DELETE /workspace-contexts/{workspaceId}
+```
+
+Behavior:
+
+- Closes the in-memory workspace context.
+- Does not delete repository files or Git worktrees.
+- A later explicit worktree deletion endpoint may be added, but it must not be coupled to context close.
+
+Errors:
+
+- `404 Not Found` when `workspaceId` is unknown.
+
 ### Get Source File
 
 ```text
@@ -393,6 +563,7 @@ Behavior:
 
 - The endpoint returns the current derived trace links for the repository session.
 - The first implementation slice must include `ItemToItem`, `ItemToFile`, and resolvable `FileToFile` trace links.
+- Intra-context trace links set both endpoint workspace IDs to the active workspace context.
 - Trace links are recomputed from the current model graph, file records, imports, and Git state; they are not edited directly.
 
 Errors:
@@ -415,11 +586,41 @@ Response: `TraceLinksResponseDto`
 Behavior:
 
 - Returns derived trace links for one explicit repository/branch/worktree context.
-- Combined views may merge trace links from multiple contexts only when each rendered link keeps its source `workspaceId` in view state.
+- Intra-context trace links set both endpoint workspace IDs to this `workspaceId`.
+- Combined views use `MultiContextViewDto.crossContextTraceLinks` instead of client-side context-free merging.
 
 Errors:
 
 - `404 Not Found` when `workspaceId` is unknown.
+
+### Create Multi-Context View
+
+```text
+POST /multi-context-views
+```
+
+Request:
+
+```json
+{
+  "kind": "BranchComparison",
+  "title": "main vs experiment",
+  "workspaceIds": ["workspace-main", "workspace-experiment"]
+}
+```
+
+Response: `MultiContextViewDto`
+
+Behavior:
+
+- The backend validates that every `workspaceId` is open.
+- The backend builds a read-only projection over the requested contexts.
+- The response must not include unscoped node, edge, file, or trace-link references.
+
+Errors:
+
+- `400 Bad Request` when fewer than two contexts are supplied or the view kind is unsupported.
+- `404 Not Found` when any workspace context is unknown.
 
 ## Deferred Trace Contracts
 

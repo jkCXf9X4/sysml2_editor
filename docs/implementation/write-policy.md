@@ -55,6 +55,50 @@ When the user creates or edits an element:
 - Preserve SysML-native stable identity metadata.
 - Block writes for editable elements that do not have persisted identity metadata, unless the operation is an explicit identity backfill.
 
+## Worktree And Context Rules
+
+The backend owns workspace-context validation. The frontend may request contexts and display their state, but it must not infer write safety from paths or branch labels.
+
+Initial design:
+
+1. Opening an existing repository root creates one workspace context for the currently checked-out branch.
+2. Opening an existing Git worktree creates a separate workspace context, even when it belongs to a repository that is already open.
+3. Creating a new worktree is an explicit backend operation requested by the user. It must never happen as a hidden side effect of opening a comparison.
+4. A same-repository branch comparison may use read-only contexts from Git data, but editing both branches requires two distinct writable roots.
+5. The backend marks a context read-only when the root path is not writable, the branch is detached, the branch is already open in another writable root without a distinct worktree, or the context was created only for comparison.
+6. Closing a context does not delete a worktree. Worktree deletion is a separate explicit operation.
+
+Recommended context operations for the first editable multi-branch slice:
+
+- `POST /repositories/open`: open an existing repository or worktree path.
+- `POST /workspace-contexts/worktrees`: create a new worktree for a branch and open it as a workspace context.
+- `GET /workspace-contexts`: list current contexts and writable state.
+- `DELETE /workspace-contexts/{workspaceId}`: close the in-memory context without deleting files.
+
+Worktree creation request shape:
+
+```json
+{
+  "repositoryId": "local-vehicle-demo",
+  "branch": "experiment",
+  "path": "/absolute/path/to/repo-experiment-worktree",
+  "createBranch": false
+}
+```
+
+Worktree creation response shape:
+
+```json
+{
+  "workspaceId": "workspace-experiment",
+  "repositoryId": "local-vehicle-demo",
+  "rootPath": "/absolute/path/to/repo-experiment-worktree",
+  "branch": "experiment",
+  "isWritable": true,
+  "writableReason": "Backed by a distinct writable worktree."
+}
+```
+
 ## Transactional Save Flow
 
 Save should happen in this order:
