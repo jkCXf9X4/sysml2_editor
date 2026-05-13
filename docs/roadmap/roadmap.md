@@ -1,77 +1,5 @@
 # Implementation Plan for `sysml2_editor`
 
-## Technology Suggestion
-
-The app should run on both Windows and Linux. That requirement should influence the stack early, especially around desktop packaging, file watching, Git process handling, and line-ending behavior.
-
-Recommended initial stack:
-
-- React
-- TypeScript
-- C# / .NET backend
-- Monaco Editor
-- React Flow
-- Git CLI
-
-Why this fits:
-
-- C# experience reduces backend risk.
-- .NET runs well on Windows and Linux.
-- Git and filesystem operations are straightforward from C#.
-- The parser/model index can be implemented as strongly typed C# domain code.
-- The React UI remains flexible for graph/canvas-heavy interaction.
-- Git CLI is reliable and avoids premature complexity.
-
-Vision trace:
-
-- Supports: visual workbench interaction through React; precise backend-owned model state through .NET; Git-native review through Git CLI integration.
-- Tradeoff: starts as a local web app and MVP parser instead of full desktop packaging or full SysML v2 grammar.
-
-Desktop packaging options:
-
-- Phase 1: run as a local web app during development.
-- Phase 2: package with Electron if quickest cross-platform delivery matters.
-- Alternative: use Avalonia/.NET if a more native C# desktop shell becomes more important than web-based canvas flexibility.
-
-Backend responsibilities:
-
-- Repository open/clone/status operations
-- Workspace context management for multiple repositories, branches, and worktrees
-- SysML file discovery
-- Parse/index pipeline
-- Stable model graph API
-- Save operations that preserve file boundaries
-- Git diff/status/commit integration
-
-Frontend responsibilities:
-
-- Dockable workbench
-- Canvas/tree/matrix/text views
-- Visual editing gestures
-- Inspector and validation presentation
-- Change overlays and traceability navigation across items, files, branches, and repositories
-
-Git integration should start with the `git` CLI wrapper.
-
-SysML parsing should start with the MVP custom subset parser described in [parser-contract.md](../implementation/parser-contract.md). External parser or language-server integrations can come later if the product needs broader language coverage.
-Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](../implementation/syntax-examples.md) as the local implementation subset.
-
-## Implementation Inputs Required
-
-Before a feature slice starts, keep these decision docs current:
-
-- Structure: [root layout](../../README.md) and source area READMEs
-- SysML reference: [sysml-v2.md](../reference/sysml-v2.md)
-- Syntax examples: [syntax-examples.md](../implementation/syntax-examples.md)
-- Runtime: [runtime.md](../architecture/runtime.md)
-- API contract: [api-contract.md](../implementation/api/api-contract.md)
-- Parser contract: [parser-contract.md](../implementation/parser-contract.md)
-- Model graph: [model-graph.md](../architecture/model-graph.md)
-- Write policy: [write-policy.md](../architecture/write-policy.md)
-- Starter test matrix: [starter-test-matrix.md](../testing/starter-test-matrix.md)
-
-[starter-test-matrix.md](../testing/starter-test-matrix.md) is the canonical readiness and gate document. If any required decision for the active slice is still open, implementation should stop at scaffolding and discovery.
-
 ## MVP Definition
 
 ### MVP Goal
@@ -96,19 +24,7 @@ Must-have:
 - Visualize traceability between model items and their source files
 - Preserve explicit repository and branch context for every opened model graph
 
-### First Supported Model Elements
-
-Start with:
-
-- Package
-- Part definition
-- Part usage
-- Port
-- Connection
-- Requirement
-- Satisfy / trace relationship
-
-Avoid starting with full behavioral modeling. Structure + requirements + traceability gives the strongest early value.
+Supported elements are defined in [mvp-coverage.md](../testing/mvp-coverage.md). Avoid starting with full behavioral modeling. Structure + requirements + traceability gives the strongest early value.
 
 ## Development Phases
 
@@ -190,13 +106,7 @@ Success criterion:
 
 > A user can edit two branches or related repositories side by side without ambiguity about where each change will be written.
 
-Implementation decisions:
-
-- `ModelGraphDto` remains a single-context graph. Side-by-side branch or repository screens use `MultiContextViewDto`.
-- Opening a repository path or existing worktree creates a workspace context.
-- Creating a new worktree is explicit and backend-owned; the UI requests it, but the backend validates branch, path, and write safety.
-- Closing a workspace context only removes the in-memory context. It does not delete a worktree.
-- Save and commit actions are disabled from combined views until the selected change resolves to exactly one writable `workspaceId`.
+Runtime rules for multi-context editing are defined in [runtime.md](../architecture/runtime.md).
 
 ### Phase 4: Custom Views and Traceability
 
@@ -237,16 +147,3 @@ Features:
 Success criterion:
 
 > The tool becomes a serious MBSE workbench, not just a diagram editor.
-
-## Setup Order
-
-Project setup should follow this order:
-
-1. Create the repository root and documentation structure.
-2. Create the backend solution and projects.
-3. Create the frontend app shell.
-4. Add backend OpenAPI generation.
-5. Add test projects.
-6. Add fixture repositories and sample files.
-7. Wire the local dev command.
-8. Add the first smoke test and parser round-trip test.

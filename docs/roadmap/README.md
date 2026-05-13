@@ -39,3 +39,16 @@ Read these files in order when setting up or changing the project:
 - Follow [working-rules.md](../ai/working-rules.md) for implementation behavior.
 - Use architecture documents for system guarantees and implementation documents for concrete contracts.
 - Use [starter-test-matrix.md](../testing/starter-test-matrix.md) for implementation readiness and slice gates.
+
+## Setup Order
+
+Project setup should follow this order:
+
+1. Create the repository root and documentation structure.
+2. Create the backend solution and projects.
+3. Create the frontend app shell.
+4. Add backend OpenAPI generation.
+5. Add test projects.
+6. Add fixture repositories and sample files.
+7. Wire the local dev command.
+8. Add the first smoke test and parser round-trip test.

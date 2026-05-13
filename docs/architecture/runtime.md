@@ -31,7 +31,7 @@ Vision trace:
 - The backend owns workspace contexts for opened repositories, branches, commits, and worktrees.
 - Multiple contexts may be open at once; every write operation must target one writable context.
 
-## Multi-Context Runtime Rule
+## Multi-Context Runtime Rules
 
 The runtime must distinguish repository identity from workspace context identity:
 
@@ -42,6 +42,10 @@ The runtime must distinguish repository identity from workspace context identity
 - Multiple repositories may be open at the same time as separate workspace contexts.
 - Multi-context comparison views are derived projections over workspace contexts, not replacement model graphs.
 - Worktree creation is an explicit backend operation requested by the user. The runtime must not create or delete worktrees as hidden side effects of comparison or context close.
+- Opening a repository path or existing worktree creates a workspace context.
+- Closing a workspace context only removes the in-memory context. It does not delete a worktree.
+- `ModelGraphDto` remains a single-context graph. Side-by-side branch or repository screens use `MultiContextViewDto`.
+- Save and commit actions are disabled from combined views until the selected change resolves to exactly one writable `workspaceId`.
 
 ## Development Command Shape
 
@@ -56,6 +60,58 @@ The first implementation slice should standardize on a simple local launch model
 - Frontend API proxy: `/api` proxies to `http://localhost:5087/api`
 
 During development, Vite may serve the frontend. For packaged local-web use, the ASP.NET Core backend may serve built static frontend assets.
+
+## Recommended Stack
+
+- React
+- TypeScript
+- C# / .NET backend
+- Monaco Editor (text editing)
+- React Flow (canvas/graph views)
+- Git CLI
+
+Why this fits:
+
+- C# experience reduces backend risk.
+- .NET runs well on Windows and Linux.
+- Git and filesystem operations are straightforward from C#.
+- The parser/model index can be implemented as strongly typed C# domain code.
+- The React UI remains flexible for graph/canvas-heavy interaction.
+- Git CLI is reliable and avoids premature complexity.
+
+Vision trace:
+
+- Supports: visual workbench interaction through React; precise backend-owned model state through .NET; Git-native review through Git CLI integration.
+- Tradeoff: starts as a local web app and MVP parser instead of full desktop packaging or full SysML v2 grammar.
+
+## Desktop Packaging Options
+
+- Phase 1: run as a local web app during development.
+- Phase 2: package with Electron if quickest cross-platform delivery matters.
+- Alternative: use Avalonia/.NET if a more native C# desktop shell becomes more important than web-based canvas flexibility.
+
+## Backend Responsibilities
+
+- Repository open/clone/status operations
+- Workspace context management for multiple repositories, branches, and worktrees
+- SysML file discovery
+- Parse/index pipeline
+- Stable model graph API
+- Save operations that preserve file boundaries
+- Git diff/status/commit integration
+
+## Frontend Responsibilities
+
+- Dockable workbench
+- Canvas/tree/matrix/text views
+- Visual editing gestures
+- Inspector and validation presentation
+- Change overlays and traceability navigation across items, files, branches, and repositories
+
+Git integration should start with the `git` CLI wrapper.
+
+SysML parsing should start with the MVP custom subset parser described in [parser-contract.md](../implementation/parser-contract.md). External parser or language-server integrations can come later if the product needs broader language coverage.
+Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](../implementation/syntax-examples.md) as the local implementation subset.
 
 ## CORS Policy
 
