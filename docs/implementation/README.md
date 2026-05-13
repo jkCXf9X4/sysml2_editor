@@ -4,7 +4,11 @@ Implementation contracts, API specs, parser rules, syntax examples, and current 
 
 ## Contents
 
-- [API Contract](./api-contract.md)
+- [API Contract](./api-contract.md) — Contract overview, ownership, path and status rules
+- [Core DTOs](./core-dtos.md) — All DTO definitions with JSON examples
+- [Session and context models](./session-models.md) — Repository session, workspace context, multi-context view model
+- [Endpoints](./endpoints.md) — Full endpoint contracts with behavior and errors
+- [Deferred contracts](./deferred-contracts.md) — Future DTOs and endpoints reserved for later slices
 - [Parser Contract](./parser-contract.md)
 - [Syntax Examples](./syntax-examples.md)
 
