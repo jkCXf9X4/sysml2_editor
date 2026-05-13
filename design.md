@@ -10,7 +10,7 @@ That direction is aligned with SysML v2: textual notation is intended to support
 
 Vision trace:
 
-- Supports: visual editing without making diagrams the source of truth; textual SysML in Git as durable source of truth; visible item, file, branch, and repository traceability.
+- Supports: visual editing without making diagrams the source of truth; textual SysML in Git as durable source of truth; visible item, file, branch, repository, and workspace-context traceability.
 - Tradeoff: early design favors a structured engineering workbench over a generic diagramming tool.
 
 ## Suggested UI Concept
@@ -65,9 +65,10 @@ Each tab should be able to show one of several view types:
 3. Diagram/canvas view
 4. Textual SysML editor
 5. Branch/revision comparison view
-6. Custom saved view
+6. Repository comparison view
+7. Custom saved view
 
-The key idea: the model is the source of truth; diagrams are editable views into it.
+The key idea: the model is the source of truth; diagrams are editable views into it. Every tab should carry a visible context label for repository, branch, and writable/read-only state.
 
 ### C. Attribute / Inspector Area
 
@@ -115,6 +116,8 @@ Because panel position should not be fixed, support:
 - Saving workspace layouts
 - PowerPoint mode for simple users
 - Engineer mode for full model/text/git detail
+- Side-by-side branch views from the same repository
+- Side-by-side repository views for related system, library, or supplier models
 
 ## Core Workflows
 
@@ -141,10 +144,35 @@ The app should understand:
 - Current branch
 - Other local branches
 - Remote branches
+- Multiple active branches from the same repository
+- Multiple active repositories in the same workspace
+- Which active contexts are writable and which are read-only comparison contexts
 - Uncommitted changes
 - Model files
 - Saved views
 - Validation status
+
+### Workflow 1b: Work Across Branches And Repositories
+
+The user should be able to keep several contexts open at once instead of repeatedly closing and reopening projects.
+
+Flow:
+
+```text
+Open Project
+ -> Open another branch, worktree, or related repository
+ -> Place contexts side by side
+ -> Compare structure, traceability, source ownership, and diffs
+ -> Edit in writable contexts
+ -> Commit changes to the correct repository and branch
+```
+
+Rules:
+
+- A context is the combination of repository, branch or worktree, commit state, and writable status.
+- Editing is allowed only in contexts with a distinct safe write location.
+- Read-only comparison contexts should still support navigation, traceability, source viewing, and diff overlays.
+- Save and commit UI must always show the target repository and branch before writing.
 
 ### Workflow 2: Create Architecture Visually
 
@@ -193,6 +221,7 @@ Every node should have visible trace indicators. Traceability views should make 
 - File-to-file: imports, package modularity, generated views, and layout artifacts
 - Branch-to-branch: element and file changes between alternatives
 - Repo-to-repo: external model libraries, supplier repositories, and related engineering repositories
+- Context-to-context: side-by-side navigation across opened branches and repositories
 
 Useful traceability views:
 
@@ -201,6 +230,7 @@ Useful traceability views:
 3. Impact analysis view
 4. Source ownership view
 5. Cross-repository dependency view
+6. Multi-context comparison view
 
 ### Workflow 5: Custom Views
 
@@ -243,6 +273,8 @@ Key Git features:
 - Checkout branch
 - Show multiple branches simultaneously
 - Show multiple repos simultaneously
+- Edit multiple branches simultaneously when backed by separate safe worktrees or repository contexts
+- Edit multiple repositories simultaneously with isolated working-tree status and commit targets
 - Diff branches visually
 - Compare model elements between branches or repos
 - Commit from inside the app
@@ -289,6 +321,19 @@ Edge:
 
 Do not make the canvas the model. The canvas is just one projection of the model.
 
+For multi-context work, each model graph belongs to an explicit context:
+
+```text
+Workspace
+  -> Repository context
+     -> Branch/worktree context
+        -> Model graph
+        -> Source files
+        -> Trace links
+```
+
+Views may combine contexts, but edits must always target exactly one writable context.
+
 ## Key Design Principles
 
 ### 1. Text is truth, diagrams are views
@@ -310,6 +355,10 @@ Large systems fail visually when everything is shown at once.
 ### 5. Make traceability a first-class part of the model hierarchy
 
 Traceability should appear in node badges, inspector, hover cards, source ownership view, impact view, matrix view, cross-repository dependency view, and commit summary.
+
+### 6. Make context explicit
+
+Every visible model item, source file, trace link, diff, save action, and commit action should make repository and branch context clear.
 
 ## Suggested Feature: Architecture Lens
 

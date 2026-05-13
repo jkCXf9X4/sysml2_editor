@@ -1,4 +1,6 @@
 {
+  "baseWorkspaceId": "workspace-branch-divergence-base",
+  "headWorkspaceId": "workspace-branch-divergence-head",
   "baseBranch": "base",
   "headBranch": "head",
   "added": [

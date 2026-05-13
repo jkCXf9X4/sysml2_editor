@@ -10,7 +10,7 @@ This policy is accepted for the initial design but is not implemented in the fir
 
 Vision trace:
 
-- Supports: textual SysML files in Git as the durable source of truth; reviewable generated changes; visual editing that preserves identity and semantics.
+- Supports: textual SysML files in Git as the durable source of truth; reviewable generated changes; visual editing that preserves identity, semantics, repository context, and branch context.
 - Tradeoff: save behavior is blocked until parser and writer gates prove that edits can be persisted without unrelated file churn.
 
 ## File Convention
@@ -43,6 +43,10 @@ When the user creates or edits an element:
 
 ## Save Rules
 
+- Every save targets exactly one `workspaceId`.
+- The UI must show the target repository, branch, and file before save.
+- The backend must reject writes to read-only comparison contexts.
+- Two branches of the same repository may both be writable only when backed by distinct safe worktrees or repository roots.
 - Preserve the existing line ending style of the target file.
 - Preserve unrelated text and declaration order where possible.
 - Never rewrite untouched files.

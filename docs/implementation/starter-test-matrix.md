@@ -22,6 +22,7 @@ Vision trace:
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
 | `parse_minimal_graph` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser maps the supported subset into the model graph | Matches `expected/graph.json` exactly, including schema-required fields |
+| `model_graph_has_context` | Unit/Integration | `fixtures/tiny-single-file` | Prove every graph is tied to repository and branch context | `ModelGraphDto.context` includes workspace ID, repository ID, branch, and writable state |
 | `derive_item_to_file_traceability` | Unit/Integration | `fixtures/tiny-single-file` | Prove source ownership is first-class traceability | `ModelGraphDto.traceLinks` includes item-to-file links for every structured node |
 | `derive_import_traceability` | Unit/Integration | `fixtures/multi-file-modular` | Prove file-to-file traceability starts in the read-only slice | Matches `expected/trace-links.json` for source ownership and resolved imports |
 | `malformed_input_reports_diagnostic` | Parser/Error | `fixtures/invalid-input` | Fail safely | Matches `expected/diagnostics.json`; valid files in the same repo still load |
@@ -43,6 +44,7 @@ Vision trace:
 | --- | --- | --- | --- | --- |
 | `semantic_branch_diff` | Integration | `fixtures/branch-divergence` | Verify branch comparison | Matches `expected/diff.json` |
 | `branch_trace_links` | Integration | `fixtures/branch-divergence` | Preserve branch-to-branch traceability contract | Diff output includes changed files, changed items, and branch trace links |
+| `multi_context_identity` | Integration | fixture to add with two worktrees | Preserve same-repo multi-branch editing path | Two branch contexts have distinct workspace IDs, branch names, writable states, and non-ambiguous save targets |
 
 ## Gating Rule
 

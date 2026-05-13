@@ -1,4 +1,14 @@
 {
+  "context": {
+    "workspaceId": "workspace-tiny-single-file-main",
+    "repositoryId": "fixture-tiny-single-file",
+    "repositoryAlias": "tiny-single-file",
+    "rootPath": "/fixtures/tiny-single-file",
+    "branch": "main",
+    "commitSha": null,
+    "isWritable": true,
+    "writableReason": "Fixture context is writable for tests."
+  },
   "nodes": [
     {
       "stableId": "00000000-0000-4000-8000-000000000001",

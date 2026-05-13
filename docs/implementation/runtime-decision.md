@@ -19,7 +19,7 @@ For the first implementation slice, `sysml2_editor` runs as a local web app:
 
 Vision trace:
 
-- Supports: textual SysML in Git as the durable source of truth; Git operations as visible modeling workflow; visual editing backed by backend-owned model state.
+- Supports: textual SysML in Git as the durable source of truth; Git operations as visible modeling workflow; visual editing backed by backend-owned model state; multiple repository and branch contexts in one local workspace.
 - Tradeoff: defers desktop packaging so the first slices can prove parsing, source mapping, and Git-backed workflows.
 
 ## Operational Model
@@ -28,6 +28,18 @@ Vision trace:
 - The frontend loads from the backend URL.
 - The frontend never writes files directly and never shells out to Git directly.
 - All repo writes and status refreshes go through the backend API.
+- The backend owns workspace contexts for opened repositories, branches, commits, and worktrees.
+- Multiple contexts may be open at once; every write operation must target one writable context.
+
+## Multi-Context Runtime Rule
+
+The runtime must distinguish repository identity from workspace context identity:
+
+- `repositoryId` identifies a Git repository known to the backend.
+- `workspaceId` identifies one open view/edit context for a repository, branch, commit, or worktree.
+- Two branches of the same repository may be open at the same time only as distinct workspace contexts.
+- Two writable branches of the same repository require distinct safe write locations, such as separate Git worktrees.
+- Multiple repositories may be open at the same time as separate workspace contexts.
 
 ## Development Command Shape
 

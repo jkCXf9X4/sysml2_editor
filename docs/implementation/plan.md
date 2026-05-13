@@ -36,6 +36,7 @@ Desktop packaging options:
 Backend responsibilities:
 
 - Repository open/clone/status operations
+- Workspace context management for multiple repositories, branches, and worktrees
 - SysML file discovery
 - Parse/index pipeline
 - Stable model graph API
@@ -93,6 +94,7 @@ Must-have:
 - Commit changes
 - Store custom views as JSON
 - Visualize traceability between model items and their source files
+- Preserve explicit repository and branch context for every opened model graph
 
 ### First Supported Model Elements
 
@@ -117,6 +119,7 @@ Build confidence in repo parsing and navigation.
 Features:
 
 - Open Git repo
+- Create one explicit workspace context for the opened repo and current branch
 - Parse SysML files
 - Show tree hierarchy
 - Show text editor
@@ -155,6 +158,7 @@ Make it useful in real engineering teams.
 Features:
 
 - Branch switcher
+- Side-by-side branch contexts for the same repository
 - Commit panel
 - Visual diff
 - Branch comparison
@@ -168,6 +172,22 @@ Success criterion:
 
 > A user can compare two architecture alternatives on different branches without reading raw diffs.
 
+### Phase 3b: Multi-Context Editing
+
+Allow more than one writable context when each context has a distinct safe write location.
+
+Features:
+
+- Open two worktrees for different branches of the same repository
+- Open multiple repositories in one workspace
+- Edit supported files in separate writable contexts
+- Keep save and commit targets scoped to one repository and branch
+- Show context labels on graph, source, trace, diff, save, and commit surfaces
+
+Success criterion:
+
+> A user can edit two branches or related repositories side by side without ambiguity about where each change will be written.
+
 ### Phase 4: Custom Views and Traceability
 
 Add the features that make it better than PowerPoint.
@@ -180,6 +200,7 @@ Features:
 - Trace matrix
 - Source ownership view
 - Cross-repository dependency view
+- Multi-context comparison view
 - Impact analysis
 - Query/filter system
 - View publishing

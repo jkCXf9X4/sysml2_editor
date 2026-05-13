@@ -2,18 +2,40 @@
 
 ## Decision
 
-The implementation should use a stable graph schema with explicit node, edge, file, trace-link, and source-range concepts.
+The implementation should use a stable graph schema with explicit context, node, edge, file, trace-link, and source-range concepts.
 
 The UI, diff engine, inspector, and traceability features all read from the same graph.
 
 Vision trace:
 
-- Supports: every model element remains precise, traceable, reviewable, and tied back to source text; item, file, branch, and repository traceability can be projected from one shared model.
+- Supports: every model element remains precise, traceable, reviewable, and tied back to source text; item, file, branch, repository, and workspace-context traceability can be projected from one shared model.
 - Tradeoff: the schema carries explicit source and lifecycle metadata from the start, even when early UI slices only consume part of it.
 
 ## Core Entities
 
 Backend C# records are canonical for the first slice. Frontend types should be generated from OpenAPI as described in [api-contract.md](./api-contract.md).
+
+### Model Context
+
+Each model graph belongs to one context. A context identifies the repository, branch or worktree, commit state, and whether the graph may be edited.
+
+Required fields:
+
+- `workspaceId`: backend-local workspace ID, required
+- `repositoryId`: backend-local repository ID, required
+- `repositoryAlias`: display name for the repository, required
+- `rootPath`: absolute root path for the backing repository or worktree, required in backend responses
+- `branch`: branch name or `"HEAD"` for detached HEAD, required
+- `commitSha`: current commit SHA or `null` when unavailable
+- `isWritable`: boolean, required
+- `writableReason`: human-readable explanation, required
+
+Rules:
+
+- Multiple contexts may reference the same repository if they represent distinct branches, commits, or worktrees.
+- Multiple contexts may reference different repositories in the same workspace.
+- Save and commit operations must target exactly one writable context.
+- Read-only contexts still support graph browsing, source viewing, traceability, and diff overlays.
 
 ### Node
 
@@ -112,6 +134,7 @@ Recommended `sourceKind` and `targetKind` values:
 - `File`
 - `Branch`
 - `Repository`
+- `WorkspaceContext`
 
 ## API Serialization
 
@@ -144,6 +167,7 @@ These records are the starting point for backend DTOs. Names may move by namespa
 
 ```csharp
 public sealed record ModelGraphDto(
+    ModelContextDto Context,
     IReadOnlyList<ModelNodeDto> Nodes,
     IReadOnlyList<ModelEdgeDto> Edges,
     IReadOnlyList<ModelFileDto> Files,
@@ -153,12 +177,23 @@ public sealed record ModelGraphDto(
 
 public sealed record OpenRepositoryResponseDto(
     string RepositoryId,
+    string WorkspaceId,
     string RootPath,
     string Branch,
     ModelGraphDto Graph);
 
 public sealed record TraceLinksResponseDto(
     IReadOnlyList<TraceLinkDto> TraceLinks);
+
+public sealed record ModelContextDto(
+    string WorkspaceId,
+    string RepositoryId,
+    string RepositoryAlias,
+    string RootPath,
+    string Branch,
+    string? CommitSha,
+    bool IsWritable,
+    string WritableReason);
 
 public sealed record ModelNodeDto(
     Guid StableId,
@@ -306,6 +341,19 @@ Recommended `role` values:
 - `Config`
 - `ImportedFragment`
 
+## Workspace Contexts
+
+Workspace context is the unit of safe viewing and editing.
+
+The first implementation slice may open one context. Later slices must be able to hold several contexts at once:
+
+- Same repository, different branches, read-only comparison contexts.
+- Same repository, different worktrees, independently writable contexts.
+- Different repositories, independently writable contexts.
+- Related repositories used as dependencies or supplier/library models.
+
+Combined views must not collapse IDs across contexts. When a view contains data from multiple contexts, UI and API projections must include context identity so duplicate stable IDs from different branches or repositories are not ambiguous.
+
 Recommended `lineEnding` values:
 
 - `LF`
@@ -325,6 +373,7 @@ Later slices extend trace links for:
 
 - Branch-to-branch links from semantic diff results.
 - Repo-to-repo links from imported libraries, supplier models, shared views, or related engineering repositories.
+- Context-to-context links from side-by-side branch and repository views.
 
 Trace link IDs are deterministic UUID v5-style IDs derived from kind, source endpoint, target endpoint, relationship, and source range when present.
 

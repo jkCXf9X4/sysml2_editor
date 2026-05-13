@@ -9,6 +9,7 @@
 - Every model element should remain precise, traceable, reviewable, and tied back to source text.
 - Traceability should be visible across model items, source files, branches, and related repositories so users can follow why something exists, where it lives, and what it affects.
 - Git concepts such as branches, diffs, commits, and review should be first class citizens of the modeling workflow.
+- Users should be able to inspect, compare, and edit multiple branches of the same repository and multiple related repositories in one workspace without losing context.
 - Custom views should be projections of the model, not separate competing models.
 
 ## Product Promise
@@ -19,6 +20,21 @@ The product should feel like a practical engineering workbench:
 - Strict enough to protect SysML semantics, stable identity, and source ranges.
 - Reviewable enough that generated changes make sense in Git.
 - Traceable enough that requirements, parts, ports, connections, files, branches, repositories, and changes can be followed through the model.
+- Context-aware enough that users always know which repository, branch, file, and model item they are viewing or editing.
+
+## Multi-Context Workspace
+
+The product should support more than one active model context at a time.
+
+Users should be able to:
+
+- Open multiple repositories in the same workspace.
+- Open multiple branches or worktrees from the same repository side by side.
+- Compare branches or repositories visually without replacing the current working context.
+- Edit supported models in more than one writable context when each context has a distinct safe write location.
+- Keep branch, repository, file, and model-item identity visible in every view, trace, diff, and save operation.
+
+Implementation may start with one read-only repository context, but architecture and contracts must preserve a path to concurrent branch and repository contexts.
 
 ## Traceability Scope
 
