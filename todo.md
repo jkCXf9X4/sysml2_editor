@@ -2,13 +2,13 @@
 
 
 
-Move out the individual parts of the project-structure.md into the folder readmes or other more fitting parts to place the information regarding structure close to its intended use
-
-
-
 split the api-contracts into core blocks for an easier overview of design decisions 
 
 split the model-graph.md into an architecture part for high level info and a implementation part for specifics 
 
+can you see if you can split the implementation model-graph.md into smaller core entities to improve overview 
 
-move test phases into roadmap and sync with current implementation plans
+
+can you create subfolders for implementation api-contracts and model-graph info to make the folder overview cleaner
+
+move testing/phases into roadmap/ folder and sync with current implementation plans

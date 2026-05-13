@@ -147,7 +147,7 @@ Add performance coverage for workflows that can degrade on real repositories:
 | Document | Content |
 | --- | --- |
 | [MVP coverage](./mvp-coverage.md) | Supported elements, round-trip cases, negative cases |
-| [Phase-based strategy](./phases.md) | Five-phase rollout with test focus and exit criteria |
+| [Phase-based strategy](../roadmap/phases.md) | Five-phase rollout with test focus and exit criteria |
 | [Test fixtures](./fixtures.md) | Fixture catalog and rules |
 | [Automation and CI](./automation-ci.md) | Per-commit, PR, and nightly gates |
 | [Quality and risk](./quality-and-risk.md) | Cross-platform, non-functional, risk priorities, exit criteria |

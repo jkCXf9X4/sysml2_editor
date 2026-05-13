@@ -64,7 +64,7 @@ Before a feature slice starts, keep these decision docs current:
 - SysML reference: [sysml-v2.md](../reference/sysml-v2.md)
 - Syntax examples: [syntax-examples.md](../implementation/syntax-examples.md)
 - Runtime: [runtime.md](../architecture/runtime.md)
-- API contract: [api-contract.md](../implementation/api-contract.md)
+- API contract: [api-contract.md](../implementation/api/api-contract.md)
 - Parser contract: [parser-contract.md](../implementation/parser-contract.md)
 - Model graph: [model-graph.md](../architecture/model-graph.md)
 - Write policy: [write-policy.md](../architecture/write-policy.md)

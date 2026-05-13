@@ -2,13 +2,25 @@
 
 Implementation contracts, API specs, parser rules, syntax examples, and current build direction. Derived from the former `docs/design.md`.
 
-## Contents
+### API Contracts (`api/`)
 
-- [API Contract](./api-contract.md) — Contract overview, ownership, path and status rules
-- [Core DTOs](./core-dtos.md) — All DTO definitions with JSON examples
-- [Session and context models](./session-models.md) — Repository session, workspace context, multi-context view model
-- [Endpoints](./endpoints.md) — Full endpoint contracts with behavior and errors
-- [Deferred contracts](./deferred-contracts.md) — Future DTOs and endpoints reserved for later slices
+- [API Contract](./api/api-contract.md) — Contract overview, ownership, path and status rules
+- [Core DTOs](./api/core-dtos.md) — All DTO definitions with JSON examples
+- [Session and context models](./api/session-models.md) — Repository session, workspace context, multi-context view model
+- [Endpoints](./api/endpoints.md) — Full endpoint contracts with behavior and errors
+- [Deferred contracts](./api/deferred-contracts.md) — Future DTOs and endpoints reserved for later slices
+
+### Model Graph (`graph/`)
+
+- [Model graph](./graph/model-graph.md) — Entry point with links to sub-documents
+- [Graph entities](./graph/graph-entities.md) — Core entity field specs (context, node, edge, source range, trace link, multi-context view)
+- [Graph code generation](./graph/graph-codegen.md) — JSON serialization, C# records, TypeScript interfaces
+- [Stable IDs](./graph/stable-ids.md) — ID annotation format, persistence rules, derived fallback IDs
+- [Graph traceability](./graph/graph-traceability.md) — Trace link derivation rules
+- [Graph supplemental](./graph/graph-supplemental.md) — File records, opaque spans, diagnostics, lifecycle state, derived views
+
+### Other
+
 - [Parser Contract](./parser-contract.md)
 - [Syntax Examples](./syntax-examples.md)
 

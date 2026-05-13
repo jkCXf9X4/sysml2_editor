@@ -10,15 +10,16 @@ Read these files in order when setting up or changing the project:
 4. [Backend layout](../../src/backend/README.md)
 5. [Frontend layout](../../src/frontend/README.md)
 6. [Shared contracts layout](../../src/shared/README.md)
-7. [starter-test-matrix.md](../testing/starter-test-matrix.md)
-8. [runtime.md](../architecture/runtime.md)
-9. [api-contract.md](../implementation/api-contract.md)
-10. [parser-contract.md](../implementation/parser-contract.md)
-11. [model-graph.md](../architecture/model-graph.md)
-12. [write-policy.md](../architecture/write-policy.md)
-13. [sysml-v2.md](../reference/sysml-v2.md)
-14. [syntax-examples.md](../implementation/syntax-examples.md)
-15. [roadmap.md](./roadmap.md)
+7. [Phases](./phases.md) — testing focus and exit criteria by phase
+8. [starter-test-matrix.md](../testing/starter-test-matrix.md)
+9. [runtime.md](../architecture/runtime.md)
+10. [api-contract.md](../implementation/api/api-contract.md)
+11. [parser-contract.md](../implementation/parser-contract.md)
+12. [model-graph.md](../architecture/model-graph.md)
+13. [write-policy.md](../architecture/write-policy.md)
+14. [sysml-v2.md](../reference/sysml-v2.md)
+15. [syntax-examples.md](../implementation/syntax-examples.md)
+16. [roadmap.md](./roadmap.md)
 
 ## Documentation Traceability
 

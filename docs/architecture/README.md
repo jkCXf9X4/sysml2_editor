@@ -12,7 +12,7 @@ This folder contains high-level system decisions and their rationale. Architectu
 Details in [runtime.md](./runtime.md).
 
 2. **Stable Model Graph**: System uses a context-aware graph schema with nodes, edges, files, and trace links. All UI projections derive from this single graph. 
-Details in [model-graph.md](./model-graph.md).
+Details in [model-graph.md](./model-graph.md) (architecture overview) and [model-graph.md](../implementation/graph/model-graph.md) (field-level specs, C# shapes, ID rules).
 
 3. **Deterministic Write Policy**: Edits target exactly one writable context, preserve file ownership, and never rewrite unrelated content. 
 Details in [write-policy.md](./write-policy.md).
