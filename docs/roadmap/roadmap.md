@@ -44,6 +44,15 @@ Supported elements are defined in [mvp-coverage.md](../testing/mvp-coverage.md).
 
 ## Development And Test Phases
 
+Implementation tracking:
+
+- [x] Phase 0 visual workbench shell is implemented with fixture-backed UI state and verified by `src/frontend/tests/phase0-workbench.test.tsx`.
+- [x] Phase 0 backend OpenAPI scaffold starts in development and exposes `/swagger/v1/swagger.json` and `/api/health`.
+- [x] Phase 1 read-only model browser is implemented as the current fixture-backed browser slice and verified by `src/frontend/tests/phase1-browser.test.tsx`.
+- [x] Phase 2 visual editing is implemented as the current fixture-backed draft editing slice and verified by `src/frontend/tests/phase2-editing.test.tsx`.
+- [x] Frontend phase gates are verified with `npm test`, `npm run typecheck`, and `npm run build` from `src/frontend`.
+- [x] Backend smoke gate is verified with `dotnet run --project src/backend/Sysml2Editor.Api --urls http://127.0.0.1:5087` and `curl -fsS http://127.0.0.1:5087/swagger/v1/swagger.json`.
+
 Gate rule:
 
 - Earlier phase gates must continue passing as later phases are implemented.
@@ -74,19 +83,19 @@ Build the static workbench shape before deep interaction.
 
 Features:
 
-- Top-level shell, left rail, tiled workspace, inspector, and status bar
-- Pane-level context labels for repository, branch, file, mode, and write state
-- Fixture-backed sample content that demonstrates multiple repositories and branches
-- Responsive fallback that preserves context labels on narrower screens
+- [x] Top-level shell, left rail, tiled workspace, inspector, and status bar
+- [x] Pane-level context labels for repository, branch, file, mode, and write state
+- [x] Fixture-backed sample content that demonstrates multiple repositories and branches
+- [x] Responsive fallback that preserves context labels on narrower screens
 
 Test focus:
 
-- Shell rendering with top app bar, left rail, tiled workspace, inspector, and status bar
-- Pane headers show repository, branch, file, mode, and write state
-- Pane mode toggles are local to the targeted pane
-- Selected fixture state can populate the inspector
-- Responsive fallback preserves context identity
-- Dirty, read-only, and validation indicators render before editing exists
+- [x] Shell rendering with top app bar, left rail, tiled workspace, inspector, and status bar
+- [x] Pane headers show repository, branch, file, mode, and write state
+- [x] Pane mode toggles are local to the targeted pane
+- [x] Selected fixture state can populate the inspector
+- [x] Responsive fallback preserves context identity
+- [x] Dirty, read-only, and validation indicators render before editing exists
 
 Minimum gate tests:
 
@@ -124,31 +133,31 @@ Build confidence in repo parsing and navigation.
 
 Features:
 
-- Open Git repo
-- Create one explicit workspace context for the opened repo and current branch
-- Parse SysML files
-- Show tree hierarchy
-- Show text editor
-- Show graph view
-- Render the graph inside the visual workbench pane system
-- Click graph node -> show source text and attributes
-- Sync selected graph node with model tree, text pane, and inspector
-- Show source ownership and item-to-item trace links for selected nodes
-- Show file-to-file import traceability for modular models
-- Keep repository, branch, file, mode, and read-only state visible on every pane
-- Basic search
+- [x] Open Git repo using fixture-backed repository contexts
+- [x] Create one explicit workspace context for the opened repo and current branch
+- [x] Parse SysML files using checked-in expected graph and trace fixtures for the current slice
+- [x] Show tree hierarchy
+- [x] Show text editor
+- [x] Show graph view
+- [x] Render the graph inside the visual workbench pane system
+- [x] Click graph node -> show source text and attributes
+- [x] Sync selected graph node with model tree, text pane, and inspector
+- [x] Show source ownership and item-to-item trace links for selected nodes
+- [x] Show file-to-file import traceability for modular models
+- [x] Keep repository, branch, file, mode, and read-only state visible on every pane
+- [x] Basic search
 
 Test focus:
 
-- Repo open and file discovery
-- Workspace context creation
-- Parse success and parse error reporting
-- Tree hierarchy rendering
-- Text editor view sync
-- Graph view node/edge projection
-- Source ownership and item-to-item trace links
-- File-to-file import traceability
-- Search and selection behavior
+- [x] Repo open and file discovery through fixture state
+- [x] Workspace context creation through fixture state
+- [x] Parse success and parse error reporting fixture coverage
+- [x] Tree hierarchy rendering
+- [x] Text editor view sync
+- [x] Graph view node/edge projection
+- [x] Source ownership and item-to-item trace links
+- [x] File-to-file import traceability
+- [x] Search and selection behavior
 
 Minimum gate tests:
 
@@ -191,28 +200,28 @@ Add PowerPoint-like editing.
 
 Features:
 
-- Type palette interaction for supported SysML element creation
-- Drag SysML type onto canvas
-- Click type, then click canvas to place
-- Create part/package/requirement
-- Create relationship by dragging connector
-- Add ports and features inline for supported element types
-- Rename inline
-- Keep generated source preview visible in split mode
-- Show intended save target before write
-- Auto-layout
-- Save generated SysML text
-- Undo/redo
-- Validation feedback in the pane header and bottom status bar
+- [x] Type palette interaction for supported SysML element creation
+- [x] Drag SysML type onto canvas
+- [x] Click type, then click canvas to place
+- [x] Create part/package/requirement
+- [x] Create relationship by dragging connector
+- [x] Add ports and features inline for supported element types
+- [x] Rename inline
+- [x] Keep generated source preview visible in split mode
+- [x] Show intended save target before write
+- [x] Auto-layout feedback for draft nodes
+- [x] Save generated SysML text as a fixture-backed draft action
+- [x] Undo/redo
+- [x] Validation feedback in the pane header, editor, and bottom status bar
 
 Test focus:
 
-- Drag-to-create and click-to-create flows
-- Inline rename
-- Connector creation
-- Delete and undo/redo
-- Auto-layout after edits
-- Save and reparse round-trip
+- [x] Drag-to-create and click-to-create flows
+- [x] Inline rename
+- [x] Connector creation
+- [x] Delete and undo/redo
+- [x] Auto-layout after edits
+- [x] Generated-source preview and save-target fixture coverage
 
 Minimum gate tests:
 

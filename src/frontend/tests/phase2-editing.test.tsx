@@ -71,4 +71,52 @@ describe('phase 2 visual editing', () => {
     expect(draftName).toHaveValue('coolingBarrier');
     expect(preview).toHaveTextContent('part coolingBarrier: ThermalBarrier;');
   });
+
+  it('supports phase 2 palette placement, connectors, save target, and validation feedback', () => {
+    render(<App />);
+
+    const architecturePane = getPane('System Architecture');
+    fireEvent.click(within(architecturePane).getByRole('button', { name: 'Split' }));
+
+    const packageChip = screen.getAllByRole('button', { name: 'Package' })[0];
+    fireEvent.click(packageChip);
+    fireEvent.click(within(architecturePane).getByRole('button', { name: 'Place on Canvas' }));
+
+    const preview = within(architecturePane).getByRole('textbox', { name: 'Generated SysML preview' });
+    expect(preview).toHaveTextContent('package thermalPackage;');
+
+    fireEvent.click(screen.getAllByRole('button', { name: 'Requirement' })[0]);
+    fireEvent.click(within(architecturePane).getByRole('button', { name: /Click canvas or drop a palette type here/ }));
+    expect(preview).toHaveTextContent('requirement reqThermalIsolation;');
+
+    fireEvent.click(within(architecturePane).getByRole('button', { name: 'Drag Connector' }));
+    expect(preview).toHaveTextContent('conn thermalLink: cooling.coolantOut -> coolant;');
+    expect(architecturePane).toHaveTextContent('Writable, source-backed architecture projection, model valid');
+
+    const portChip = screen.getAllByRole('button', { name: 'Port' })[0];
+    const dropZone = within(architecturePane).getByRole('button', { name: /Click canvas or drop a palette type here/ });
+    fireEvent.dragStart(portChip, {
+      dataTransfer: {
+        setData: () => undefined,
+        effectAllowed: 'copy',
+      },
+    });
+    fireEvent.drop(dropZone, {
+      dataTransfer: {
+        getData: () => 'Port',
+      },
+    });
+    expect(preview).toHaveTextContent('port out coolantOut: FluidOut;');
+
+    fireEvent.click(within(architecturePane).getByRole('button', { name: 'Delete' }));
+    expect(preview).not.toHaveTextContent('port out coolantOut: FluidOut;');
+    fireEvent.click(within(architecturePane).getByRole('button', { name: 'Undo' }));
+    expect(preview).toHaveTextContent('port out coolantOut: FluidOut;');
+
+    expect(architecturePane).toHaveTextContent('Intended save target');
+    expect(architecturePane).toHaveTextContent('Draft SysML is valid for the supported phase 2 subset.');
+    expect(architecturePane).toHaveTextContent('Pending draft nodes arranged below the selected owner.');
+    expect(within(architecturePane).getByRole('button', { name: 'Save Draft SysML' })).toBeInTheDocument();
+    expect(screen.getByLabelText('Workspace status')).toHaveTextContent('Validation: draft valid');
+  });
 });

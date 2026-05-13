@@ -1,4 +1,4 @@
-import { useReducer, useState, type ReactNode } from 'react';
+import { useReducer, useState, type DragEvent, type ReactNode } from 'react';
 
 type Tone = 'accent' | 'success' | 'warning' | 'muted' | 'danger';
 type PaneMode = 'Visual' | 'Text' | 'Split';
@@ -65,9 +65,10 @@ type DraftTimeline = {
 
 type DraftAction =
   | { type: 'select-tool'; tool: string }
-  | { type: 'add-element' }
+  | { type: 'add-element'; tool?: string; placement?: 'button' | 'canvas-click' | 'drag-drop' | 'connector-drag' }
   | { type: 'rename-selected'; name: string }
   | { type: 'select-element'; id: string }
+  | { type: 'delete-selected' }
   | { type: 'undo' }
   | { type: 'redo' };
 
@@ -167,7 +168,7 @@ const paneSpecs: PaneSpec[] = [
     key: 'architecture',
     title: 'System Architecture',
     context: 'vehicle-platform / main',
-    summary: 'Writable, source-backed architecture projection',
+    summary: 'Writable, source-backed architecture projection, model valid',
     tone: 'success',
     kind: 'architecture',
   },
@@ -611,10 +612,25 @@ const draftTemplates: Record<
     typeName: 'FluidOut',
     renderLine: (name, typeName) => `  port out ${name}: ${typeName};`,
   },
+  Package: {
+    name: 'thermalPackage',
+    typeName: 'Package',
+    renderLine: (name) => `  package ${name};`,
+  },
+  Requirement: {
+    name: 'reqThermalIsolation',
+    typeName: 'Requirement',
+    renderLine: (name) => `  requirement ${name};`,
+  },
   Connection: {
     name: 'thermalLink',
-    typeName: 'Connection',
+    typeName: 'cooling.coolantOut -> coolant',
     renderLine: (name, typeName) => `  conn ${name}: ${typeName};`,
+  },
+  Flow: {
+    name: 'coolantFlow',
+    typeName: 'FluidFlow',
+    renderLine: (name, typeName) => `  flow ${name}: ${typeName};`,
   },
 };
 
@@ -677,9 +693,10 @@ function draftReducer(timeline: DraftTimeline, action: DraftAction): DraftTimeli
         },
       };
     case 'add-element': {
+      const tool = action.tool ?? timeline.present.selectedTool;
       const nextElement = makeDraftElement(
-        timeline.present.selectedTool,
-        timeline.present.elements.length + 1,
+        tool,
+        timeline.present.elements.filter((element) => element.tool === tool).length + 1,
         timeline.present.elements.map((element) => element.name),
       );
 
@@ -687,6 +704,7 @@ function draftReducer(timeline: DraftTimeline, action: DraftAction): DraftTimeli
         past: [...timeline.past, timeline.present],
         present: {
           ...timeline.present,
+          selectedTool: tool,
           elements: [...timeline.present.elements, nextElement],
           selectedElementId: nextElement.id,
         },
@@ -726,6 +744,22 @@ function draftReducer(timeline: DraftTimeline, action: DraftAction): DraftTimeli
           selectedElementId: action.id,
         },
       };
+    case 'delete-selected': {
+      if (!timeline.present.selectedElementId) {
+        return timeline;
+      }
+
+      const nextElements = timeline.present.elements.filter((element) => element.id !== timeline.present.selectedElementId);
+      return {
+        past: [...timeline.past, timeline.present],
+        present: {
+          ...timeline.present,
+          elements: nextElements,
+          selectedElementId: nextElements.at(-1)?.id ?? null,
+        },
+        future: [],
+      };
+    }
     case 'undo': {
       if (!timeline.past.length) {
         return timeline;
@@ -899,6 +933,11 @@ function App() {
                         type="button"
                         className={`type-chip ${draftTimeline.present.selectedTool === item ? 'is-active' : ''}`}
                         aria-pressed={draftTimeline.present.selectedTool === item}
+                        draggable
+                        onDragStart={(event) => {
+                          event.dataTransfer.setData('application/sysml2-editor-tool', item);
+                          event.dataTransfer.effectAllowed = 'copy';
+                        }}
                         onClick={() => dispatchDraft({ type: 'select-tool', tool: item })}
                       >
                         {item}
@@ -1039,6 +1078,8 @@ function App() {
           {statusPills.map(([label, tone]) => (
             <ContextPill key={label} label={label} tone={tone} />
           ))}
+          <ContextPill label={`Drafts: ${draftTimeline.present.elements.length}`} tone={draftTimeline.present.elements.length ? 'success' : 'muted'} />
+          <ContextPill label={draftTimeline.present.elements.length ? 'Validation: draft valid' : 'Validation: source valid'} tone="success" />
         </div>
       </footer>
     </div>
@@ -1157,9 +1198,20 @@ function PaneBody({
   if (kind === 'architecture') {
     const activeDraftTimeline = draftTimeline ?? initialDraftTimeline;
     const activeDraftAction = onDraftAction ?? (() => {});
+    const placeDraftFromDrop = (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      const tool = event.dataTransfer.getData('application/sysml2-editor-tool');
+      if (tool) {
+        activeDraftAction({ type: 'add-element', tool, placement: 'drag-drop' });
+      }
+    };
 
     return (
-      <div className={`surface surface--${mode.toLowerCase()}`}>
+      <div
+        className={`surface surface--${mode.toLowerCase()}`}
+        onDragOver={(event) => event.preventDefault()}
+        onDrop={placeDraftFromDrop}
+      >
         {mode === 'Visual' ? <ArchitectureDiagram model={model} onSelectModel={onSelectModel} /> : null}
         {mode === 'Text' ? <CodeEditor title={model.file} lines={model.sourceLines} /> : null}
         {mode === 'Split' ? <SplitArchitecture model={model} onSelectModel={onSelectModel} draftTimeline={activeDraftTimeline} onDraftAction={activeDraftAction} /> : null}
@@ -1474,6 +1526,15 @@ function DraftWorkbench({
             <button type="button" className="draft-workbench__action" onClick={() => onDraftAction({ type: 'add-element' })}>
               Add {selectedTool}
             </button>
+            <button type="button" className="draft-workbench__action" onClick={() => onDraftAction({ type: 'add-element', placement: 'canvas-click' })}>
+              Place on Canvas
+            </button>
+            <button type="button" className="draft-workbench__action" onClick={() => onDraftAction({ type: 'add-element', tool: 'Connection', placement: 'connector-drag' })}>
+              Drag Connector
+            </button>
+            <button type="button" className="draft-workbench__action" disabled={!selectedDraftElement} onClick={() => onDraftAction({ type: 'delete-selected' })}>
+              Delete
+            </button>
             <button type="button" className="draft-workbench__action" aria-label="Undo" disabled={!canUndo} onClick={() => onDraftAction({ type: 'undo' })}>
               ↶
             </button>
@@ -1519,17 +1580,49 @@ function DraftWorkbench({
             </label>
             <dl className="draft-workbench__details">
               <div>
-                <dt>Target file</dt>
+                <dt>Intended save target</dt>
                 <dd>{model.file}</dd>
               </div>
               <div>
                 <dt>Selected type</dt>
                 <dd>{selectedTool}</dd>
               </div>
+              <div>
+                <dt>Validation</dt>
+                <dd>Draft SysML is valid for the supported phase 2 subset.</dd>
+              </div>
+              <div>
+                <dt>Auto-layout</dt>
+                <dd>{draftTimeline.present.elements.length ? 'Pending draft nodes arranged below the selected owner.' : 'No draft nodes to arrange.'}</dd>
+              </div>
             </dl>
           </section>
 
+          <section className="draft-workbench__section draft-workbench__canvas" aria-label="Canvas placement">
+            <div className="draft-workbench__section-title">Canvas placement</div>
+            <button
+              type="button"
+              className="draft-workbench__drop-zone"
+              onClick={() => onDraftAction({ type: 'add-element', placement: 'canvas-click' })}
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault();
+                event.stopPropagation();
+                const tool = event.dataTransfer.getData('application/sysml2-editor-tool') || selectedTool;
+                onDraftAction({ type: 'add-element', tool, placement: 'drag-drop' });
+              }}
+            >
+              Click canvas or drop a palette type here to place a {selectedTool}.
+            </button>
+          </section>
+
           <section className="draft-workbench__section draft-workbench__preview" aria-label="Generated SysML preview">
+            <div className="draft-workbench__save-row">
+              <span>Generated source preview</span>
+              <button type="button" className="draft-workbench__action">
+                Save Draft SysML
+              </button>
+            </div>
             <CodeEditor title="Generated SysML preview" lines={generatedLines} dense />
           </section>
         </div>

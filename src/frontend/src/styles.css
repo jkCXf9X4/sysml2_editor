@@ -1093,6 +1093,37 @@ input:focus-visible {
   grid-column: 1 / -1;
 }
 
+.draft-workbench__canvas {
+  grid-column: 1 / -1;
+}
+
+.draft-workbench__drop-zone {
+  min-height: 72px;
+  border: 1px dashed rgba(53, 208, 181, 0.38);
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(53, 208, 181, 0.08), rgba(92, 168, 255, 0.04)),
+    rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  cursor: copy;
+  padding: 12px;
+  text-align: left;
+}
+
+.draft-workbench__save-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.draft-workbench__save-row span {
+  color: var(--muted);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
 .draft-workbench__empty {
   color: var(--muted);
   font-size: 13px;
