@@ -1,0 +1,69 @@
+{
+  "context": {
+    "workspaceId": "workspace-phase-1-browser-main",
+    "repositoryId": "fixture-phase-1-browser",
+    "repositoryAlias": "phase-1-browser",
+    "rootPath": "/fixtures/phase-1-browser",
+    "branch": "main",
+    "commitSha": null,
+    "isWritable": false,
+    "writableReason": "Read-only browser context."
+  },
+  "selection": {
+    "treeNodeId": "battery-system",
+    "graphNodeId": "battery-system",
+    "label": "BatterySystem",
+    "kind": "Part Definition",
+    "qualifiedName": "VehiclePlatform::Vehicle::Powertrain::BatterySystem",
+    "sourceFile": "model/2_SystemArchitecture/2.1_Vehicle/2.1.1_Powertrain/BatterySystem.sysml"
+  },
+  "tree": {
+    "rootLabel": "VehiclePlatform",
+    "visibleLabels": [
+      "VehiclePlatform",
+      "2.1 Vehicle",
+      "2.1.1 Powertrain",
+      "BatterySystem",
+      "Inverter",
+      "ElectricMotor"
+    ]
+  },
+  "source": {
+    "file": "model/2_SystemArchitecture/2.1_Vehicle/2.1.1_Powertrain/BatterySystem.sysml",
+    "lineEnding": "LF",
+    "mode": "Text",
+    "readOnly": true
+  },
+  "graph": {
+    "visibleNodes": [
+      "Vehicle",
+      "Powertrain",
+      "BatterySystem",
+      "Inverter",
+      "ElectricMotor"
+    ],
+    "selectedNode": "BatterySystem",
+    "edges": [
+      "contains",
+      "selected"
+    ]
+  },
+  "traceability": {
+    "sourceOwnership": [
+      "Defined in: BatterySystem.sysml",
+      "Referenced by: Powertrain"
+    ],
+    "itemTraces": [
+      "Satisfies: REQ-0021 Battery capacity",
+      "Verifies: TEST-014 HV functional test",
+      "Allocated from: SYS-001 Powertrain system"
+    ]
+  },
+  "search": {
+    "placeholder": "Search model...",
+    "query": "Battery",
+    "filteredLabels": [
+      "BatterySystem"
+    ]
+  }
+}
