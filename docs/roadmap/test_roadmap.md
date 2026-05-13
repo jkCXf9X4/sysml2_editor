@@ -77,6 +77,10 @@ Test focus:
 - Auto-layout after edits
 - Save and reparse round-trip
 
+Fixture set:
+
+- `phase-2-editing`: writable edit-session snapshot for draft creation, rename, undo/redo, and generated SysML preview assertions
+
 Exit criteria:
 
 - Supported edits can be created visually and persisted safely.

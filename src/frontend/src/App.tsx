@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useReducer, useState, type ReactNode } from 'react';
 
 type Tone = 'accent' | 'success' | 'warning' | 'muted' | 'danger';
 type PaneMode = 'Visual' | 'Text' | 'Split';
@@ -43,6 +43,35 @@ type PaneSpec = {
   tone: Tone;
   kind: 'architecture' | 'comparison' | 'source' | 'diff';
 };
+
+type DraftElement = {
+  id: string;
+  tool: string;
+  name: string;
+  typeName: string;
+};
+
+type DraftState = {
+  selectedTool: string;
+  elements: DraftElement[];
+  selectedElementId: string | null;
+};
+
+type DraftTimeline = {
+  past: DraftState[];
+  present: DraftState;
+  future: DraftState[];
+};
+
+type DraftAction =
+  | { type: 'select-tool'; tool: string }
+  | { type: 'add-element' }
+  | { type: 'rename-selected'; name: string }
+  | { type: 'select-element'; id: string }
+  | { type: 'undo' }
+  | { type: 'redo' };
+
+type DraftDispatch = (action: DraftAction) => void;
 
 const topMenus = ['File', 'Edit', 'View', 'Navigate', 'Model', 'Tools', 'Window', 'Help'] as const;
 
@@ -559,7 +588,175 @@ const primaryWorkspaceStats = [
   ['Dialect', 'SysML v2'],
 ] as const;
 
+const draftTemplates: Record<
+  string,
+  {
+    name: string;
+    typeName: string;
+    renderLine: (name: string, typeName: string) => string;
+  }
+> = {
+  Part: {
+    name: 'thermalBarrier',
+    typeName: 'ThermalBarrier',
+    renderLine: (name, typeName) => `  part ${name}: ${typeName};`,
+  },
+  'Part Definition': {
+    name: 'auxiliaryModule',
+    typeName: 'AuxiliaryModule',
+    renderLine: (name) => `  part def ${name};`,
+  },
+  Port: {
+    name: 'coolantOut',
+    typeName: 'FluidOut',
+    renderLine: (name, typeName) => `  port out ${name}: ${typeName};`,
+  },
+  Connection: {
+    name: 'thermalLink',
+    typeName: 'Connection',
+    renderLine: (name, typeName) => `  conn ${name}: ${typeName};`,
+  },
+};
+
+const initialDraftState: DraftState = {
+  selectedTool: 'Part',
+  elements: [],
+  selectedElementId: null,
+};
+
+const initialDraftTimeline: DraftTimeline = {
+  past: [],
+  present: initialDraftState,
+  future: [],
+};
+
+function getDraftTemplate(tool: string) {
+  return draftTemplates[tool] ?? {
+    name: 'draftElement',
+    typeName: 'Element',
+    renderLine: (name: string, typeName: string) => `  part ${name}: ${typeName};`,
+  };
+}
+
+function makeDraftElement(tool: string, index: number, existingNames: readonly string[]): DraftElement {
+  const template = getDraftTemplate(tool);
+  const baseName = template.name;
+  const candidate = index <= 1 ? baseName : `${baseName}${index}`;
+  const name = existingNames.includes(candidate) ? `${candidate}${existingNames.length + 1}` : candidate;
+
+  return {
+    id: `draft-${tool.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-${index}`,
+    tool,
+    name,
+    typeName: template.typeName,
+  };
+}
+
+function buildGeneratedSource(baseLines: readonly string[], elements: readonly DraftElement[]) {
+  const lines = [...baseLines];
+  const closingBraceIndex = lines.lastIndexOf('}');
+  const draftLines = elements.map((element) => getDraftTemplate(element.tool).renderLine(element.name, element.typeName));
+
+  if (closingBraceIndex === -1) {
+    return [...lines, ...draftLines];
+  }
+
+  const insertion = draftLines.length ? ['', ...draftLines] : [];
+  lines.splice(closingBraceIndex, 0, ...insertion);
+  return lines;
+}
+
+function draftReducer(timeline: DraftTimeline, action: DraftAction): DraftTimeline {
+  switch (action.type) {
+    case 'select-tool':
+      return {
+        ...timeline,
+        present: {
+          ...timeline.present,
+          selectedTool: action.tool,
+        },
+      };
+    case 'add-element': {
+      const nextElement = makeDraftElement(
+        timeline.present.selectedTool,
+        timeline.present.elements.length + 1,
+        timeline.present.elements.map((element) => element.name),
+      );
+
+      return {
+        past: [...timeline.past, timeline.present],
+        present: {
+          ...timeline.present,
+          elements: [...timeline.present.elements, nextElement],
+          selectedElementId: nextElement.id,
+        },
+        future: [],
+      };
+    }
+    case 'rename-selected': {
+      if (!timeline.present.selectedElementId) {
+        return timeline;
+      }
+
+      const nextElements = timeline.present.elements.map((element) => {
+        if (element.id !== timeline.present.selectedElementId) {
+          return element;
+        }
+
+        return {
+          ...element,
+          name: action.name,
+        };
+      });
+
+      return {
+        past: [...timeline.past, timeline.present],
+        present: {
+          ...timeline.present,
+          elements: nextElements,
+        },
+        future: [],
+      };
+    }
+    case 'select-element':
+      return {
+        ...timeline,
+        present: {
+          ...timeline.present,
+          selectedElementId: action.id,
+        },
+      };
+    case 'undo': {
+      if (!timeline.past.length) {
+        return timeline;
+      }
+
+      const previous = timeline.past[timeline.past.length - 1];
+      return {
+        past: timeline.past.slice(0, -1),
+        present: previous,
+        future: [timeline.present, ...timeline.future],
+      };
+    }
+    case 'redo': {
+      if (!timeline.future.length) {
+        return timeline;
+      }
+
+      const [next, ...rest] = timeline.future;
+      return {
+        past: [...timeline.past, timeline.present],
+        present: next,
+        future: rest,
+      };
+    }
+  }
+
+  return timeline;
+}
+
 function App() {
+  const [draftTimeline, dispatchDraft] = useReducer(draftReducer, initialDraftTimeline);
   const [paneModes, setPaneModes] = useState<Record<PaneKey, PaneMode>>({
     architecture: 'Visual',
     comparison: 'Visual',
@@ -697,7 +894,13 @@ function App() {
                   <div className="palette-group__title">{group.title}</div>
                   <div className="palette-group__items">
                     {group.items.map((item) => (
-                      <button key={item} type="button" className="type-chip">
+                      <button
+                        key={item}
+                        type="button"
+                        className={`type-chip ${draftTimeline.present.selectedTool === item ? 'is-active' : ''}`}
+                        aria-pressed={draftTimeline.present.selectedTool === item}
+                        onClick={() => dispatchDraft({ type: 'select-tool', tool: item })}
+                      >
                         {item}
                       </button>
                     ))}
@@ -719,6 +922,8 @@ function App() {
               mode={paneModes.architecture}
               model={selectedModel}
               onSelectModel={setSelectedModelId}
+              draftTimeline={draftTimeline}
+              onDraftAction={dispatchDraft}
             />
           </WorkbenchPane>
 
@@ -939,18 +1144,25 @@ function PaneBody({
   mode,
   model,
   onSelectModel,
+  draftTimeline,
+  onDraftAction,
 }: {
   kind: PaneSpec['kind'];
   mode: PaneMode;
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  draftTimeline?: DraftTimeline;
+  onDraftAction?: DraftDispatch;
 }) {
   if (kind === 'architecture') {
+    const activeDraftTimeline = draftTimeline ?? initialDraftTimeline;
+    const activeDraftAction = onDraftAction ?? (() => {});
+
     return (
       <div className={`surface surface--${mode.toLowerCase()}`}>
         {mode === 'Visual' ? <ArchitectureDiagram model={model} onSelectModel={onSelectModel} /> : null}
         {mode === 'Text' ? <CodeEditor title={model.file} lines={model.sourceLines} /> : null}
-        {mode === 'Split' ? <SplitArchitecture model={model} onSelectModel={onSelectModel} /> : null}
+        {mode === 'Split' ? <SplitArchitecture model={model} onSelectModel={onSelectModel} draftTimeline={activeDraftTimeline} onDraftAction={activeDraftAction} /> : null}
       </div>
     );
   }
@@ -1206,14 +1418,122 @@ function ComparisonText({ model }: { model: BrowserModel }) {
 function SplitArchitecture({
   model,
   onSelectModel,
+  draftTimeline,
+  onDraftAction,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  draftTimeline: DraftTimeline;
+  onDraftAction: DraftDispatch;
 }) {
+  const generatedLines = buildGeneratedSource(model.sourceLines, draftTimeline.present.elements);
+  const selectedDraftElement = draftTimeline.present.elements.find((element) => element.id === draftTimeline.present.selectedElementId) ?? null;
+
   return (
     <div className="split-view">
       <ArchitectureDiagram model={model} onSelectModel={onSelectModel} />
-      <CodeEditor title="Generated SysML" lines={model.sourceLines} dense />
+      <DraftWorkbench
+        model={model}
+        draftTimeline={draftTimeline}
+        selectedDraftElement={selectedDraftElement}
+        generatedLines={generatedLines}
+        onDraftAction={onDraftAction}
+      />
+    </div>
+  );
+}
+
+function DraftWorkbench({
+  model,
+  draftTimeline,
+  selectedDraftElement,
+  generatedLines,
+  onDraftAction,
+}: {
+  model: BrowserModel;
+  draftTimeline: DraftTimeline;
+  selectedDraftElement: DraftElement | null;
+  generatedLines: readonly string[];
+  onDraftAction: React.Dispatch<DraftAction>;
+}) {
+  const canUndo = draftTimeline.past.length > 0;
+  const canRedo = draftTimeline.future.length > 0;
+  const selectedTool = draftTimeline.present.selectedTool;
+  const selectedTemplate = getDraftTemplate(selectedTool);
+
+  return (
+    <div className="split-side-panel draft-workbench">
+      <div className="split-side-panel__title">Draft editor</div>
+      <div className="draft-workbench__body">
+        <div className="draft-workbench__toolbar">
+          <div className="draft-workbench__summary">
+            <span>Selected type</span>
+            <strong>{selectedTool}</strong>
+          </div>
+          <div className="draft-workbench__actions">
+            <button type="button" className="draft-workbench__action" onClick={() => onDraftAction({ type: 'add-element' })}>
+              Add {selectedTool}
+            </button>
+            <button type="button" className="draft-workbench__action" aria-label="Undo" disabled={!canUndo} onClick={() => onDraftAction({ type: 'undo' })}>
+              ↶
+            </button>
+            <button type="button" className="draft-workbench__action" aria-label="Redo" disabled={!canRedo} onClick={() => onDraftAction({ type: 'redo' })}>
+              ↷
+            </button>
+          </div>
+        </div>
+
+        <div className="draft-workbench__content">
+          <section className="draft-workbench__section" aria-label="Draft elements">
+            <div className="draft-workbench__section-title">Draft elements</div>
+            {draftTimeline.present.elements.length ? (
+              <div className="draft-workbench__elements">
+                {draftTimeline.present.elements.map((element) => (
+                  <button
+                    key={element.id}
+                    type="button"
+                    className={`draft-element ${selectedDraftElement?.id === element.id ? 'is-selected' : ''}`}
+                    onClick={() => onDraftAction({ type: 'select-element', id: element.id })}
+                  >
+                    <strong>{element.name}</strong>
+                    <span>{element.tool} · {element.typeName}</span>
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <div className="draft-workbench__empty">No draft elements yet.</div>
+            )}
+          </section>
+
+          <section className="draft-workbench__section" aria-label="Draft properties">
+            <div className="draft-workbench__section-title">Draft properties</div>
+            <label className="draft-workbench__field">
+              <span>Draft name</span>
+              <input
+                type="text"
+                value={selectedDraftElement?.name ?? selectedTemplate.name}
+                aria-label="Draft name"
+                disabled={!selectedDraftElement}
+                onChange={(event) => onDraftAction({ type: 'rename-selected', name: event.target.value })}
+              />
+            </label>
+            <dl className="draft-workbench__details">
+              <div>
+                <dt>Target file</dt>
+                <dd>{model.file}</dd>
+              </div>
+              <div>
+                <dt>Selected type</dt>
+                <dd>{selectedTool}</dd>
+              </div>
+            </dl>
+          </section>
+
+          <section className="draft-workbench__section draft-workbench__preview" aria-label="Generated SysML preview">
+            <CodeEditor title="Generated SysML preview" lines={generatedLines} dense />
+          </section>
+        </div>
+      </div>
     </div>
   );
 }

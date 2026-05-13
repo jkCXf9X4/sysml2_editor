@@ -1,0 +1,113 @@
+{
+  "context": {
+    "workspaceId": "workspace-phase-2-editing-main",
+    "repositoryId": "fixture-phase-2-editing",
+    "repositoryAlias": "phase-2-editing",
+    "rootPath": "/fixtures/phase-2-editing",
+    "branch": "main",
+    "commitSha": null,
+    "isWritable": true,
+    "writableReason": "Editing fixture context is writable for draft changes."
+  },
+  "selection": {
+    "treeNodeId": "battery-system",
+    "graphNodeId": "battery-system",
+    "label": "BatterySystem",
+    "kind": "Part Definition",
+    "qualifiedName": "VehiclePlatform::Vehicle::Powertrain::BatterySystem",
+    "sourceFile": "model/BatterySystem.sysml"
+  },
+  "editing": {
+    "targetFile": "model/BatterySystem.sysml",
+    "selectedTool": "Part",
+    "draftElement": {
+      "id": "draft-part-1",
+      "tool": "Part",
+      "name": "thermalBarrier",
+      "typeName": "ThermalBarrier"
+    },
+    "snapshots": {
+      "initial": [
+        "part def BatterySystem {",
+        "  attribute capacity: Energy = 75 kWh;",
+        "  attribute nominalVoltage: Voltage = 400 V;",
+        "  port in coolant: FluidIn;",
+        "  port out hvPos: ElectricPowerOut;",
+        "  port out hvNeg: ElectricPowerOut;",
+        "  part cellArray: CellArray;",
+        "  part bms: BMS;",
+        "  part cooling: CoolingPlate;",
+        "  conn c1: cellArray.hvPos -> hvPos;",
+        "  conn c2: cellArray.hvNeg -> hvNeg;",
+        "  conn c3: cooling.coolantIn -> coolant;",
+        "}"
+      ],
+      "afterAdd": [
+        "part def BatterySystem {",
+        "  attribute capacity: Energy = 75 kWh;",
+        "  attribute nominalVoltage: Voltage = 400 V;",
+        "  port in coolant: FluidIn;",
+        "  port out hvPos: ElectricPowerOut;",
+        "  port out hvNeg: ElectricPowerOut;",
+        "  part cellArray: CellArray;",
+        "  part bms: BMS;",
+        "  part cooling: CoolingPlate;",
+        "  conn c1: cellArray.hvPos -> hvPos;",
+        "  conn c2: cellArray.hvNeg -> hvNeg;",
+        "  conn c3: cooling.coolantIn -> coolant;",
+        "",
+        "  part thermalBarrier: ThermalBarrier;",
+        "}"
+      ],
+      "afterRename": [
+        "part def BatterySystem {",
+        "  attribute capacity: Energy = 75 kWh;",
+        "  attribute nominalVoltage: Voltage = 400 V;",
+        "  port in coolant: FluidIn;",
+        "  port out hvPos: ElectricPowerOut;",
+        "  port out hvNeg: ElectricPowerOut;",
+        "  part cellArray: CellArray;",
+        "  part bms: BMS;",
+        "  part cooling: CoolingPlate;",
+        "  conn c1: cellArray.hvPos -> hvPos;",
+        "  conn c2: cellArray.hvNeg -> hvNeg;",
+        "  conn c3: cooling.coolantIn -> coolant;",
+        "",
+        "  part coolingBarrier: ThermalBarrier;",
+        "}"
+      ],
+      "afterUndo": [
+        "part def BatterySystem {",
+        "  attribute capacity: Energy = 75 kWh;",
+        "  attribute nominalVoltage: Voltage = 400 V;",
+        "  port in coolant: FluidIn;",
+        "  port out hvPos: ElectricPowerOut;",
+        "  port out hvNeg: ElectricPowerOut;",
+        "  part cellArray: CellArray;",
+        "  part bms: BMS;",
+        "  part cooling: CoolingPlate;",
+        "  conn c1: cellArray.hvPos -> hvPos;",
+        "  conn c2: cellArray.hvNeg -> hvNeg;",
+        "  conn c3: cooling.coolantIn -> coolant;",
+        "}"
+      ],
+      "afterRedo": [
+        "part def BatterySystem {",
+        "  attribute capacity: Energy = 75 kWh;",
+        "  attribute nominalVoltage: Voltage = 400 V;",
+        "  port in coolant: FluidIn;",
+        "  port out hvPos: ElectricPowerOut;",
+        "  port out hvNeg: ElectricPowerOut;",
+        "  part cellArray: CellArray;",
+        "  part bms: BMS;",
+        "  part cooling: CoolingPlate;",
+        "  conn c1: cellArray.hvPos -> hvPos;",
+        "  conn c2: cellArray.hvNeg -> hvNeg;",
+        "  conn c3: cooling.coolantIn -> coolant;",
+        "",
+        "  part coolingBarrier: ThermalBarrier;",
+        "}"
+      ]
+    }
+  }
+}

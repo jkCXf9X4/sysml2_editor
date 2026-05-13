@@ -13,6 +13,7 @@ The repo should maintain a small fixture library that grows with the product.
 - `cross-platform-paths`: spaces, Unicode, and line-ending sensitive paths
 - `phase-0-workbench`: visual workbench shell and multi-context UI snapshots
 - `phase-1-browser`: read-only model browser state and traceability snapshots
+- `phase-2-editing`: visual editing session snapshots and generated SysML previews
 
 Concrete fixtures live under [fixtures](../fixtures).
 
