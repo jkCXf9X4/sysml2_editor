@@ -1,0 +1,10 @@
+{
+  "renameBatteryUsageToTractionBattery": {
+    "changedFiles": [
+      "model/root.sysml"
+    ],
+    "unchangedFiles": [
+      "model/power.sysml"
+    ]
+  }
+}

@@ -1,0 +1,213 @@
+# Model Schema
+
+## Decision
+
+The implementation should use a stable graph schema with explicit node, edge, file, and source-range concepts.
+
+The UI, diff engine, inspector, and traceability features all read from the same graph.
+
+## Core Entities
+
+Backend C# records are canonical for the first slice. Frontend types should be generated from OpenAPI as described in [api-contract.md](./api-contract.md).
+
+### Node
+
+Each node represents one semantic model element.
+
+Required fields:
+
+- `stableId`: UUID string, required
+- `kind`: `NodeKind`, required
+- `name`: string, required; empty only for `Unknown`
+- `qualifiedName`: string, required when resolvable
+- `owningPackageId`: UUID string or `null`
+- `sourceFile`: repo-relative path, required
+- `sourceRange`: `SourceRange`, required
+- `attributes`: string-keyed JSON object, required
+- `modelStatus`: `ModelStatus`, required
+
+Recommended `kind` values for the MVP:
+
+- `Package`
+- `PartDefinition`
+- `PartUsage`
+- `Port`
+- `Connection`
+- `Requirement`
+- `Import`
+- `Unknown`
+
+### Edge
+
+Each edge represents a semantic relationship.
+
+Required fields:
+
+- `stableId`: UUID string, required
+- `kind`: `EdgeKind`, required
+- `sourceId`: UUID string, required
+- `targetId`: UUID string, required when resolved
+- `sourceFile`: repo-relative path, required
+- `sourceRange`: `SourceRange`, required
+- `modelStatus`: `ModelStatus`, required
+
+Recommended `kind` values for the MVP:
+
+- `Contains`
+- `References`
+- `ConnectsTo`
+- `Satisfies`
+- `Imports`
+- `TracesTo`
+
+### Source Range
+
+Source ranges are 1-based and inclusive at the start, exclusive at the end.
+
+Fields:
+
+- `startLine`: integer, required
+- `startColumn`: integer, required
+- `endLine`: integer, required
+- `endColumn`: integer, required
+
+## API Serialization
+
+JSON field names use camelCase. Enum values use PascalCase strings matching the names in this document.
+
+Minimal node JSON:
+
+```json
+{
+  "stableId": "11111111-1111-4111-8111-111111111111",
+  "kind": "PartDefinition",
+  "name": "BatteryPack",
+  "qualifiedName": "Vehicle::BatteryPack",
+  "owningPackageId": "00000000-0000-4000-8000-000000000001",
+  "sourceFile": "model/root.sysml",
+  "sourceRange": {
+    "startLine": 3,
+    "startColumn": 3,
+    "endLine": 3,
+    "endColumn": 24
+  },
+  "attributes": {},
+  "modelStatus": "Committed"
+}
+```
+
+## Canonical C# Shapes
+
+These records are the starting point for backend DTOs. Names may move by namespace, but field meaning should stay stable.
+
+```csharp
+public sealed record ModelGraphDto(
+    IReadOnlyList<ModelNodeDto> Nodes,
+    IReadOnlyList<ModelEdgeDto> Edges,
+    IReadOnlyList<ModelFileDto> Files,
+    IReadOnlyList<DiagnosticDto> Diagnostics);
+
+public sealed record ModelNodeDto(
+    Guid StableId,
+    NodeKind Kind,
+    string Name,
+    string QualifiedName,
+    Guid? OwningPackageId,
+    string SourceFile,
+    SourceRangeDto SourceRange,
+    IReadOnlyDictionary<string, object?> Attributes,
+    ModelStatus ModelStatus);
+
+public sealed record ModelEdgeDto(
+    Guid StableId,
+    EdgeKind Kind,
+    Guid SourceId,
+    Guid? TargetId,
+    string SourceFile,
+    SourceRangeDto SourceRange,
+    ModelStatus ModelStatus);
+
+public sealed record SourceRangeDto(
+    int StartLine,
+    int StartColumn,
+    int EndLine,
+    int EndColumn);
+```
+
+## Generated TypeScript Shape
+
+TypeScript types should be generated from OpenAPI. Do not hand-maintain these by default.
+
+Expected generated shape:
+
+```typescript
+export interface ModelNodeDto {
+  stableId: string;
+  kind: NodeKind;
+  name: string;
+  qualifiedName: string;
+  owningPackageId?: string | null;
+  sourceFile: string;
+  sourceRange: SourceRangeDto;
+  attributes: Record<string, unknown>;
+  modelStatus: ModelStatus;
+}
+```
+
+## Stable ID Rule
+
+Stable IDs are persisted in the source text using an editor-owned comment marker immediately above the element definition.
+
+Example:
+
+```text
+// sysml2_editor:id: 3c4c3f6a-5d49-4ec7-8d5f-0d792df0a8f1
+```
+
+Rules:
+
+- IDs are generated once when the element is created.
+- IDs do not change on rename.
+- IDs do not change when a node moves within the same owning file.
+- If a file lacks IDs, the first save backfills them.
+
+## File-Level Records
+
+The implementation should also track file metadata separately from model nodes.
+
+Required file metadata:
+
+- `path`
+- `lineEnding`
+- `contentHash`
+- `role`
+- `isDirty`
+
+Recommended `role` values:
+
+- `Model`
+- `View`
+- `Config`
+- `ImportedFragment`
+
+## Lifecycle State
+
+Nodes and edges should have a lifecycle state for UI overlays and commit summaries.
+
+Recommended values:
+
+- `Committed`
+- `Modified`
+- `Added`
+- `Deleted`
+- `Unresolved`
+
+## Derived Views
+
+The following UI projections should be derived from the same graph:
+
+- Tree view from containment edges
+- Graph view from semantic edges
+- Inspector from node attributes and incident edges
+- Trace matrix from traceability edges
+- Impact analysis from changed nodes and dependent edges

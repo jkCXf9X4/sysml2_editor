@@ -1,0 +1,48 @@
+{
+  "nodes": [
+    {
+      "stableId": "00000000-0000-4000-8000-000000000001",
+      "kind": "Package",
+      "name": "Vehicle",
+      "qualifiedName": "Vehicle",
+      "owningPackageId": null,
+      "sourceFile": "model/root.sysml",
+      "modelStatus": "Committed"
+    },
+    {
+      "stableId": "11111111-1111-4111-8111-111111111111",
+      "kind": "PartDefinition",
+      "name": "BatteryPack",
+      "qualifiedName": "Vehicle::BatteryPack",
+      "owningPackageId": "00000000-0000-4000-8000-000000000001",
+      "sourceFile": "model/root.sysml",
+      "modelStatus": "Committed"
+    },
+    {
+      "stableId": "22222222-2222-4222-8222-222222222222",
+      "kind": "PartUsage",
+      "name": "battery",
+      "qualifiedName": "Vehicle::battery",
+      "owningPackageId": "00000000-0000-4000-8000-000000000001",
+      "sourceFile": "model/root.sysml",
+      "modelStatus": "Committed"
+    }
+  ],
+  "edges": [
+    {
+      "kind": "Contains",
+      "sourceId": "00000000-0000-4000-8000-000000000001",
+      "targetId": "11111111-1111-4111-8111-111111111111"
+    },
+    {
+      "kind": "Contains",
+      "sourceId": "00000000-0000-4000-8000-000000000001",
+      "targetId": "22222222-2222-4222-8222-222222222222"
+    },
+    {
+      "kind": "References",
+      "sourceId": "22222222-2222-4222-8222-222222222222",
+      "targetId": "11111111-1111-4111-8111-111111111111"
+    }
+  ]
+}

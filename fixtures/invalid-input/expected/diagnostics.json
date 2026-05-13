@@ -1,0 +1,9 @@
+[
+  {
+    "severity": "Error",
+    "messageContains": "Expected element name",
+    "sourceFile": "model/root.sysml",
+    "startLine": 2,
+    "startColumn": 12
+  }
+]
