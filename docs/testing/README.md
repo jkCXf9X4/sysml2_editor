@@ -1,6 +1,6 @@
 # Testing
 
-This folder contains testing strategy details and readiness gates.
+This folder contains testing strategy details. Implementation phases, readiness gates, and phase exit criteria are tracked in [Implementation roadmap](../roadmap/roadmap.md).
 
 ## Documents
 
@@ -9,6 +9,3 @@ This folder contains testing strategy details and readiness gates.
 - [Fixtures](./fixtures.md) — Fixture catalog and rules
 - [Automation and CI](./automation-ci.md) — Per-commit, PR, and nightly gates
 - [Quality and risk](./quality-and-risk.md) — Cross-platform, non-functional, risk priorities, exit criteria
-- [Starter test matrix](./starter-test-matrix.md) — Minimum gated test set
-
-Implementation phases are tracked under [docs/roadmap/](../roadmap/).

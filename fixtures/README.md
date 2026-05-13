@@ -24,4 +24,4 @@ Expected JSON files are canonical assertion snapshots for the first tests. They 
 
 Fixture syntax follows the MVP subset in [syntax-examples.md](../docs/implementation/syntax-examples.md).
 
-The starter test matrix in [starter-test-matrix.md](../docs/testing/starter-test-matrix.md) defines which fixtures are needed for each development slice.
+The [implementation roadmap](../docs/roadmap/roadmap.md) defines which fixtures are needed for each development phase.

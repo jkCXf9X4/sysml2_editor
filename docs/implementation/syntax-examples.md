@@ -1,6 +1,6 @@
 # MVP Syntax Examples
 
-These examples define the exact textual subset used by the first implementation slice.
+These examples define the exact textual subset used by Phase 1 in the [implementation roadmap](../roadmap/roadmap.md).
 
 The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the MVP subset. They are implementation fixtures, not a claim of full SysML v2 conformance.
 

@@ -14,9 +14,9 @@ Opening the same absolute path twice should return the existing `repositoryId` f
 
 Rules:
 
-- The first implementation slice may create one context per opened repository.
-- Later slices must allow multiple contexts for the same repository when branches, commits, or worktrees are shown side by side.
-- Later slices must allow multiple repositories in the same workspace.
+- Phase 1 may create one context per opened repository.
+- Later roadmap phases must allow multiple contexts for the same repository when branches, commits, or worktrees are shown side by side.
+- Later roadmap phases must allow multiple repositories in the same workspace.
 - Save and commit operations must always target one writable `workspaceId`.
 - Read-only contexts may still expose model graph, source files, trace links, and comparisons.
 
@@ -30,7 +30,7 @@ Rules:
 - Branch comparison, repository comparison, trace matrices, and impact views use `MultiContextViewDto`.
 - A multi-context view includes the single-context graph snapshots it projects, and every projected reference is scoped by `workspaceId`.
 - Editing from a multi-context view must first resolve to exactly one writable `workspaceId`, one file path, and one intended operation.
-- The first implementation slice may skip this endpoint entirely; the first branch comparison implementation must add it before exposing side-by-side comparison in the UI.
+- Phase 1 may skip this endpoint entirely; the first branch comparison implementation must add it before exposing side-by-side comparison in the UI.
 
 Recommended view kinds:
 

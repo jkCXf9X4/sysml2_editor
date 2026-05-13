@@ -46,7 +46,7 @@ Response:
 Behavior:
 
 - The backend validates that `path` exists, is a directory, and is inside a Git work tree.
-- The backend discovers `*.sysml` files, parses them synchronously for the first slice, and returns the current graph.
+- The backend discovers `*.sysml` files, parses them synchronously for Phase 1, and returns the current graph.
 - Parse diagnostics do not make the open request fail unless no model graph can be created at all.
 - Git branch is read from the local repository. Detached HEAD is reported as `"HEAD"`.
 - The backend creates a `workspaceId` for this repository context and marks whether it is writable.
@@ -108,8 +108,8 @@ Response:
 Behavior:
 
 - Returns all open repository/branch/worktree contexts in the running backend process.
-- The first implementation slice may return one context.
-- Later slices use this endpoint to drive side-by-side branch and repository views.
+- Phase 1 may return one context.
+- Later roadmap phases use this endpoint to drive side-by-side branch and repository views.
 
 ## Create Worktree Context
 
@@ -217,7 +217,7 @@ Response: `TraceLinksResponseDto`
 Behavior:
 
 - The endpoint returns the current derived trace links for the repository session.
-- The first implementation slice must include `ItemToItem`, `ItemToFile`, and resolvable `FileToFile` trace links.
+- Phase 1 must include `ItemToItem`, `ItemToFile`, and resolvable `FileToFile` trace links.
 - Intra-context trace links set both endpoint workspace IDs to the active workspace context.
 - Trace links are recomputed from the current model graph, file records, imports, and Git state; they are not edited directly.
 

@@ -1,6 +1,6 @@
 # Model Graph Implementation
 
-Backend C# records are canonical for the first slice. Frontend types should be generated from OpenAPI as described in [api-contract.md](../api/api-contract.md).
+Backend C# records are canonical for the Phase 1 API path in the [implementation roadmap](../../roadmap/roadmap.md). Frontend types should be generated from OpenAPI as described in [api-contract.md](../api/api-contract.md).
 
 ## Documents
 

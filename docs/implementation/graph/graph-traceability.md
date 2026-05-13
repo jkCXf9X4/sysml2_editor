@@ -2,7 +2,7 @@
 
 ## First Slice
 
-The first implementation slice must derive trace links for:
+Phase 1 in the [implementation roadmap](../../roadmap/roadmap.md) must derive trace links for:
 
 - Item-to-item semantic relationships that are already represented as model edges.
 - Item-to-file source ownership for every structured node.
@@ -10,7 +10,7 @@ The first implementation slice must derive trace links for:
 
 ## Later Slices
 
-Later slices extend trace links for:
+Later roadmap phases extend trace links for:
 
 - Branch-to-branch links from semantic diff results.
 - Repo-to-repo links from imported libraries, supplier models, shared views, or related engineering repositories.

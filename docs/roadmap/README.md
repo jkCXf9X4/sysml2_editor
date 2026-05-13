@@ -1,54 +1,38 @@
-# Implementation Workspace
+# Roadmap
 
-This folder is the implementation entry point for humans and AI agents. It merges the former `docs/plan.md` to centralize implementation planning.
+This folder contains the single implementation roadmap for `sysml2_editor`.
 
-Read these files in order when setting up or changing the project:
+[roadmap.md](./roadmap.md) is the canonical source for:
 
-1. [Product vision](../../PRODUCT_VISION.md)
-2. [Architecture overview](../architecture/README.md)
-3. [Root layout](../../README.md) — repository top-level shape
-4. [Backend layout](../../src/backend/README.md)
-5. [Frontend layout](../../src/frontend/README.md)
-6. [Shared contracts layout](../../src/shared/README.md)
-7. [Test roadmap](./test_roadmap.md) — testing focus and exit criteria by phase
-8. [starter-test-matrix.md](../testing/starter-test-matrix.md)
-9. [runtime.md](../architecture/runtime.md)
-10. [api-contract.md](../implementation/api/api-contract.md)
-11. [parser-contract.md](../implementation/parser-contract.md)
-12. [model-graph.md](../architecture/model-graph.md)
-13. [write-policy.md](../architecture/write-policy.md)
-14. [sysml-v2.md](../reference/sysml-v2.md)
-15. [syntax-examples.md](../implementation/syntax-examples.md)
-16. [roadmap.md](./roadmap.md)
+- MVP scope
+- Development phases
+- Test focus by phase
+- Fixture expectations
+- Minimum gate tests
+- Setup order
+- Phase exit criteria
 
-## Documentation Traceability
+Do not add separate phase plans, test roadmaps, setup plans, or readiness matrices in this folder. If phase scope, gate tests, or exit criteria change, update [roadmap.md](./roadmap.md) directly.
 
-- Use [PRODUCT_VISION.md](../../PRODUCT_VISION.md) as the central product intent and traceability source.
-- Use [../implementation/README.md](../implementation/README.md) for implementation details and contracts.
-- Use [../ui/design.md](../ui/design.md) for UI/UX direction derived from the product vision.
-- Use [../architecture/README.md](../architecture/README.md) for cross-cutting system decisions.
-- Use individual source area READMEs ([../../src/backend/README.md](../../src/backend/README.md), [../../src/frontend/README.md](../../src/frontend/README.md), [../../src/shared/README.md](../../src/shared/README.md)) for repo structure during scaffolding and project setup.
-- If the repository layout diverges from these READMEs, update the relevant source area README first so the setup path stays accurate.
+## Supporting References
 
-## Readiness Source
+Use these documents for detail behind the roadmap:
 
-[starter-test-matrix.md](../testing/starter-test-matrix.md) is the canonical implementation readiness and gate document. It defines the scaffold gate, read-only browser gate, writer gate, and Git diff gate.
+- [Product vision](../../PRODUCT_VISION.md) for product intent and tradeoffs
+- [UI design](../ui/design.md) for the target workbench experience
+- [Architecture overview](../architecture/README.md) for system decisions
+- [Runtime decision](../architecture/runtime.md) for local-web runtime rules
+- [Write policy](../architecture/write-policy.md) for save and context safety
+- [Implementation contracts](../implementation/README.md) for API, parser, and graph details
+- [Testing strategy](../testing/test-strategy.md) for testing principles
+- [Fixtures](../testing/fixtures.md) for fixture catalog and rules
 
-## Agent Working Contract
+## Source Layout References
 
-- Follow [working-rules.md](../ai/working-rules.md) for implementation behavior.
-- Use architecture documents for system guarantees and implementation documents for concrete contracts.
-- Use [starter-test-matrix.md](../testing/starter-test-matrix.md) for implementation readiness and slice gates.
+Use source-area READMEs for repository structure during implementation:
 
-## Setup Order
+- [Backend layout](../../src/backend/README.md)
+- [Frontend layout](../../src/frontend/README.md)
+- [Shared contracts layout](../../src/shared/README.md)
 
-Project setup should follow this order:
-
-1. Create the repository root and documentation structure.
-2. Create the backend solution and projects.
-3. Create the frontend app shell.
-4. Add backend OpenAPI generation.
-5. Add test projects.
-6. Add fixture repositories and sample files.
-7. Wire the local dev command.
-8. Add the first smoke test and parser round-trip test.
+If the repository layout changes, update the relevant source-area README first, then update the roadmap only if the implementation order, gates, or exit criteria change.

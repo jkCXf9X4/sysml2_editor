@@ -66,4 +66,4 @@ If a decision does not support a vision pillar, the decision should either be ch
 
 ## Current Strategic Choice
 
-The first implementation slice prioritizes a read-only Git-backed model browser before visual editing. This does not change the product vision; it reduces delivery risk by proving repository access, parsing, source mapping, and model projection before writes are exposed.
+Phase 1 in the [implementation roadmap](docs/roadmap/roadmap.md) prioritizes a read-only Git-backed model browser before visual editing. This does not change the product vision; it reduces delivery risk by proving repository access, parsing, source mapping, and model projection before writes are exposed.

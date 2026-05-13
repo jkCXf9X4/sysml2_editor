@@ -15,7 +15,7 @@ Example:
 - IDs are generated once when the element is created.
 - IDs do not change on rename.
 - IDs do not change when a node moves within the same owning file.
-- In the read-only first slice, elements without identity metadata may be loaded with deterministic derived IDs, but they are marked read-only with a diagnostic.
+- In the read-only Phase 1 browser, elements without identity metadata may be loaded with deterministic derived IDs, but they are marked read-only with a diagnostic.
 - Writer support must not silently save a file with missing identity metadata. A later explicit backfill operation may add metadata annotations and then enable editing.
 
 ## Derived Read-Only IDs

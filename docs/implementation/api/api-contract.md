@@ -4,7 +4,7 @@ The ASP.NET Core backend owns repository access, parsing, file IO, and Git execu
 
 ## Contract Ownership
 
-- Backend C# DTOs are canonical for the first implementation slice.
+- Backend C# DTOs are canonical for the Phase 1 API path in the [implementation roadmap](../../roadmap/roadmap.md).
 - The backend must expose OpenAPI during development.
 - Frontend TypeScript API clients should be generated from OpenAPI into `src/shared/contracts/generated/`.
 - Generated files should not be edited manually.

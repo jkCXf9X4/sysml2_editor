@@ -6,7 +6,7 @@ The editor should use deterministic file ownership rules so that a save changes 
 
 The write policy is part of the implementation contract, not an afterthought.
 
-This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the writer gate in [starter-test-matrix.md](../testing/starter-test-matrix.md) is active.
+This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the Phase 2 writer gates in [Implementation roadmap](../roadmap/roadmap.md) are active.
 
 Vision trace:
 
@@ -15,7 +15,7 @@ Vision trace:
 
 ## File Convention
 
-The first implementation slice should use this repository layout:
+The initial writable model layout should use this repository shape:
 
 ```text
 model/root.sysml
@@ -68,7 +68,7 @@ Initial design:
 5. The backend marks a context read-only when the root path is not writable, the branch is detached, the branch is already open in another writable root without a distinct worktree, or the context was created only for comparison.
 6. Closing a context does not delete a worktree. Worktree deletion is a separate explicit operation.
 
-Recommended context operations for the first editable multi-branch slice:
+Recommended context operations for the first editable multi-branch roadmap phase:
 
 - `POST /repositories/open`: open an existing repository or worktree path.
 - `POST /workspace-contexts/worktrees`: create a new worktree for a branch and open it as a workspace context.
@@ -119,7 +119,7 @@ Save should happen in this order:
 
 ## Backup Rule
 
-The first implementation slice should avoid backup files and rely on Git plus transactional write checks. If a file is not tracked by Git, failed writes must still leave the original content untouched.
+The initial writer should avoid backup files and rely on Git plus transactional write checks. If a file is not tracked by Git, failed writes must still leave the original content untouched.
 
 ## Naming Rules
 

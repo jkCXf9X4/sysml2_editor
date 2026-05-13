@@ -2,13 +2,13 @@
 
 ## Decision
 
-For the first implementation slice, `sysml2_editor` runs as a local web app:
+For Phase 1 in the [implementation roadmap](../roadmap/roadmap.md), `sysml2_editor` runs as a local web app:
 
 - React frontend in the browser
 - ASP.NET Core backend on `localhost`
 - Backend serves the API and static frontend assets
 - Backend owns repository access, file IO, and Git process spawning
-- No Electron or Avalonia wrapper in the first slice
+- No Electron or Avalonia wrapper in Phase 1
 
 ## Why This Is The Starting Point
 
@@ -20,7 +20,7 @@ For the first implementation slice, `sysml2_editor` runs as a local web app:
 Vision trace:
 
 - Supports: textual SysML in Git as the durable source of truth; Git operations as visible modeling workflow; visual editing backed by backend-owned model state; multiple repository and branch contexts in one local workspace.
-- Tradeoff: defers desktop packaging so the first slices can prove parsing, source mapping, and Git-backed workflows.
+- Tradeoff: defers desktop packaging so early roadmap phases can prove parsing, source mapping, and Git-backed workflows.
 
 ## Operational Model
 
@@ -49,7 +49,7 @@ The runtime must distinguish repository identity from workspace context identity
 
 ## Development Command Shape
 
-The first implementation slice should standardize on a simple local launch model:
+The initial local-web runtime should standardize on a simple launch model:
 
 - Backend project: `src/backend/Sysml2Editor.Api`
 - Backend command: `dotnet run --project src/backend/Sysml2Editor.Api`
@@ -86,9 +86,11 @@ Vision trace:
 
 ## Desktop Packaging Options
 
-- Phase 1: run as a local web app during development.
-- Phase 2: package with Electron if quickest cross-platform delivery matters.
-- Alternative: use Avalonia/.NET if a more native C# desktop shell becomes more important than web-based canvas flexibility.
+Implementation phases are defined only in [Implementation roadmap](../roadmap/roadmap.md). Runtime packaging options are:
+
+- Start as a local web app during development.
+- Package with Electron if quickest cross-platform delivery matters.
+- Use Avalonia/.NET if a more native C# desktop shell becomes more important than web-based canvas flexibility.
 
 ## Backend Responsibilities
 

@@ -4,7 +4,7 @@
 
 This document defines how to test `sysml2_editor` as a Git-native SysML v2 workbench.
 
-The plan makes three things non-negotiable:
+The testing strategy makes three things non-negotiable:
 
 1. Textual SysML is the source of truth.
 2. Visual editing must round-trip to stable, reviewable text.
@@ -147,11 +147,10 @@ Add performance coverage for workflows that can degrade on real repositories:
 | Document | Content |
 | --- | --- |
 | [MVP coverage](./mvp-coverage.md) | Supported elements, round-trip cases, negative cases |
-| [Test roadmap](../roadmap/test_roadmap.md) | Five-phase rollout with test focus and exit criteria |
+| [Implementation roadmap](../roadmap/roadmap.md) | Combined phase rollout, test focus, fixtures, and exit criteria |
 | [Test fixtures](./fixtures.md) | Fixture catalog and rules |
 | [Automation and CI](./automation-ci.md) | Per-commit, PR, and nightly gates |
 | [Quality and risk](./quality-and-risk.md) | Cross-platform, non-functional, risk priorities, exit criteria |
-| [Starter test matrix](./starter-test-matrix.md) | Minimum gated test set for initial implementation slices |
 
 ## Summary
 

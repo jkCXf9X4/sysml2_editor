@@ -1,6 +1,6 @@
 # Cross-Platform Requirements
 
-Because the plan calls for Windows and Linux support, tests must explicitly cover:
+Because the [implementation roadmap](../roadmap/roadmap.md) calls for Windows and Linux support, tests must explicitly cover:
 
 - Path separators
 - Case sensitivity differences

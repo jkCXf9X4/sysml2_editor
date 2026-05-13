@@ -2,7 +2,7 @@
 
 ## Decision
 
-The first implementation slice uses a custom, MVP-scoped parser for a narrow textual SysML subset.
+Phase 1 in the [implementation roadmap](../roadmap/roadmap.md) uses a custom, MVP-scoped parser for a narrow textual SysML subset.
 
 It is not a full SysML v2 grammar implementation. It is a conservative parser whose job is to load, edit, and save the subset that the app supports first.
 
@@ -53,7 +53,7 @@ The parser must produce:
 
 - Supported semantic elements with `@Sysml2EditorIdentity` metadata use its `id` attribute as `stableId`.
 - Packages are supported semantic elements and must have identity metadata to be editable.
-- In the read-only first slice, elements missing identity metadata may be loaded with deterministic derived IDs and a `MissingStableId` warning diagnostic.
+- In the read-only Phase 1 browser, elements missing identity metadata may be loaded with deterministic derived IDs and a `MissingStableId` warning diagnostic.
 - Missing-identity elements are read-only until a later explicit backfill operation adds persisted identity metadata.
 - Relationship edges use deterministic derived IDs unless the source text later introduces explicit relationship identity.
 
@@ -88,7 +88,7 @@ Additional invariants:
 - The parser must not reorder unrelated declarations.
 - The parser must preserve file boundaries and imports.
 - Stable identity metadata must be preserved when a supported element is rewritten.
-- In the first read-only slice, no writer exists and round-trip invariants are verified only once writer support begins.
+- In the read-only Phase 1 browser, no writer exists and round-trip invariants are verified only once writer support begins.
 
 ## Error Handling
 

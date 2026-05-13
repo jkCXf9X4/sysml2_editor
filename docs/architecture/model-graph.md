@@ -52,7 +52,7 @@ A combined view must never merge nodes, files, or trace links into a context-fre
 
 Workspace context is the unit of safe viewing and editing.
 
-The first implementation slice may open one context. Later slices must be able to hold several contexts at once:
+Phase 1 may open one context. Later roadmap phases must be able to hold several contexts at once:
 
 - Same repository, different branches, read-only comparison contexts.
 - Same repository, different worktrees, independently writable contexts.

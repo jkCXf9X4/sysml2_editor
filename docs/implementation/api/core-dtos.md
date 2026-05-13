@@ -1,6 +1,6 @@
 # Core DTOs
 
-DTO definitions for the API contract. Backend C# DTOs are canonical for the first implementation slice.
+DTO definitions for the API contract. Backend C# DTOs are canonical for the Phase 1 API path in the [implementation roadmap](../../roadmap/roadmap.md).
 
 ## ModelGraphDto
 

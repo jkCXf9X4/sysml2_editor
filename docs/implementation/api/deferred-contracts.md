@@ -39,4 +39,4 @@ Branch-to-branch and repo-to-repo traceability are not first-slice behavior, but
 - Visual diff
 - Clone repository
 
-These are not required for the read-only first slice.
+These are not required for the read-only Phase 1 browser.

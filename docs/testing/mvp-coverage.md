@@ -11,7 +11,7 @@ The MVP supports the following SysML v2 elements:
 - Satisfy / trace relationship
 
 The initial test suite should focus on those elements first.
-The minimum gate set for the first implementation slice is defined in [starter-test-matrix.md](./starter-test-matrix.md).
+The minimum gate set for Phase 1 is defined in [Implementation roadmap](../roadmap/roadmap.md).
 Concrete starter fixtures live under [fixtures](../fixtures).
 
 ## Round-trip cases
