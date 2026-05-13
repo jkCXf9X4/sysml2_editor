@@ -16,7 +16,8 @@ The product should let users:
 
 ## Authoritative Context
 
-- Product and UX direction: [design.md](../../design.md)
+- Product vision: [PRODUCT_VISION.md](../../PRODUCT_VISION.md)
+- Product and UX direction derived from the vision: [design.md](../../design.md)
 - Implementation entry point: [docs/implementation/README.md](../implementation/README.md)
 - Current implementation decisions: [docs/implementation/README.md](../implementation/README.md)
 - Minimum test gate: [starter-test-matrix.md](../implementation/starter-test-matrix.md)

@@ -13,6 +13,11 @@ Use this as the reference when scaffolding the codebase. The goal is to keep res
 - Keep implementation docs under `docs/implementation`
 - Keep AI navigation docs under `docs/ai`
 
+Vision trace:
+
+- Supports: visual UI, backend Git/file ownership, parser/domain rules, and tests each stay independently understandable and reviewable.
+- Tradeoff: uses a few explicit folders early instead of a minimal single-project scaffold, because parser, Git, model, and UI responsibilities need clear boundaries.
+
 ## Root Layout
 
 The implementation scaffold should use this top-level shape:
@@ -20,6 +25,7 @@ The implementation scaffold should use this top-level shape:
 ```text
 sysml2_editor/
   README.md
+  PRODUCT_VISION.md
   plan.md
   design.md
   test-strategy.md

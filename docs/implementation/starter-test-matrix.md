@@ -4,6 +4,11 @@ This is the minimum test set for the initial implementation path.
 
 Tests are split by slice so the first read-only branch is not blocked by writer, diff, or editing behavior. Later slices inherit earlier gates.
 
+Vision trace:
+
+- Supports: precise source mapping, reviewable Git changes, and safe visual editing by requiring evidence before behavior is exposed.
+- Tradeoff: the first slice is read-only, intentionally delaying visual writes until parser, identity, and file ownership behavior are verified.
+
 ## Slice 0: Scaffold Gate
 
 | Test | Layer | Fixture | Purpose | Expected Result |

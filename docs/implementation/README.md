@@ -4,16 +4,17 @@ This folder is the implementation entry point for humans and AI agents.
 
 Read these files in order when setting up or changing the project:
 
-1. [project-structure.md](./project-structure.md)
-2. [starter-test-matrix.md](./starter-test-matrix.md)
-3. [runtime-decision.md](./runtime-decision.md)
-4. [api-contract.md](./api-contract.md)
-5. [parser-contract.md](./parser-contract.md)
-6. [model-schema.md](./model-schema.md)
-7. [write-policy.md](./write-policy.md)
-8. [spec-reference.md](./spec-reference.md)
-9. [syntax-examples.md](./syntax-examples.md)
-10. [plan.md](./plan.md)
+1. [Product vision](../../PRODUCT_VISION.md)
+2. [project-structure.md](./project-structure.md)
+3. [starter-test-matrix.md](./starter-test-matrix.md)
+4. [runtime-decision.md](./runtime-decision.md)
+5. [api-contract.md](./api-contract.md)
+6. [parser-contract.md](./parser-contract.md)
+7. [model-schema.md](./model-schema.md)
+8. [write-policy.md](./write-policy.md)
+9. [spec-reference.md](./spec-reference.md)
+10. [syntax-examples.md](./syntax-examples.md)
+11. [plan.md](./plan.md)
 
 ## Current Build Direction
 
@@ -27,6 +28,10 @@ Read these files in order when setting up or changing the project:
 - Save policy: deterministic owning-file writes only
 
 These bullets are a summary only. The linked decision documents are authoritative when details differ.
+
+## Vision Trace
+
+All implementation decisions must trace back to [PRODUCT_VISION.md](../../PRODUCT_VISION.md). If a decision optimizes for implementation speed, parser scope, or runtime simplicity, the tradeoff must be explicit and must not weaken the core product promise: visual modeling backed by precise, traceable, reviewable SysML text in Git.
 
 ## Readiness Source
 

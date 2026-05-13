@@ -8,6 +8,11 @@ The write policy is part of the implementation contract, not an afterthought.
 
 This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the writer gate in [starter-test-matrix.md](./starter-test-matrix.md) is active.
 
+Vision trace:
+
+- Supports: textual SysML files in Git as the durable source of truth; reviewable generated changes; visual editing that preserves identity and semantics.
+- Tradeoff: save behavior is blocked until parser and writer gates prove that edits can be persisted without unrelated file churn.
+
 ## File Convention
 
 The first implementation slice should use this repository layout:

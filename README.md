@@ -2,8 +2,17 @@
 
 Git-native SysML v2 viewer and editor.
 
+## Product Vision
+
+`sysml2_editor` is a Git-native SysML v2 architecture workbench that lets engineers model systems visually with PowerPoint-level ease while preserving textual precision, traceability, validation, and version control.
+
+Traceability includes links between model items, source files, branches, and related repositories.
+
+All material design and implementation decisions should trace back to [PRODUCT_VISION.md](./PRODUCT_VISION.md).
+
 ## Start Here
 
+- Product vision: [PRODUCT_VISION.md](./PRODUCT_VISION.md)
 - Project plan index: [plan.md](./plan.md)
 - AI implementation guide: [docs/ai/index.md](./docs/ai/index.md)
 - Implementation workspace: [docs/implementation/README.md](./docs/implementation/README.md)

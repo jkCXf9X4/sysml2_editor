@@ -21,6 +21,11 @@ Instead:
 - Keep fixture syntax close to SysML v2 textual notation where practical.
 - Mark deliberate simplifications in [syntax-examples.md](./syntax-examples.md).
 
+Vision trace:
+
+- Supports: textual SysML files in Git as the durable source of truth; precise semantics grounded in the external SysML language source.
+- Tradeoff: local MVP examples intentionally limit coverage while preserving a path back to formal SysML v2.
+
 ## Identity Metadata Decision
 
 Stable model identity should be represented with SysML-native metadata annotations, not tool-owned comments.
@@ -34,6 +39,11 @@ metadata def Sysml2EditorIdentity {
 ```
 
 The MVP parser recognizes `@Sysml2EditorIdentity { id = "..."; }` immediately above editable element definitions. This keeps identity in the model text using the SysML metadata mechanism while leaving room to migrate if a standard SysML identity metadata definition is adopted later.
+
+Vision trace:
+
+- Supports: stable identity, traceability, reviewability, and source-text ownership without hiding model identity in tool-owned side files.
+- Tradeoff: uses project-owned metadata until a standard identity convention is adopted.
 
 ## Conformance Rule
 

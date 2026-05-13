@@ -6,6 +6,11 @@ The implementation should use a stable graph schema with explicit node, edge, fi
 
 The UI, diff engine, inspector, and traceability features all read from the same graph.
 
+Vision trace:
+
+- Supports: every model element remains precise, traceable, reviewable, and tied back to source text; item, file, branch, and repository traceability can be projected from one shared model.
+- Tradeoff: the schema carries explicit source and lifecycle metadata from the start, even when early UI slices only consume part of it.
+
 ## Core Entities
 
 Backend C# records are canonical for the first slice. Frontend types should be generated from OpenAPI as described in [api-contract.md](./api-contract.md).
@@ -287,3 +292,5 @@ The following UI projections should be derived from the same graph:
 - Inspector from node attributes and incident edges
 - Trace matrix from traceability edges
 - Impact analysis from changed nodes and dependent edges
+- Source ownership view from nodes, files, imports, and source ranges
+- Cross-repository dependency view from imported libraries, related repositories, and unresolved external references once multi-repo support is introduced

@@ -17,6 +17,11 @@ For the first implementation slice, `sysml2_editor` runs as a local web app:
 - It avoids committing to desktop packaging before the product behavior is proven.
 - It lets the frontend iterate quickly while the backend stays authoritative for model state.
 
+Vision trace:
+
+- Supports: textual SysML in Git as the durable source of truth; Git operations as visible modeling workflow; visual editing backed by backend-owned model state.
+- Tradeoff: defers desktop packaging so the first slices can prove parsing, source mapping, and Git-backed workflows.
+
 ## Operational Model
 
 - Users launch the backend with a local dev command.

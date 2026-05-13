@@ -8,6 +8,11 @@ It is not a full SysML v2 grammar implementation. It is a conservative parser wh
 
 Use [spec-reference.md](./spec-reference.md) for the external language source and [syntax-examples.md](./syntax-examples.md) for the exact MVP syntax accepted by this project.
 
+Vision trace:
+
+- Supports: textual SysML in Git as the durable source of truth; model elements tied back to source ranges; safe visual editing through parseable semantics.
+- Tradeoff: accepts a narrow MVP parser before full SysML v2 coverage so implementation can prove source mapping and round-trip behavior early.
+
 ## Supported MVP Subset
 
 The parser must recognize the following semantic constructs:

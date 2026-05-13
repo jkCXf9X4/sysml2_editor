@@ -6,6 +6,7 @@ It exists to route agents to the authoritative planning and implementation docum
 
 ## Start Here
 
+- Product vision: [PRODUCT_VISION.md](../../PRODUCT_VISION.md)
 - Implementation work: [docs/implementation/README.md](../implementation/README.md)
 - Test strategy: [test-strategy.md](../../test-strategy.md)
 - Product and UX direction: [design.md](../../design.md)
@@ -13,6 +14,7 @@ It exists to route agents to the authoritative planning and implementation docum
 ## What This Guide Is For
 
 - Point to the authoritative docs for decisions and constraints
+- Keep implementation decisions traceable to the product vision
 - Keep the setup path, coding path, and test path aligned
 
 ## What The Agent Should Optimize For
@@ -27,10 +29,11 @@ It exists to route agents to the authoritative planning and implementation docum
 
 If any implementation assumption changes:
 
-1. Update the relevant decision doc first.
-2. Update this guide only when navigation changes.
-3. Update the implementation plan if the change affects sequencing.
-4. Update tests if the behavior contract changed.
+1. Check whether the change still supports [PRODUCT_VISION.md](../../PRODUCT_VISION.md).
+2. Update the relevant decision doc with a vision trace.
+3. Update this guide only when navigation changes.
+4. Update the implementation plan if the change affects sequencing.
+5. Update tests if the behavior contract changed.
 
 ## Helpful Companion Docs
 

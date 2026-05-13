@@ -4,6 +4,11 @@ These examples define the exact textual subset used by the first implementation 
 
 The examples are derived from the OMG SysML v2 textual notation reference source in [spec-reference.md](./spec-reference.md), but they intentionally cover only the MVP subset. They are implementation fixtures, not a claim of full SysML v2 conformance.
 
+Vision trace:
+
+- Supports: precise source-backed model semantics and reviewable fixtures for parser, graph, and writer behavior.
+- Tradeoff: uses a narrow syntax subset to prove the visual-to-text workflow before broad language support.
+
 ## Supported Identity Metadata
 
 Stable IDs are stored as SysML-native metadata annotations on every editable model element, including packages. File-level imports and relationship edges may use deterministic derived IDs in the initial design.

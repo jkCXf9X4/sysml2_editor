@@ -2,9 +2,16 @@
 
 ## Product Vision
 
-`sysml2_editor` should be a Git-native SysML v2 architecture workbench where the diagram is easy to manipulate like PowerPoint, but the model remains precise, traceable, reviewable, and version-controlled as text.
+[PRODUCT_VISION.md](./PRODUCT_VISION.md) is the central product intent and traceability source.
+
+Design summary: `sysml2_editor` should be a Git-native SysML v2 architecture workbench where the diagram is easy to manipulate like PowerPoint, but the model remains precise, traceable, reviewable, and version-controlled as text.
 
 That direction is aligned with SysML v2: textual notation is intended to support precise model definition, large-model editing, Git-based configuration management, validation, generation, and CI workflows.
+
+Vision trace:
+
+- Supports: visual editing without making diagrams the source of truth; textual SysML in Git as durable source of truth; visible item, file, branch, and repository traceability.
+- Tradeoff: early design favors a structured engineering workbench over a generic diagramming tool.
 
 ## Suggested UI Concept
 
@@ -179,13 +186,21 @@ Recommended navigation mechanisms:
 
 Traceability should be a first-class feature, not a report hidden somewhere.
 
-Every node should have visible trace indicators.
+Every node should have visible trace indicators. Traceability views should make relationships navigable at several levels:
+
+- Item-to-item: requirements, satisfies, traces, ports, connections, and dependencies
+- Item-to-file: source file ownership, references, and save impact
+- File-to-file: imports, package modularity, generated views, and layout artifacts
+- Branch-to-branch: element and file changes between alternatives
+- Repo-to-repo: external model libraries, supplier repositories, and related engineering repositories
 
 Useful traceability views:
 
 1. Node-centered trace view
 2. Trace matrix
 3. Impact analysis view
+4. Source ownership view
+5. Cross-repository dependency view
 
 ### Workflow 5: Custom Views
 
@@ -294,7 +309,7 @@ Large systems fail visually when everything is shown at once.
 
 ### 5. Make traceability a first-class part of the model hierarchy
 
-Traceability should appear in node badges, inspector, hover cards, impact view, matrix view, and commit summary.
+Traceability should appear in node badges, inspector, hover cards, source ownership view, impact view, matrix view, cross-repository dependency view, and commit summary.
 
 ## Suggested Feature: Architecture Lens
 

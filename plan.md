@@ -2,6 +2,7 @@
 
 This plan is split into separate documents for clarity:
 
+- Product vision: [PRODUCT_VISION.md](./PRODUCT_VISION.md)
 - AI implementation guide: [docs/ai/index.md](./docs/ai/index.md)
 - Design: [design.md](./design.md)
 - Implementation workspace: [docs/implementation/README.md](./docs/implementation/README.md)
@@ -17,7 +18,8 @@ This plan is split into separate documents for clarity:
 - Write policy: [docs/implementation/write-policy.md](./docs/implementation/write-policy.md)
 - Test strategy: [test-strategy.md](./test-strategy.md)
 
-Use `design.md` for product vision, UX, workflows, and model architecture.
+Use `PRODUCT_VISION.md` as the central product intent and traceability source.
+Use `design.md` for UX, workflows, and model architecture derived from the product vision.
 Use `docs/implementation/README.md` as the implementation entry point.
 Use `docs/implementation/project-structure.md` during repo scaffolding and project setup.
 

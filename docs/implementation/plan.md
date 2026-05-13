@@ -22,6 +22,11 @@ Why this fits:
 - The React UI remains flexible for graph/canvas-heavy interaction.
 - Git CLI is reliable and avoids premature complexity.
 
+Vision trace:
+
+- Supports: visual workbench interaction through React; precise backend-owned model state through .NET; Git-native review through Git CLI integration.
+- Tradeoff: starts as a local web app and MVP parser instead of full desktop packaging or full SysML v2 grammar.
+
 Desktop packaging options:
 
 - Phase 1: run as a local web app during development.
@@ -43,7 +48,7 @@ Frontend responsibilities:
 - Canvas/tree/matrix/text views
 - Visual editing gestures
 - Inspector and validation presentation
-- Change overlays and traceability navigation
+- Change overlays and traceability navigation across items, files, branches, and repositories
 
 Git integration should start with the `git` CLI wrapper.
 
@@ -87,6 +92,7 @@ Must-have:
 - Show attributes of selected element
 - Commit changes
 - Store custom views as JSON
+- Visualize traceability between model items and their source files
 
 ### First Supported Model Elements
 
@@ -168,6 +174,8 @@ Features:
 - Shared repo views
 - Local private views
 - Trace matrix
+- Source ownership view
+- Cross-repository dependency view
 - Impact analysis
 - Query/filter system
 - View publishing

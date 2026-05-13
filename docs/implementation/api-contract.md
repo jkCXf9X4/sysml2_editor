@@ -9,6 +9,11 @@ The ASP.NET Core backend owns repository access, parsing, file IO, and Git execu
 - Frontend TypeScript API clients should be generated from OpenAPI into `src/shared/contracts/generated/`.
 - Generated files should not be edited manually.
 
+Vision trace:
+
+- Supports: precise, traceable, reviewable model data exposed consistently to UI views; generated contracts prevent frontend/backend drift.
+- Tradeoff: backend DTOs are canonical first, with generated TypeScript clients instead of hand-maintained shared types.
+
 ## Development Endpoints
 
 Base URL:
