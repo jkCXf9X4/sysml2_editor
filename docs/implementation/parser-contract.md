@@ -44,6 +44,7 @@ Rules:
 The parser must produce:
 
 - A model graph for supported constructs
+- Derived trace links for item-to-item relationships, item-to-file ownership, and resolvable file-to-file imports
 - Source ranges for every structured element
 - Diagnostics for malformed or unsupported sections
 - `OpaqueSpanDto` records for content the parser does not understand structurally
@@ -68,6 +69,8 @@ Rules:
 - The parser creates an `Imports` edge from the file-level import node.
 - If the imported target resolves to a model node, `targetId` is that node ID.
 - If the imported target is unresolved, `targetId` is `null` and `attributes["unresolvedTarget"]` contains the imported qualified name.
+- Resolved imports also produce a `FileToFile` trace link from the importing file to the imported file.
+- Unresolved imports produce an `ItemToItem` or `FileToFile` trace link with `attributes["unresolvedTarget"]` set to the imported qualified name.
 
 ## Round-Trip Invariants
 

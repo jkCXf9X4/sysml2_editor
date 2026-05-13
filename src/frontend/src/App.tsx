@@ -17,6 +17,8 @@ export function App() {
         </div>
         <div className="topbar-actions">
           <StatusPill label="main" tone="success" />
+          <StatusPill label="1 file" tone="neutral" />
+          <StatusPill label="6 traces" tone="neutral" />
           <StatusPill label="OpenAPI ready" tone="neutral" />
         </div>
       </header>
@@ -47,16 +49,21 @@ export function App() {
             <div className="canvas-card canvas-card-muted">
               <strong>BatteryPack</strong>
               <span>Part definition</span>
+              <small>model/root.sysml:3</small>
             </div>
             <div className="canvas-card canvas-card-muted">
               <strong>battery</strong>
               <span>Part usage</span>
+              <small>references BatteryPack</small>
             </div>
           </div>
         </section>
 
         <aside className="panel panel-right">
-          <h2>Inspector</h2>
+          <div className="panel-header">
+            <h2>Inspector</h2>
+            <StatusPill label="Traceable" tone="success" />
+          </div>
           <dl className="details">
             <div>
               <dt>Selected</dt>
@@ -71,6 +78,24 @@ export function App() {
               <dd>model/root.sysml</dd>
             </div>
           </dl>
+
+          <section className="trace-section" aria-label="Traceability">
+            <h3>Traceability</h3>
+            <ul className="trace-list">
+              <li>
+                <span>Defined in</span>
+                <strong>model/root.sysml</strong>
+              </li>
+              <li>
+                <span>Referenced by</span>
+                <strong>Vehicle::battery</strong>
+              </li>
+              <li>
+                <span>Branch context</span>
+                <strong>main</strong>
+              </li>
+            </ul>
+          </section>
         </aside>
       </main>
     </div>

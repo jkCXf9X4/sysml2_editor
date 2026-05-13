@@ -2,7 +2,7 @@
 
 ## Decision
 
-The implementation should use a stable graph schema with explicit node, edge, file, and source-range concepts.
+The implementation should use a stable graph schema with explicit node, edge, file, trace-link, and source-range concepts.
 
 The UI, diff engine, inspector, and traceability features all read from the same graph.
 
@@ -81,6 +81,38 @@ Fields:
 
 For file-level synthetic nodes and edges, use the smallest source range that identifies the declaration that caused the model item. Do not use zero values.
 
+### Trace Link
+
+Trace links are derived navigation facts that make product traceability explicit for UI, tests, and future APIs. They do not replace semantic model edges; they give a stable cross-level trace view over model items, files, branches, and repositories.
+
+Required fields:
+
+- `stableId`: UUID string, required
+- `kind`: `TraceLinkKind`, required
+- `sourceKind`: `TraceEndpointKind`, required
+- `sourceId`: string, required
+- `targetKind`: `TraceEndpointKind`, required
+- `targetId`: string, required
+- `relationship`: string, required
+- `sourceFile`: repo-relative path or `null`
+- `sourceRange`: `SourceRange` or `null`
+- `attributes`: string-keyed JSON object, required
+
+Recommended `kind` values:
+
+- `ItemToItem`
+- `ItemToFile`
+- `FileToFile`
+- `BranchToBranch`
+- `RepoToRepo`
+
+Recommended `sourceKind` and `targetKind` values:
+
+- `ModelItem`
+- `File`
+- `Branch`
+- `Repository`
+
 ## API Serialization
 
 JSON field names use camelCase. Enum values use PascalCase strings matching the names in this document.
@@ -115,6 +147,7 @@ public sealed record ModelGraphDto(
     IReadOnlyList<ModelNodeDto> Nodes,
     IReadOnlyList<ModelEdgeDto> Edges,
     IReadOnlyList<ModelFileDto> Files,
+    IReadOnlyList<TraceLinkDto> TraceLinks,
     IReadOnlyList<OpaqueSpanDto> OpaqueSpans,
     IReadOnlyList<DiagnosticDto> Diagnostics);
 
@@ -123,6 +156,9 @@ public sealed record OpenRepositoryResponseDto(
     string RootPath,
     string Branch,
     ModelGraphDto Graph);
+
+public sealed record TraceLinksResponseDto(
+    IReadOnlyList<TraceLinkDto> TraceLinks);
 
 public sealed record ModelNodeDto(
     Guid StableId,
@@ -150,6 +186,18 @@ public sealed record SourceRangeDto(
     int StartColumn,
     int EndLine,
     int EndColumn);
+
+public sealed record TraceLinkDto(
+    Guid StableId,
+    TraceLinkKind Kind,
+    TraceEndpointKind SourceKind,
+    string SourceId,
+    TraceEndpointKind TargetKind,
+    string TargetId,
+    string Relationship,
+    string? SourceFile,
+    SourceRangeDto? SourceRange,
+    IReadOnlyDictionary<string, object?> Attributes);
 
 public sealed record ModelFileDto(
     string Path,
@@ -195,6 +243,23 @@ export interface ModelNodeDto {
   sourceRange: SourceRangeDto;
   attributes: Record<string, unknown>;
   modelStatus: ModelStatus;
+}
+```
+
+Expected generated trace link shape:
+
+```typescript
+export interface TraceLinkDto {
+  stableId: string;
+  kind: TraceLinkKind;
+  sourceKind: TraceEndpointKind;
+  sourceId: string;
+  targetKind: TraceEndpointKind;
+  targetId: string;
+  relationship: string;
+  sourceFile?: string | null;
+  sourceRange?: SourceRangeDto | null;
+  attributes: Record<string, unknown>;
 }
 ```
 
@@ -247,6 +312,23 @@ Recommended `lineEnding` values:
 - `CRLF`
 - `Mixed`
 - `Unknown`
+
+## Traceability Links
+
+The first implementation slice must derive trace links for:
+
+- Item-to-item semantic relationships that are already represented as model edges.
+- Item-to-file source ownership for every structured node.
+- File-to-file import relationships when the imported target resolves to another repository-relative file.
+
+Later slices extend trace links for:
+
+- Branch-to-branch links from semantic diff results.
+- Repo-to-repo links from imported libraries, supplier models, shared views, or related engineering repositories.
+
+Trace link IDs are deterministic UUID v5-style IDs derived from kind, source endpoint, target endpoint, relationship, and source range when present.
+
+Trace links are read-only derived data. Edits update the model graph or files; trace links are recomputed from the resulting graph, file records, Git state, and repository dependency metadata.
 
 ## Opaque Spans
 

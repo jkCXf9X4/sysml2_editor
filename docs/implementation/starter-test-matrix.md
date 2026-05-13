@@ -22,9 +22,11 @@ Vision trace:
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
 | `parse_minimal_graph` | Unit/Integration | `fixtures/tiny-single-file` | Prove the parser maps the supported subset into the model graph | Matches `expected/graph.json` exactly, including schema-required fields |
+| `derive_item_to_file_traceability` | Unit/Integration | `fixtures/tiny-single-file` | Prove source ownership is first-class traceability | `ModelGraphDto.traceLinks` includes item-to-file links for every structured node |
+| `derive_import_traceability` | Unit/Integration | `fixtures/multi-file-modular` | Prove file-to-file traceability starts in the read-only slice | Matches `expected/trace-links.json` for source ownership and resolved imports |
 | `malformed_input_reports_diagnostic` | Parser/Error | `fixtures/invalid-input` | Fail safely | Matches `expected/diagnostics.json`; valid files in the same repo still load |
 | `get_source_file_preserves_text` | Integration | `fixtures/tiny-single-file` | Prove source text can be displayed without rewriting | Returned content, line ending, and hash match the fixture |
-| `open_browse_select_smoke` | End-to-End | `fixtures/tiny-single-file` | Prove the first user path | A repo opens, the tree renders, and a selected node shows inspector data from `expected/graph.json` |
+| `open_browse_select_smoke` | End-to-End | `fixtures/tiny-single-file` | Prove the first user path | A repo opens, the tree renders, and a selected node shows inspector data and source ownership from `expected/graph.json` |
 
 ## Slice 2: Writer And Identity Gate
 
@@ -40,6 +42,7 @@ Vision trace:
 | Test | Layer | Fixture | Purpose | Expected Result |
 | --- | --- | --- | --- | --- |
 | `semantic_branch_diff` | Integration | `fixtures/branch-divergence` | Verify branch comparison | Matches `expected/diff.json` |
+| `branch_trace_links` | Integration | `fixtures/branch-divergence` | Preserve branch-to-branch traceability contract | Diff output includes changed files, changed items, and branch trace links |
 
 ## Gating Rule
 

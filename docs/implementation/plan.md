@@ -122,11 +122,13 @@ Features:
 - Show text editor
 - Show graph view
 - Click graph node -> show source text and attributes
+- Show source ownership and item-to-item trace links for selected nodes
+- Show file-to-file import traceability for modular models
 - Basic search
 
 Success criterion:
 
-> A user can open an existing SysML repo and understand the product structure visually.
+> A user can open an existing SysML repo and understand the product structure visually, including which source files define and connect the visible model elements.
 
 ### Phase 2: Visual Editing
 
@@ -156,7 +158,9 @@ Features:
 - Commit panel
 - Visual diff
 - Branch comparison
+- Branch-to-branch trace links
 - Changed-node highlighting
+- Changed-file highlighting
 - Local changes overlay
 - Basic merge conflict assistance
 

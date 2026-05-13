@@ -1,0 +1,89 @@
+[
+  {
+    "stableId": "11111111-aaaa-4aaa-8aaa-111111111111",
+    "kind": "FileToFile",
+    "sourceKind": "File",
+    "sourceId": "model/root.sysml",
+    "targetKind": "File",
+    "targetId": "model/power.sysml",
+    "relationship": "Imports",
+    "sourceFile": "model/root.sysml",
+    "sourceRange": {
+      "startLine": 1,
+      "startColumn": 1,
+      "endLine": 1,
+      "endColumn": 16
+    },
+    "attributes": {
+      "import": "Power::*"
+    }
+  },
+  {
+    "stableId": "22222222-aaaa-4aaa-8aaa-222222222222",
+    "kind": "ItemToFile",
+    "sourceKind": "ModelItem",
+    "sourceId": "00000000-0000-4000-8000-000000000001",
+    "targetKind": "File",
+    "targetId": "model/root.sysml",
+    "relationship": "DefinedIn",
+    "sourceFile": "model/root.sysml",
+    "sourceRange": {
+      "startLine": 3,
+      "startColumn": 1,
+      "endLine": 7,
+      "endColumn": 2
+    },
+    "attributes": {}
+  },
+  {
+    "stableId": "33333333-aaaa-4aaa-8aaa-333333333333",
+    "kind": "ItemToFile",
+    "sourceKind": "ModelItem",
+    "sourceId": "33333333-3333-4333-8333-333333333333",
+    "targetKind": "File",
+    "targetId": "model/root.sysml",
+    "relationship": "DefinedIn",
+    "sourceFile": "model/root.sysml",
+    "sourceRange": {
+      "startLine": 5,
+      "startColumn": 3,
+      "endLine": 6,
+      "endColumn": 34
+    },
+    "attributes": {}
+  },
+  {
+    "stableId": "44444444-aaaa-4aaa-8aaa-444444444444",
+    "kind": "ItemToFile",
+    "sourceKind": "ModelItem",
+    "sourceId": "77777777-7777-4777-8777-777777777777",
+    "targetKind": "File",
+    "targetId": "model/power.sysml",
+    "relationship": "DefinedIn",
+    "sourceFile": "model/power.sysml",
+    "sourceRange": {
+      "startLine": 1,
+      "startColumn": 1,
+      "endLine": 5,
+      "endColumn": 2
+    },
+    "attributes": {}
+  },
+  {
+    "stableId": "55555555-aaaa-4aaa-8aaa-555555555555",
+    "kind": "ItemToFile",
+    "sourceKind": "ModelItem",
+    "sourceId": "44444444-4444-4444-8444-444444444444",
+    "targetKind": "File",
+    "targetId": "model/power.sysml",
+    "relationship": "DefinedIn",
+    "sourceFile": "model/power.sysml",
+    "sourceRange": {
+      "startLine": 3,
+      "startColumn": 3,
+      "endLine": 4,
+      "endColumn": 24
+    },
+    "attributes": {}
+  }
+]

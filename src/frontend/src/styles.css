@@ -156,6 +156,40 @@ body {
   font-weight: 600;
 }
 
+.trace-section {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.trace-section h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+}
+
+.trace-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trace-list li {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: #fbfcfb;
+}
+
+.trace-list span,
+.canvas-card small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
 .canvas {
   min-height: 100%;
   display: grid;

@@ -37,6 +37,7 @@ http://localhost:5173
   "nodes": [],
   "edges": [],
   "files": [],
+  "traceLinks": [],
   "opaqueSpans": [],
   "diagnostics": []
 }
@@ -53,6 +54,7 @@ http://localhost:5173
     "nodes": [],
     "edges": [],
     "files": [],
+    "traceLinks": [],
     "opaqueSpans": [],
     "diagnostics": []
   }
@@ -88,6 +90,28 @@ http://localhost:5173
   "content": "package Vehicle { }",
   "lineEnding": "LF",
   "contentHash": "sha256:..."
+}
+```
+
+### TraceLinkDto
+
+```json
+{
+  "stableId": "66666666-6666-4666-8666-666666666666",
+  "kind": "ItemToFile",
+  "sourceKind": "ModelItem",
+  "sourceId": "11111111-1111-4111-8111-111111111111",
+  "targetKind": "File",
+  "targetId": "model/root.sysml",
+  "relationship": "DefinedIn",
+  "sourceFile": "model/root.sysml",
+  "sourceRange": {
+    "startLine": 3,
+    "startColumn": 3,
+    "endLine": 4,
+    "endColumn": 24
+  },
+  "attributes": {}
 }
 ```
 
@@ -175,6 +199,7 @@ Response:
     "nodes": [],
     "edges": [],
     "files": [],
+    "traceLinks": [],
     "opaqueSpans": [],
     "diagnostics": []
   }
@@ -224,6 +249,59 @@ Errors:
 
 - `400 Bad Request` when `path` is invalid or escapes the repository.
 - `404 Not Found` when the repository or file does not exist.
+
+### Get Trace Links
+
+```text
+GET /repositories/{repositoryId}/trace-links
+```
+
+Response: `TraceLinksResponseDto`
+
+```json
+{
+  "traceLinks": []
+}
+```
+
+Behavior:
+
+- The endpoint returns the current derived trace links for the repository session.
+- The first implementation slice must include `ItemToItem`, `ItemToFile`, and resolvable `FileToFile` trace links.
+- Trace links are recomputed from the current model graph, file records, imports, and Git state; they are not edited directly.
+
+Errors:
+
+- `404 Not Found` when `repositoryId` is unknown.
+
+## Deferred Trace Contracts
+
+Branch-to-branch and repo-to-repo traceability are not first-slice behavior, but their contract boundaries are reserved so implementation choices do not block the product vision.
+
+### BranchTraceDto
+
+```json
+{
+  "baseBranch": "main",
+  "headBranch": "experiment",
+  "traceLinks": [],
+  "changedFiles": [],
+  "changedItems": []
+}
+```
+
+### RepositoryDependencyDto
+
+```json
+{
+  "repositoryId": "local-vehicle-demo",
+  "relatedRepositoryId": "local-supplier-model",
+  "relationship": "DependsOn",
+  "source": "model/root.sysml",
+  "target": "../supplier/model/root.sysml",
+  "traceLinks": []
+}
+```
 
 ## Deferred Endpoints
 
