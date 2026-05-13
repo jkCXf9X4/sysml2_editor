@@ -1,22 +1,43 @@
-# Phases — Testing View
+# Test Roadmap for `sysml2_editor`
 
-Testing focus and exit criteria aligned with the development phases in [roadmap.md](./roadmap.md).
+This document turns the development phases in [roadmap.md](./roadmap.md) into testable slices.
+It stays close to [starter-test-matrix.md](../testing/starter-test-matrix.md) and the fixture
+rules in [fixtures/README.md](../../fixtures/README.md).
 
 ## Phase 0: Visual Workbench Shell
 
-Primary test goal: prove the target workbench shell communicates multi-context SysML work before backend data is connected.
+Primary test goal: prove the shell can communicate multi-context SysML work before backend data
+is connected.
 
-Test focus:
+Phase 0 should stay small and deterministic. Reuse the checked-in fixture families instead of
+inventing broad new coverage.
 
-- Top-level shell layout: top app bar, left rail, tiled workspace, inspector, and status bar
-- Pane-level context labels for repository, branch, file, mode, and write state
-- Fixture-backed multi-repository and multi-branch sample state
-- Editable, read-only, dirty, and validation state visibility
-- Responsive fallback that preserves context identity
+The first slice should use fixture-backed component tests for shell rendering and a small unit
+test seam for state projection.
 
-Exit criteria:
+### Unit test matrix
 
-- A user can identify the active repository, branch, file, selected model element, and write state from visible UI alone.
+| Test | Layer | Fixture | Purpose | Expected Result |
+| --- | --- | --- | --- | --- |
+| `shell_renders_workbench_chrome` | Component | `fixtures/tiny-single-file` | Prove the shell composes the workbench scaffold | Top app bar, left rail, tiled workspace, inspector, and status bar render in the expected slots |
+| `pane_headers_show_context_identity` | Component | `fixtures/branch-divergence` | Prove every pane carries visible identity | Repository, branch, file, mode, and write-state labels are present on each pane header |
+| `pane_mode_toggle_is_local` | Component | `fixtures/branch-divergence/expected/multi-context-view.json` | Prove `Visual / Text / Split / Diff` controls only affect the targeted pane | Switching one pane does not mutate sibling panes or lose context labels |
+| `fixture_state_drives_selection_summary` | Unit | `fixtures/tiny-single-file/expected/graph.json` | Prove selected-model metadata can populate the inspector stub | Selected node summary, attributes, and source ownership can be derived from fixture state |
+| `responsive_fallback_preserves_identity` | Component | `fixtures/tiny-single-file` | Prove the shell remains readable on narrow layouts | Labels may wrap or compress, but repository and branch identity remain visible |
+| `dirty_readonly_validation_states_render` | Component | `fixtures/branch-divergence/expected/multi-context-view.json` | Prove shell state badges are visible before editing exists | Dirty, read-only, and validation indicators appear in the pane chrome and status bar |
+
+### Fixture set
+
+| Fixture | Role in Phase 0 |
+| --- | --- |
+| `fixtures/tiny-single-file/` | Baseline single-repository shell state for one-context rendering and inspector summary tests |
+| `fixtures/branch-divergence/` | Multi-branch sample state for comparison layouts and pane identity tests |
+| `fixtures/multi-file-modular/` | Optional traceability-heavy sample if the shell needs file ownership examples in the sidebar |
+
+### Exit criteria
+
+- A user can identify the active repository, branch, file, selected model element, and write
+  state from visible UI alone.
 - Visual, text, split, and diff panes can be represented with fixture data.
 - The shell is ready for parser, graph, inspector, and Git data integration.
 

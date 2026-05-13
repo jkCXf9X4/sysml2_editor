@@ -10,7 +10,7 @@ Read these files in order when setting up or changing the project:
 4. [Backend layout](../../src/backend/README.md)
 5. [Frontend layout](../../src/frontend/README.md)
 6. [Shared contracts layout](../../src/shared/README.md)
-7. [Phases](./phases.md) — testing focus and exit criteria by phase
+7. [Test roadmap](./test_roadmap.md) — testing focus and exit criteria by phase
 8. [starter-test-matrix.md](../testing/starter-test-matrix.md)
 9. [runtime.md](../architecture/runtime.md)
 10. [api-contract.md](../implementation/api/api-contract.md)
