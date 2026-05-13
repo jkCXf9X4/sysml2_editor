@@ -7,7 +7,7 @@ This plan is split into separate documents for clarity:
 - Implementation workspace: [docs/implementation/README.md](./docs/implementation/README.md)
 - Implementation plan: [docs/implementation/plan.md](./docs/implementation/plan.md)
 - Project structure: [docs/implementation/project-structure.md](./docs/implementation/project-structure.md)
-- Readiness checklist: [docs/implementation/readiness-checklist.md](./docs/implementation/readiness-checklist.md)
+- Implementation readiness and gates: [docs/implementation/starter-test-matrix.md](./docs/implementation/starter-test-matrix.md)
 - SysML reference: [docs/implementation/spec-reference.md](./docs/implementation/spec-reference.md)
 - Syntax examples: [docs/implementation/syntax-examples.md](./docs/implementation/syntax-examples.md)
 - Runtime decision: [docs/implementation/runtime-decision.md](./docs/implementation/runtime-decision.md)
@@ -15,7 +15,6 @@ This plan is split into separate documents for clarity:
 - Parser contract: [docs/implementation/parser-contract.md](./docs/implementation/parser-contract.md)
 - Model schema: [docs/implementation/model-schema.md](./docs/implementation/model-schema.md)
 - Write policy: [docs/implementation/write-policy.md](./docs/implementation/write-policy.md)
-- Starter test matrix: [docs/implementation/starter-test-matrix.md](./docs/implementation/starter-test-matrix.md)
 - Test strategy: [test-strategy.md](./test-strategy.md)
 
 Use `design.md` for product vision, UX, workflows, and model architecture.

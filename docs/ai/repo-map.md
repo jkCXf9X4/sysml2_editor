@@ -18,10 +18,10 @@ docs/implementation/
 
 ## How To Use The Docs During Implementation
 
-- Start with the AI guide and the readiness checklist.
+- Start with the AI guide and the implementation workspace.
 - Use the decision docs as the contract for implementation work.
 - Use the structure doc when creating or rearranging folders.
-- Use the test matrix before adding new behavior.
+- Use the test matrix as the readiness gate before adding new behavior.
 - Use the write policy when deciding where a change belongs.
 
 ## Update Rule

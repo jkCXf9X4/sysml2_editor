@@ -52,7 +52,7 @@ Use [spec-reference.md](./spec-reference.md) as the external language reference 
 
 ## Implementation Inputs Required
 
-Before the first feature slice starts, lock these decision docs:
+Before a feature slice starts, keep these decision docs current:
 
 - Structure: [project-structure.md](./project-structure.md)
 - SysML reference: [spec-reference.md](./spec-reference.md)
@@ -63,9 +63,8 @@ Before the first feature slice starts, lock these decision docs:
 - Model schema: [model-schema.md](./model-schema.md)
 - Write policy: [write-policy.md](./write-policy.md)
 - Starter test matrix: [starter-test-matrix.md](./starter-test-matrix.md)
-- Readiness checklist: [readiness-checklist.md](./readiness-checklist.md)
 
-If any of these are still open, implementation should stop at scaffolding and discovery.
+[starter-test-matrix.md](./starter-test-matrix.md) is the canonical readiness and gate document. If any required decision for the active slice is still open, implementation should stop at scaffolding and discovery.
 
 ## MVP Definition
 
