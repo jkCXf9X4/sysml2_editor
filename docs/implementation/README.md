@@ -5,16 +5,18 @@ This folder is the implementation entry point for humans and AI agents.
 Read these files in order when setting up or changing the project:
 
 1. [Product vision](../../PRODUCT_VISION.md)
-2. [project-structure.md](./project-structure.md)
-3. [starter-test-matrix.md](./starter-test-matrix.md)
-4. [runtime-decision.md](./runtime-decision.md)
-5. [api-contract.md](./api-contract.md)
-6. [parser-contract.md](./parser-contract.md)
-7. [model-schema.md](./model-schema.md)
-8. [write-policy.md](./write-policy.md)
-9. [spec-reference.md](./spec-reference.md)
-10. [syntax-examples.md](./syntax-examples.md)
-11. [plan.md](./plan.md)
+2. [Documentation plan](../plan.md)
+3. [Architecture overview](../architecture/README.md)
+4. [project-structure.md](./project-structure.md)
+5. [starter-test-matrix.md](../testing/starter-test-matrix.md)
+6. [runtime.md](../architecture/runtime.md)
+7. [api-contract.md](./api-contract.md)
+8. [parser-contract.md](./parser-contract.md)
+9. [model-graph.md](../architecture/model-graph.md)
+10. [write-policy.md](../architecture/write-policy.md)
+11. [sysml-v2.md](../reference/sysml-v2.md)
+12. [syntax-examples.md](./syntax-examples.md)
+13. [roadmap.md](./roadmap.md)
 
 ## Current Build Direction
 
@@ -35,10 +37,10 @@ All implementation decisions must trace back to [PRODUCT_VISION.md](../../PRODUC
 
 ## Readiness Source
 
-[starter-test-matrix.md](./starter-test-matrix.md) is the canonical implementation readiness and gate document. It defines the scaffold gate, read-only browser gate, writer gate, and Git diff gate.
+[starter-test-matrix.md](../testing/starter-test-matrix.md) is the canonical implementation readiness and gate document. It defines the scaffold gate, read-only browser gate, writer gate, and Git diff gate.
 
 ## Agent Working Contract
 
 - Follow [working-rules.md](../ai/working-rules.md) for implementation behavior.
-- Use decision docs in this folder as contracts.
-- Use [starter-test-matrix.md](./starter-test-matrix.md) for implementation readiness and slice gates.
+- Use architecture documents for system guarantees and implementation documents for concrete contracts.
+- Use [starter-test-matrix.md](../testing/starter-test-matrix.md) for implementation readiness and slice gates.

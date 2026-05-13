@@ -2,7 +2,7 @@
 
 ## Product Vision
 
-[PRODUCT_VISION.md](./PRODUCT_VISION.md) is the central product intent and traceability source.
+[PRODUCT_VISION.md](../PRODUCT_VISION.md) is the central product intent and traceability source.
 
 Design summary: `sysml2_editor` should be a Git-native SysML v2 architecture workbench where the diagram is easy to manipulate like PowerPoint, but the model remains precise, traceable, reviewable, and version-controlled as text.
 

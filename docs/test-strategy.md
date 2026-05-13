@@ -12,7 +12,7 @@ The plan makes three things non-negotiable:
 
 ## Scope
 
-The strategy covers the product areas described in `plan.md`:
+The strategy covers the product areas described in [plan.md](./plan.md):
 
 - Repository open/clone/status/checkout flows
 - SysML file discovery, parsing, indexing, and validation
@@ -155,8 +155,8 @@ The MVP supports:
 - Satisfy / trace relationship
 
 The initial test suite should focus on those elements first.
-The minimum gate set for the first implementation slice is defined in [starter-test-matrix.md](./docs/implementation/starter-test-matrix.md).
-Concrete starter fixtures live under [fixtures](./fixtures).
+The minimum gate set for the first implementation slice is defined in [starter-test-matrix.md](./testing/starter-test-matrix.md).
+Concrete starter fixtures live under [fixtures](../fixtures).
 
 ### MVP round-trip cases
 

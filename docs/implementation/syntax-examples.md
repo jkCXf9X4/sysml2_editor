@@ -2,7 +2,7 @@
 
 These examples define the exact textual subset used by the first implementation slice.
 
-The examples are derived from the OMG SysML v2 textual notation reference source in [spec-reference.md](./spec-reference.md), but they intentionally cover only the MVP subset. They are implementation fixtures, not a claim of full SysML v2 conformance.
+The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the MVP subset. They are implementation fixtures, not a claim of full SysML v2 conformance.
 
 Vision trace:
 

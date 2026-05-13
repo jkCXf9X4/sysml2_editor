@@ -54,23 +54,23 @@ Frontend responsibilities:
 Git integration should start with the `git` CLI wrapper.
 
 SysML parsing should start with the MVP custom subset parser described in [parser-contract.md](./parser-contract.md). External parser or language-server integrations can come later if the product needs broader language coverage.
-Use [spec-reference.md](./spec-reference.md) as the external language reference and [syntax-examples.md](./syntax-examples.md) as the local implementation subset.
+Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](./syntax-examples.md) as the local implementation subset.
 
 ## Implementation Inputs Required
 
 Before a feature slice starts, keep these decision docs current:
 
 - Structure: [project-structure.md](./project-structure.md)
-- SysML reference: [spec-reference.md](./spec-reference.md)
+- SysML reference: [sysml-v2.md](../reference/sysml-v2.md)
 - Syntax examples: [syntax-examples.md](./syntax-examples.md)
-- Runtime: [runtime-decision.md](./runtime-decision.md)
+- Runtime: [runtime.md](../architecture/runtime.md)
 - API contract: [api-contract.md](./api-contract.md)
 - Parser contract: [parser-contract.md](./parser-contract.md)
-- Model schema: [model-schema.md](./model-schema.md)
-- Write policy: [write-policy.md](./write-policy.md)
-- Starter test matrix: [starter-test-matrix.md](./starter-test-matrix.md)
+- Model graph: [model-graph.md](../architecture/model-graph.md)
+- Write policy: [write-policy.md](../architecture/write-policy.md)
+- Starter test matrix: [starter-test-matrix.md](../testing/starter-test-matrix.md)
 
-[starter-test-matrix.md](./starter-test-matrix.md) is the canonical readiness and gate document. If any required decision for the active slice is still open, implementation should stop at scaffolding and discovery.
+[starter-test-matrix.md](../testing/starter-test-matrix.md) is the canonical readiness and gate document. If any required decision for the active slice is still open, implementation should stop at scaffolding and discovery.
 
 ## MVP Definition
 

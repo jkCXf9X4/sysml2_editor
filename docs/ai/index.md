@@ -8,8 +8,9 @@ It exists to route agents to the authoritative planning and implementation docum
 
 - Product vision: [PRODUCT_VISION.md](../../PRODUCT_VISION.md)
 - Implementation work: [docs/implementation/README.md](../implementation/README.md)
-- Test strategy: [test-strategy.md](../../test-strategy.md)
-- Product and UX direction: [design.md](../../design.md)
+- Architecture decisions: [docs/architecture/README.md](../architecture/README.md)
+- Test strategy: [test-strategy.md](../test-strategy.md)
+- Product and UX direction: [design.md](../design.md)
 
 ## What This Guide Is For
 

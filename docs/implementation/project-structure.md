@@ -10,7 +10,10 @@ Use this as the reference when scaffolding the codebase. The goal is to keep res
 - Keep domain logic separate from transport and UI
 - Keep tests close to the behavior they verify
 - Keep fixtures checked in and deterministic
-- Keep implementation docs under `docs/implementation`
+- Keep architecture decisions under `docs/architecture`
+- Keep implementation contracts under `docs/implementation`
+- Keep test gates under `docs/testing`
+- Keep external references under `docs/reference`
 - Keep AI navigation docs under `docs/ai`
 
 Vision trace:
@@ -26,13 +29,16 @@ The implementation scaffold should use this top-level shape:
 sysml2_editor/
   README.md
   PRODUCT_VISION.md
-  plan.md
-  design.md
-  test-strategy.md
   LICENSE
   docs/
     ai/
+    architecture/
     implementation/
+    reference/
+    testing/
+    design.md
+    plan.md
+    test-strategy.md
   src/
     backend/
       Sysml2Editor.Api/
@@ -48,7 +54,7 @@ sysml2_editor/
   scripts/
 ```
 
-`docs/architecture`, `docs/decisions`, and `docs/setup` are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders for the first scaffold.
+`docs/decisions` and `docs/setup` are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders for the first scaffold.
 
 ## Proposed Source Layout
 
@@ -66,7 +72,7 @@ Responsibilities:
 
 - `Api`: HTTP endpoints, request/response mapping, startup wiring
 - `Application`: use cases, orchestration, application services
-- `Domain`: parser contract, model schema, write policy rules, pure model logic
+- `Domain`: parser behavior, model graph rules, write policy rules, pure model logic
 - `Infrastructure`: Git CLI, filesystem access, repo scanning, persistence adapters
 
 ### Frontend
@@ -115,7 +121,6 @@ tests/
   unit/
   integration/
   e2e/
-  fixtures/
 ```
 
 Test intent:
@@ -123,7 +128,7 @@ Test intent:
 - `unit`: parser logic, graph rules, write policy, and pure helpers
 - `integration`: backend + filesystem + Git + parser interactions
 - `e2e`: user workflows across the full application stack
-- `fixtures`: checked-in sample repos and models used by tests
+- `fixtures/`: checked-in sample repos and models used by tests, stored at the repository root
 
 ## Fixture Layout
 
@@ -147,7 +152,7 @@ Fixture rules:
 
 Project setup should follow this order:
 
-1. Create the repository root and documentation files.
+1. Create the repository root and documentation structure.
 2. Create the backend solution and projects.
 3. Create the frontend app shell.
 4. Add backend OpenAPI generation.

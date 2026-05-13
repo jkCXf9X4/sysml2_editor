@@ -13,7 +13,7 @@ Vision trace:
 
 ## Core Entities
 
-Backend C# records are canonical for the first slice. Frontend types should be generated from OpenAPI as described in [api-contract.md](./api-contract.md).
+Backend C# records are canonical for the first slice. Frontend types should be generated from OpenAPI as described in [api-contract.md](../implementation/api-contract.md).
 
 ### Model Context
 

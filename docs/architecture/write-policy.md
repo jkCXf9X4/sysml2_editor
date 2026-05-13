@@ -6,7 +6,7 @@ The editor should use deterministic file ownership rules so that a save changes 
 
 The write policy is part of the implementation contract, not an afterthought.
 
-This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the writer gate in [starter-test-matrix.md](./starter-test-matrix.md) is active.
+This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the writer gate in [starter-test-matrix.md](../testing/starter-test-matrix.md) is active.
 
 Vision trace:
 

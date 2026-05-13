@@ -1,6 +1,6 @@
 # Repository Map
 
-Use [PRODUCT_VISION.md](../../PRODUCT_VISION.md) for product intent and [plan.md](../../plan.md) for the full documentation index.
+Use [PRODUCT_VISION.md](../../PRODUCT_VISION.md) for product intent and [plan.md](../plan.md) for the full documentation index.
 
 ## Intended Source Layout
 
@@ -14,7 +14,10 @@ src/shared/
 tests/
 fixtures/
 docs/ai/
+docs/architecture/
 docs/implementation/
+docs/reference/
+docs/testing/
 ```
 
 ## How To Use The Docs During Implementation
@@ -28,4 +31,4 @@ docs/implementation/
 
 ## Update Rule
 
-If you add a new root-level document or major setup folder, update this map and [plan.md](../../plan.md). Update the README only for new top-level entry points. If you add or change a material decision, add a vision trace.
+If you add a new major setup folder, update this map and [plan.md](../plan.md). Update the README only for new top-level entry points. If you add or change a material decision, add a vision trace.

@@ -14,9 +14,11 @@ All material design and implementation decisions should trace back to [PRODUCT_V
 ## Start Here
 
 - Product vision: [PRODUCT_VISION.md](./PRODUCT_VISION.md)
-- Project plan index: [plan.md](./plan.md)
+- Documentation index: [docs/README.md](./docs/README.md)
+- Project plan index: [docs/plan.md](./docs/plan.md)
 - AI implementation guide: [docs/ai/index.md](./docs/ai/index.md)
+- Architecture decisions: [docs/architecture/README.md](./docs/architecture/README.md)
 - Implementation workspace: [docs/implementation/README.md](./docs/implementation/README.md)
 - Backend scaffold: `src/backend/Sysml2Editor.Api`
 - Frontend scaffold: `src/frontend`
-- Readiness gate: [docs/implementation/starter-test-matrix.md](./docs/implementation/starter-test-matrix.md)
+- Readiness gate: [docs/testing/starter-test-matrix.md](./docs/testing/starter-test-matrix.md)

@@ -17,9 +17,9 @@ The first implementation does not attempt full SysML v2 conformance.
 Instead:
 
 - Use the OMG SysML v2 specification as the origin for terminology and examples.
-- Implement only the MVP subset documented in [parser-contract.md](./parser-contract.md).
+- Implement only the MVP subset documented in [parser-contract.md](../implementation/parser-contract.md).
 - Keep fixture syntax close to SysML v2 textual notation where practical.
-- Mark deliberate simplifications in [syntax-examples.md](./syntax-examples.md).
+- Mark deliberate simplifications in [syntax-examples.md](../implementation/syntax-examples.md).
 
 Vision trace:
 
@@ -47,4 +47,4 @@ Vision trace:
 
 ## Conformance Rule
 
-If a local parser decision conflicts with the OMG specification, document the difference in [syntax-examples.md](./syntax-examples.md) before implementation continues.
+If a local parser decision conflicts with the OMG specification, document the difference in [syntax-examples.md](../implementation/syntax-examples.md) before implementation continues.

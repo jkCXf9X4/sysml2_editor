@@ -6,7 +6,7 @@ The first implementation slice uses a custom, MVP-scoped parser for a narrow tex
 
 It is not a full SysML v2 grammar implementation. It is a conservative parser whose job is to load, edit, and save the subset that the app supports first.
 
-Use [spec-reference.md](./spec-reference.md) for the external language source and [syntax-examples.md](./syntax-examples.md) for the exact MVP syntax accepted by this project.
+Use [sysml-v2.md](../reference/sysml-v2.md) for the external language source and [syntax-examples.md](./syntax-examples.md) for the exact MVP syntax accepted by this project.
 
 Vision trace:
 
