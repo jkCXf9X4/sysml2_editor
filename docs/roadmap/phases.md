@@ -2,6 +2,24 @@
 
 Testing focus and exit criteria aligned with the development phases in [roadmap.md](./roadmap.md).
 
+## Phase 0: Visual Workbench Shell
+
+Primary test goal: prove the target workbench shell communicates multi-context SysML work before backend data is connected.
+
+Test focus:
+
+- Top-level shell layout: top app bar, left rail, tiled workspace, inspector, and status bar
+- Pane-level context labels for repository, branch, file, mode, and write state
+- Fixture-backed multi-repository and multi-branch sample state
+- Editable, read-only, dirty, and validation state visibility
+- Responsive fallback that preserves context identity
+
+Exit criteria:
+
+- A user can identify the active repository, branch, file, selected model element, and write state from visible UI alone.
+- Visual, text, split, and diff panes can be represented with fixture data.
+- The shell is ready for parser, graph, inspector, and Git data integration.
+
 ## Phase 1: Read-only Model Browser
 
 Primary test goal: prove the parser, indexer, and browser are trustworthy.

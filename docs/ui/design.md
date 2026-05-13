@@ -10,6 +10,64 @@ Design summary: `sysml2_editor` should be a Git-native SysML v2 architecture wor
 
 ## Suggested UI Concept
 
+### Target Workbench Vision
+
+The target UI is an IDE-style SysML v2 workbench: dense, context-aware, and optimized for systems engineers comparing and editing model structure across Git repositories, branches, and source files.
+
+The default workspace should converge on this shape:
+
+```text
+Top app bar:
+  repository selector, compare selector, active branches, commit, pull, push,
+  validation status, search, layout/settings controls
+
+Left workbench rail:
+  repositories and branches
+  model tree
+  type palette
+
+Center tiled workspace:
+  visual diagram panes
+  textual SysML panes
+  split visual/text panes
+  semantic diff panes
+  each pane labeled with repository, branch, file, mode, and write state
+
+Right inspector:
+  selected element identity
+  attributes, ports, parts, connections
+  traceability
+  source ownership
+  validation and Git metadata
+
+Bottom status bar:
+  active context, dirty file counts, model validity, cursor position,
+  indentation, encoding, SysML version
+```
+
+This is the long-term visual target. Early implementation slices may use fixture-backed mock data, but every visible surface should preserve the same concepts: context identity, source ownership, model traceability, validation state, and safe write targets.
+
+#### Visual Success Criteria
+
+The workbench is visually on track when:
+
+- A user can tell which repository, branch, file, and model element they are looking at without opening a modal.
+- Every visual, text, split, and diff pane carries an explicit context label.
+- Editable and read-only contexts are visually distinct.
+- Selecting a model element updates the model tree, source text, diagram selection, and inspector coherently.
+- Branch and repository comparisons are represented as side-by-side contexts, not as hidden global state.
+- Commit and save actions always show the target repository and branch before writing.
+- Validation status remains visible while the user edits.
+
+#### Visual Implementation Principles
+
+- Prefer a workbench layout over a landing page or document viewer.
+- Keep diagrams as editable projections over textual SysML, not as independent source-of-truth drawings.
+- Make Git context visible at the pane level, not only in the global toolbar.
+- Use color to reinforce context and change state, but do not rely on color alone.
+- Keep controls compact and repeatable; this is an engineering tool, not a marketing interface.
+- Add visual polish only where it improves scanability, selection clarity, or write safety.
+
 ### Main Layout: Flexible Workbench
 
 The UI should be a dockable workspace, not a fixed layout. Think VS Code + Figma + systems engineering browser.
