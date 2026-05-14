@@ -1,24 +1,24 @@
 # Roadmap
 
-This folder contains the single implementation roadmap for `sysml2_editor`.
+This folder contains the forward implementation roadmap for `sysml2_editor`.
 
-[roadmap.md](./roadmap.md) is the canonical source for:
+[roadmap.md](./roadmap.md) is the source for:
 
-- MVP scope
-- Development phases
-- Test focus by phase
-- Fixture expectations
-- Minimum gate tests
-- Setup order
-- Phase exit criteria
+- Current implementation baseline
+- Next milestones in recommended order
+- Milestone scope
+- Success and exit criteria
+- Required verification gates
+- Deferred work
 
-Do not add separate phase plans, test roadmaps, setup plans, or readiness matrices in this folder. If phase scope, gate tests, or exit criteria change, update [roadmap.md](./roadmap.md) directly.
+The current capability inventory lives in [Functionality index](../functionality/README.md). Update that file when functionality status, stability, test evidence, or development plans change. Update the roadmap when milestone order, scope, success criteria, or gates change.
 
 ## Supporting References
 
 Use these documents for detail behind the roadmap:
 
 - [Product vision](../../PRODUCT_VISION.md) for product intent and tradeoffs
+- [Functionality index](../functionality/README.md) for current and planned capability status
 - [UI design](../ui/design.md) for the target workbench experience
 - [Architecture overview](../architecture/README.md) for system decisions
 - [Runtime decision](../architecture/runtime.md) for local-web runtime rules

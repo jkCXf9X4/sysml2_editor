@@ -14,8 +14,9 @@ This folder contains all project documentation, organized by abstraction level t
 | Folder | Purpose |
 |--------|---------|
 | [architecture/](./architecture/) | High-level system design decisions, architectural overviews, and key tradeoffs. Summary of decisions in `architecture/README.md`, with details in subfiles. |
+| [functionality/](./functionality/) | Current and planned product capabilities, test evidence, stability level, and development plans. |
 | [implementation/](./implementation/) | Implementation contracts, API specs, parser rules, syntax examples, and current build direction. Contains `api/`, `graph/`, `parser-contract.md`, and `syntax-examples.md`. |
-| [roadmap/](./roadmap/) | Canonical implementation roadmap, integration order, phase gates, fixtures, and exit criteria. Merged from the former `docs/plan.md`. |
+| [roadmap/](./roadmap/) | Forward implementation plan from the current application state: milestones, gates, success criteria, and deferred work. |
 | [testing/](./testing/) | Supporting test strategy, MVP coverage, fixtures, CI guidance, and quality risks. Phase gates live in the roadmap. |
 | [ui/](./ui/) | User interface design, workflows, and feature specifications derived from the former `docs/design.md`. |
 | [ai/](./ai/) | Agent orientation, working rules, and context for AI-assisted development. |
