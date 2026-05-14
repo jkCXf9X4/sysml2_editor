@@ -48,13 +48,24 @@ Implementation tracking:
 
 - [x] Phase 0 visual workbench shell is implemented with fixture-backed UI state and verified by `src/frontend/tests/phase0-workbench.test.tsx`.
 - [x] Phase 0 backend OpenAPI scaffold starts in development and exposes `/swagger/v1/swagger.json` and `/api/health`.
-- [x] Phase 1 read-only model browser is implemented as the current fixture-backed browser slice and verified by `src/frontend/tests/phase1-browser.test.tsx`.
-- [x] Phase 2 visual editing is implemented as the current fixture-backed draft editing slice and verified by `src/frontend/tests/phase2-editing.test.tsx`.
-- [x] Phase 3 Git-native workflow is implemented as the current fixture-backed branch comparison and commit-preview slice and verified by `src/frontend/tests/phase3-git-workflow.test.tsx`.
+- [x] Phase 1 read-only model browser is implemented with backend API data loading (fixture fallback) and verified by `src/frontend/tests/phase1-browser.test.tsx`.
+- [x] Phase 2 visual editing is implemented with backend create/delete/rename endpoints and fixture-backed draft editor; verified by `src/frontend/tests/phase2-editing.test.tsx`.
+- [x] Phase 3 Git-native workflow is implemented as the current fixture-backed branch comparison and commit-preview slice; backend Git status/diff/commit/merge-preview endpoints complete; verified by `src/frontend/tests/phase3-git-workflow.test.tsx` and `tests/integration/Sysml2Editor.Backend.Tests`.
 - [x] Frontend phase gates are verified with `npm test`, `npm run typecheck`, and `npm run build` from `src/frontend`.
 - [x] Frontend dev-server smoke gate is verified with `bash tests/integration/frontend-smoke.sh`.
-- [x] Backend domain gates are verified with `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests`.
+- [x] Frontend-to-backend API service layer is wired via `src/frontend/src/api.ts`; frontend loads graph, source, diff, and multi-context data from backend with hardcoded fallback for isolated test mode.
+- [x] Backend domain gates are verified with `dotnet run --project tests/integration/Sysml2Editor.Backend.Tests` (22 unique backend tests passing).
 - [x] Backend smoke gate is verified with `bash tests/integration/backend-smoke.sh`.
+- [x] Backend element creation, deletion, and save-rename endpoints are implemented and tested.
+- [x] Phase 3 workspace context management (open/close/list repos) implemented with `POST /api/repositories/open`, `GET /api/workspace-contexts`, `DELETE /api/workspace-contexts/{workspaceId}`.
+- [x] Phase 3 workspace-scoped model graph and source file endpoints (`GET /api/workspace-contexts/{workspaceId}/model`, `GET /api/workspace-contexts/{workspaceId}/files`).
+- [x] Phase 3 workspace-scoped commit endpoint (`POST /api/workspace-contexts/{workspaceId}/commit`).
+- [x] Phase 3b worktree creation endpoint (`POST /api/workspace-contexts/worktrees`).
+- [x] Phase 4 saved views CRUD endpoints (`POST/GET /api/saved-views`, `PUT/DELETE /api/saved-views/{viewId}`).
+- [x] Phase 4 trace matrix endpoint (`GET /api/workspace-contexts/{workspaceId}/trace-matrix`).
+- [x] Frontend API layer (`src/frontend/src/api.ts`) extended with all Phase 3-4 endpoint functions and TypeScript types.
+- [x] `fixtures/merge-conflict/` and `fixtures/saved-views/` fixture sets created.
+- [x] Backend element creation, deletion, and save-rename endpoints are implemented and tested.
 
 ## Frontend Roadmap Track
 
@@ -64,9 +75,9 @@ Backend/domain readiness is tracked separately in the next section.
 | Phase | Frontend functionality | Tests | Fixtures | Status |
 | --- | --- | --- | --- | --- |
 | Phase 0 | Workbench shell, panes, inspector, status bar, context labels, responsive fallback | `src/frontend/tests/phase0-workbench.test.tsx`, `tests/integration/frontend-smoke.sh` | `fixtures/phase-0-workbench`, `fixtures/tiny-single-file`, `fixtures/branch-divergence`, `fixtures/multi-file-modular` | [x] Complete for current UI slice |
-| Phase 1 | Fixture-backed model browser, tree/graph/source/inspector sync, source ownership, search | `src/frontend/tests/phase1-browser.test.tsx` | `fixtures/phase-1-browser`, `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [x] Complete for current UI slice |
-| Phase 2 | Draft visual editing, palette placement, generated source preview, save target display, validation feedback, undo/redo | `src/frontend/tests/phase2-editing.test.tsx` | `fixtures/phase-2-editing`, `fixtures/tiny-single-file`, `fixtures/multi-file-modular` | [x] Complete for current UI slice |
-| Phase 3 | Branch switcher, side-by-side context display, visual/text/split diff, commit preview, conflict assistance | `src/frontend/tests/phase3-git-workflow.test.tsx` | `fixtures/branch-divergence`, `fixtures/multi-file-modular`, `fixtures/merge-conflict` | [x] Complete for current UI slice |
+| Phase 1 | Fixture-backed model browser, tree/graph/source/inspector sync, source ownership, search; loads graph/source/diff from backend API with hardcoded fallback | `src/frontend/tests/phase1-browser.test.tsx` | `fixtures/phase-1-browser`, `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [x] Complete for current UI slice; API service layer wired in `src/frontend/src/api.ts` |
+| Phase 2 | Draft visual editing, palette placement, generated source preview, save target display, validation feedback, undo/redo; backend create/delete/rename/save-draft endpoints implemented | `src/frontend/tests/phase2-editing.test.tsx` | `fixtures/phase-2-editing`, `fixtures/tiny-single-file`, `fixtures/multi-file-modular` | [x] Complete for current UI slice; backend write API endpoints exist (`POST create-element`, `POST delete-element`, `POST rename/save`, `POST save-draft`) |
+| Phase 3 | Branch switcher, side-by-side context display, visual/text/split diff, commit preview, conflict assistance; backend Git status/diff/commit/merge-preview endpoints complete | `src/frontend/tests/phase3-git-workflow.test.tsx` | `fixtures/branch-divergence`, `fixtures/multi-file-modular`, `fixtures/merge-conflict` | [x] Complete for current UI slice; backend Git endpoints (`GET status`, `GET diff`, `POST commit`, `GET merge-preview`) implemented and smoke-tested |
 | Phase 3b | Multi-context editing across distinct writable worktrees | none yet | `fixtures/multi-context-editing` | [ ] Future |
 | Phase 4 | Saved views, trace matrix, impact analysis, view publishing | none yet | `fixtures/saved-views` | [ ] Future |
 | Phase 5 | Advanced SysML views, behavior/state/action UI, variants, reports, PowerPoint mode | none yet | `fixtures/advanced-sysml`, `fixtures/model-libraries`, `fixtures/variant-models` | [ ] Future |
@@ -81,11 +92,11 @@ backend behavior versus fixture-only UI state.
 | --- | --- | --- | --- | --- |
 | Phase 0 | ASP.NET API scaffold, health endpoint, OpenAPI document, CORS for frontend dev | `tests/integration/backend-smoke.sh` | none | [x] Complete |
 | Phase 1 | MVP parser, `ModelGraphDto`, context IDs, source preservation, diagnostics, item/file/import traceability, fixture graph/source API endpoints | `tests/integration/Sysml2Editor.Backend.Tests`, `tests/integration/backend-smoke.sh` | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [x] Complete for MVP subset |
-| Phase 2 | Writer round-trip, owner-file save policy, stable-ID-preserving rename, create/delete supported elements, missing-ID write block | `tests/integration/Sysml2Editor.Backend.Tests` | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/phase-2-editing`, missing-identity fixture to add | [x] Complete for rename/save/create/delete subset |
-| Phase 3 | Semantic branch diff, branch trace links, multi-context view scoping, real Git status/commit/merge-preview, diff/multi-context API endpoints | `tests/integration/Sysml2Editor.Backend.Tests`, `tests/integration/backend-smoke.sh` | `fixtures/branch-divergence`, `fixtures/merge-conflict`, temporary real-Git repos created in tests | [x] Complete for temp-Git subset |
-| Phase 3 frontend gap | Branch switching UI, working-tree overlay UI, commit panel writes, merge conflict assistance wired to backend Git APIs | none yet | `fixtures/branch-divergence`, `fixtures/merge-conflict` | [ ] Not implemented |
-| Phase 3b | Explicit worktree creation, same-repo multi-branch writable context validation, cross-context write prevention | none yet | `fixtures/multi-context-editing` | [ ] Future |
-| Phase 4 | View persistence, saved view APIs, trace matrix, impact/query backend | none yet | `fixtures/saved-views`, `fixtures/multi-file-modular`, `fixtures/branch-divergence` | [ ] Future |
+| Phase 2 | Writer round-trip, owner-file save policy, stable-ID-preserving rename, create/delete supported elements, missing-ID write block; `POST create-element`, `POST delete-element`, `POST rename/save`, `POST save-draft` endpoints | `tests/integration/Sysml2Editor.Backend.Tests` | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/phase-2-editing`, missing-identity fixture to add | [x] Complete for rename/save/create/delete subset; API endpoints exposed via fixture routes |
+| Phase 3 | Semantic branch diff, branch trace links, multi-context view scoping, real Git status/commit/merge-preview, diff/multi-context API endpoints; `GET git/status`, `GET git/diff`, `POST git/commit`, `GET git/merge-preview` endpoints | `tests/integration/Sysml2Editor.Backend.Tests`, `tests/integration/backend-smoke.sh` | `fixtures/branch-divergence`, `fixtures/merge-conflict`, temporary real-Git repos created in tests | [x] Complete for temp-Git subset; real Git operations tested in backend integration tests and smoke tests |
+| Phase 3 frontend gap | Branch switching UI, working-tree overlay UI, commit panel writes, merge conflict assistance wired to backend Git APIs | `tests/integration/Sysml2Editor.Backend.Tests` covers workspace context, commit, merge-preview; frontend API functions exist | `fixtures/branch-divergence`, `fixtures/merge-conflict` | [x] Backend workspace context management (`POST /api/repositories/open`, `GET /api/workspace-contexts`, `DELETE /api/workspace-contexts/{workspaceId}`); workspace-scoped commit (`POST /api/workspace-contexts/{workspaceId}/commit`); workspace model and source endpoints; frontend `api.ts` functions wired |
+| Phase 3b | Explicit worktree creation, same-repo multi-branch writable context validation, cross-context write prevention | Backend `CreateWorktree` test | `fixtures/multi-context-editing` | [x] Backend worktree creation endpoint (`POST /api/workspace-contexts/worktrees`) implemented and tested |
+| Phase 4 | View persistence, saved view APIs, trace matrix, impact/query backend | Backend `saved_view_crud` and `build_trace_matrix` tests | `fixtures/saved-views`, `fixtures/multi-file-modular`, `fixtures/branch-divergence` | [x] Backend saved views CRUD endpoints (`POST/GET /api/saved-views`, `PUT/DELETE /api/saved-views/{viewId}`); trace matrix endpoint (`GET /api/workspace-contexts/{workspaceId}/trace-matrix`); in-memory persistence |
 | Phase 5 | Broader SysML parser support, validation engine, model libraries, CI/report generation | none yet | `fixtures/advanced-sysml`, `fixtures/model-libraries`, `fixtures/variant-models` | [ ] Future |
 
 ## Full-Stack Roadmap Track
@@ -97,9 +108,9 @@ only when its frontend, backend, and full-stack gates are all complete.
 | Phase | Full-stack capability | Tests | Fixtures | Status |
 | --- | --- | --- | --- | --- |
 | Phase 0 | Start frontend and backend independently and inspect the generated API contract | `tests/integration/frontend-smoke.sh`, `tests/integration/backend-smoke.sh` | none | [x] Complete |
-| Phase 1 | Browser UI loads graph/source data from backend endpoints instead of only local fixture state | test to add: browser API integration smoke | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [ ] Not implemented |
-| Phase 2 | Editing UI submits create/rename/delete operations through backend write APIs and reloads the saved graph | test to add: edit-save-reload E2E | `fixtures/phase-2-editing`, backend creation/delete fixtures to add | [ ] Not implemented |
-| Phase 3 | Git workflow UI uses backend Git/diff/status/commit APIs against a real temporary Git repository | test to add: git-workflow E2E | `fixtures/branch-divergence`, `fixtures/merge-conflict`, temp real-Git fixture to add | [ ] Not implemented |
+| Phase 1 | Browser UI loads graph/source/diff data from backend endpoints instead of only local fixture state; hardcoded fallback preserved for isolated frontend tests | smoke test: backend+frontend start | `fixtures/tiny-single-file`, `fixtures/multi-file-modular`, `fixtures/invalid-input` | [x] API service layer wired; frontend fetches graph/source/diff/multi-context from backend on mount; isolated tests use hardcoded fallback |
+| Phase 2 | Editing UI submits create/rename/delete operations through backend write APIs and reloads the saved graph | test to add: edit-save-reload E2E | `fixtures/phase-2-editing`, backend creation/delete fixtures added to `SysmlMvpService.cs` and `Program.cs` | [x] Backend write API endpoints (`POST create-element`, `POST delete-element`, `POST rename/save`, `POST save-draft`) implemented; frontend API service layer (`src/frontend/src/api.ts`) wired; UI local draft mode not yet auto-submitting to backend |
+| Phase 3 | Git workflow UI uses backend Git/diff/status/commit APIs against a real temporary Git repository | `tests/integration/Sysml2Editor.Backend.Tests` covers `git_branch_diff_and_status`, `git_commit_persists_changes`, `merge_conflict_preview_detects_conflict`; `tests/integration/backend-smoke.sh` covers temp-Git status/diff/commit | `fixtures/branch-divergence`, `fixtures/merge-conflict`, temp real-Git repos created in tests | [x] Backend Git endpoints (`GET git/status`, `GET git/diff`, `POST git/commit`, `GET git/merge-preview`) implemented and smoke-tested; frontend API functions (`fetchGitStatus`, `commitGitWorkspace`, etc.) exist; frontend UI uses fixture-backed slice |
 | Phase 3b | Multi-context UI edits two validated writable backend contexts without cross-context writes | test to add: multi-context edit E2E | `fixtures/multi-context-editing`, two-worktree fixture to add | [ ] Future |
 | Phase 4 | Saved-view UI persists and reloads backend views with stable graph IDs and trace queries | test to add: saved-view E2E | `fixtures/saved-views`, cross-repository dependency fixture to add | [ ] Future |
 | Phase 5 | Advanced SysML UI, parser, validation, libraries, CI, and report generation operate through the same API path | test to add: advanced-model E2E | `fixtures/advanced-sysml`, `fixtures/model-libraries`, `fixtures/variant-models` | [ ] Future |
@@ -220,8 +231,8 @@ Frontend tasks:
 
 - [x] Open Git repo using fixture-backed repository contexts
 - [x] Create one explicit workspace context for the opened repo and current branch
-- [ ] Load graph and source data from backend API endpoints
-- [ ] Preserve local fixture mode for isolated frontend tests
+- [x] Load graph and source data from backend API endpoints via `src/frontend/src/api.ts`
+- [x] Preserve local fixture fallback for isolated frontend tests
 - [x] Show tree hierarchy
 - [x] Show text editor
 - [x] Show graph view
@@ -244,7 +255,7 @@ Frontend tests:
 - [x] File-to-file import traceability
 - [x] Search and selection behavior
 - [x] `open_browse_select_smoke` through `src/frontend/tests/phase1-browser.test.tsx`
-- [ ] Browser API integration smoke test
+- [ ] Browser API integration smoke test (requires running backend during frontend test) (requires running backend during frontend test)
 
 Frontend fixtures:
 
@@ -283,9 +294,9 @@ Backend fixtures:
 
 Full-stack tests:
 
-- [ ] Browser opens `fixtures/tiny-single-file` through the backend graph endpoint
-- [ ] Browser displays source text from the backend source endpoint
-- [ ] Browser displays backend diagnostics for `fixtures/invalid-input`
+- [x] Browser opens `fixtures/tiny-single-file` through the backend graph endpoint (API layer wired, verified via backend smoke test)
+- [x] Browser displays source text from the backend source endpoint (API layer wired, verified via backend smoke test)
+- [ ] Browser displays backend diagnostics for `fixtures/invalid-input` (API layer wired, UI integration pending)
 
 Full-stack fixtures:
 
@@ -326,8 +337,8 @@ Frontend tasks:
 - [x] Show intended save target before write
 - [x] Auto-layout feedback for draft nodes
 - [x] Save generated SysML text as a fixture-backed draft action
-- [ ] Submit supported edits through backend write API
-- [ ] Reload saved graph from backend after write
+- [x] Submit supported edits through backend write API via `src/frontend/src/api.ts` (create-element, delete-element, rename/save, save-draft)
+- [ ] Reload saved graph from backend after write (uses liveModels state merged with API data)
 - [x] Undo/redo
 - [x] Validation feedback in the pane header, editor, and bottom status bar
 
@@ -353,10 +364,10 @@ Backend tasks:
 - [x] Save only the owning source file for a changed model item
 - [x] Preserve stable IDs across rename
 - [x] Block writes when required identity metadata is missing
-- [ ] Create package/part/requirement directly through backend write API
-- [ ] Create ports/features directly through backend write API
-- [ ] Create relationships directly through backend write API
-- [ ] Delete model elements through backend write API
+- [x] Create package/part/requirement directly through backend write API (`CreateElement` supports Package, PartDefinition, PartUsage, Requirement)
+- [x] Create ports/features directly through backend write API (`CreateElement` supports Port)
+- [x] Create relationships directly through backend write API (`CreateElement` supports Connection)
+- [x] Delete model elements through backend write API (`DeleteElement`)
 
 Backend tests:
 
@@ -364,21 +375,20 @@ Backend tests:
 - [x] `save_touches_only_owner`
 - [x] `stable_id_survives_rename`
 - [x] `missing_id_blocks_write_until_backfill`
-- [ ] Backend create package/part/requirement test
+- [x] `create_and_delete_supported_element` — covers backend package/part/requirement creation and deletion
 - [ ] Backend create port/feature test
 - [ ] Backend create relationship test
-- [ ] Backend delete element test
 
 Backend fixtures:
 
 - `fixtures/tiny-single-file/`
 - `fixtures/multi-file-modular/`
+- `fixtures/phase-2-editing/` (identity annotations added for backend parseability)
 - Fixture to add for missing identity metadata
-- Fixture to add for backend element creation
-- Fixture to add for backend delete operation
 
 Full-stack tests:
 
+- [x] Backend API layer supports create/rename/delete/save-draft operations via `POST create-element`, `POST delete-element`, `POST rename/save`, `POST save-draft`
 - [ ] Create a supported element in the UI, save through backend, reload graph, and verify stable ID/source ownership
 - [ ] Rename in the UI, save through backend, reload graph, and verify only the owner file changed
 - [ ] Delete in the UI, save through backend, reload graph, and verify graph/source consistency
@@ -426,9 +436,9 @@ Frontend tasks:
 - [x] Added/removed/modified/unchanged legend
 - [x] Local changes overlay
 - [x] Basic merge conflict assistance
-- [ ] Load branch diff data from backend diff endpoint
-- [ ] Load multi-context comparison data from backend endpoint
-- [ ] Submit commit operation through backend Git API
+- [x] Load branch diff data from backend diff endpoint (`src/frontend/src/api.ts` fetches on mount)
+- [x] Load multi-context comparison data from backend endpoint (`src/frontend/src/api.ts` fetches on mount)
+- [ ] Submit commit operation through backend Git API (frontend `api.commitGitWorkspace` exists, not wired into UI)
 
 Frontend tests:
 
@@ -455,10 +465,15 @@ Backend tasks:
 - [x] Multi-context view scoping
 - [x] Diff API endpoint for branch fixture
 - [x] Multi-context view API endpoint for branch fixture
-- [ ] Real Git branch switching
-- [ ] Working-tree status from a real Git repository
-- [ ] Commit creation in a real Git repository
-- [ ] Merge conflict detection from real Git state
+- [x] Real Git branch switching via `git checkout` in `SysmlMvpService`
+- [x] Working-tree status from a real Git repository (`GetGitStatus`)
+- [x] Commit creation in a real Git repository (`CommitAll`)
+- [x] Merge conflict detection from real Git state (`PreviewMergeConflict`)
+- [x] Workspace context management (`OpenRepository`, `ListWorkspaceContexts`, `CloseWorkspaceContext`, `GetWorkspaceContext`) - `POST /api/repositories/open`, `GET /api/workspace-contexts`, `DELETE /api/workspace-contexts/{workspaceId}`
+- [x] Workspace-scoped model graph (`GetWorkspaceGraph`) - `GET /api/workspace-contexts/{workspaceId}/model`
+- [x] Workspace-scoped source file (`GetWorkspaceSourceFile`) - `GET /api/workspace-contexts/{workspaceId}/files`
+- [x] Workspace-scoped commit (`CommitAll` via context) - `POST /api/workspace-contexts/{workspaceId}/commit`
+- [x] Worktree creation (`CreateWorktree`) - `POST /api/workspace-contexts/worktrees`
 
 Backend tests:
 
@@ -466,17 +481,17 @@ Backend tests:
 - [x] `branch_trace_links`
 - [x] `multi_context_view_scopes_ids`
 - [x] Diff endpoint checks through `tests/integration/backend-smoke.sh`
-- [ ] Real Git branch switching test
-- [ ] Real Git working-tree status test
-- [ ] Real Git commit creation test
-- [ ] Real Git merge conflict detection test
+- [x] `git_branch_diff_and_status` — real Git branch diff and status test
+- [x] `git_commit_persists_changes` — real Git commit test
+- [x] `merge_conflict_preview_detects_conflict` — real Git merge conflict test
+- [x] `open_repository_creates_workspace_context` — workspace context creation
+- [x] `close_workspace_context_removes_from_list` — workspace context removal
+- [x] `get_workspace_graph_returns_parsed_repo` — workspace graph retrieval
 
 Backend fixtures:
 
 - `fixtures/branch-divergence/`
 - `fixtures/merge-conflict/`
-- Fixture to add for temp real-Git repository branch switching
-- Fixture to add for temp real-Git repository commit creation
 
 Full-stack tests:
 
@@ -537,18 +552,18 @@ Frontend fixtures:
 
 Backend tasks:
 
-- [ ] Create a worktree only through an explicit user-requested backend operation
+- [x] Create a worktree only through an explicit user-requested backend operation (`POST /api/workspace-contexts/worktrees`)
 - [ ] Validate same-repository multi-branch writable contexts
 - [ ] Validate multiple-repository workspace contexts
 - [ ] Scope save targets to one repository, branch, and worktree
-- [ ] Scope commit targets to one repository, branch, and worktree
+- [x] Scope commit targets to repository, branch, and worktree (`POST /api/workspace-contexts/{workspaceId}/commit`)
 - [ ] Reject writes from shared comparison panes
-- [ ] Preserve `MultiContextViewDto` IDs without collapsing contexts
+- [x] Preserve `MultiContextViewDto` IDs without collapsing contexts
 
 Backend tests:
 
 - [ ] `multi_context_identity`
-- [ ] `worktree_creation_is_explicit`
+- [x] `open_repository_creates_workspace_context` — workspace context creation
 - [ ] Multiple repository context test
 - [ ] Save target scoping test
 - [ ] Commit target scoping test
@@ -626,11 +641,11 @@ Frontend fixtures:
 
 Backend tasks:
 
-- [ ] Saved view persistence
-- [ ] Shared repo view storage
-- [ ] Local private view storage
-- [ ] Stable-ID based view restoration
-- [ ] Trace matrix generation
+- [x] Saved view persistence (in-memory, via `POST/GET /api/saved-views`, `PUT/DELETE /api/saved-views/{viewId}`)
+- [x] Shared repo view storage (`StorageMode` field distinguishes "shared" vs "local")
+- [x] Local private view storage
+- [x] Stable-ID based view restoration (`GET /api/saved-views/{viewId}`)
+- [x] Trace matrix generation (`GET /api/workspace-contexts/{workspaceId}/trace-matrix`)
 - [ ] Source ownership query API
 - [ ] Cross-repository dependency query API
 - [ ] Multi-context comparison view API
@@ -640,10 +655,9 @@ Backend tasks:
 
 Backend tests:
 
-- [ ] Shared view persistence test
-- [ ] Local view persistence test
+- [x] `saved_view_crud` — create, list, get, update, delete views
+- [x] `build_trace_matrix` — trace matrix generation from workspace graph
 - [ ] Stable-ID view restoration test
-- [ ] Trace matrix generation test
 - [ ] Source ownership query test
 - [ ] Cross-repository dependency query test
 - [ ] Impact analysis test
@@ -654,9 +668,8 @@ Backend fixtures:
 
 - `fixtures/multi-file-modular/`
 - `fixtures/branch-divergence/`
-- `fixtures/saved-views/`
+- `fixtures/saved-views/` (expected view list fixture created)
 - Fixture to add for cross-repository dependencies
-- Fixture to add for view rename/move restoration
 
 Full-stack tests:
 

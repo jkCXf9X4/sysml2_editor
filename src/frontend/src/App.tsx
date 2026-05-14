@@ -1,4 +1,5 @@
 import { useEffect, useReducer, useState, type DragEvent, type ReactNode } from 'react';
+import * as api from './api';
 
 type Tone = 'accent' | 'success' | 'warning' | 'muted' | 'danger';
 type PaneMode = 'Visual' | 'Text' | 'Split';
@@ -365,8 +366,10 @@ const branchComparisonHeadLines = [
   '}',
 ];
 
+type BrowserModelId = string;
+
 type BrowserModel = {
-  id: string;
+  id: BrowserModelId;
   label: string;
   kind: string;
   repository: string;
@@ -386,7 +389,7 @@ type BrowserModel = {
   diffLines: readonly { kind: 'context' | 'added' | 'removed'; text: string }[];
 };
 
-const browserModels: Record<string, BrowserModel> = {
+const browserModels: Record<BrowserModelId, BrowserModel> = {
   vehicle: {
     id: 'vehicle',
     label: 'Vehicle',
@@ -650,8 +653,6 @@ const browserModels: Record<string, BrowserModel> = {
   },
 };
 
-type BrowserModelId = keyof typeof browserModels;
-
 const browserModelOrder = ['vehicle', 'powertrain', 'battery-system', 'inverter', 'electric-motor'] as const;
 
 const primaryWorkspaceStats = [
@@ -877,6 +878,13 @@ function App() {
   const [selectedModelId, setSelectedModelId] = useState<BrowserModelId>('battery-system');
   const [treeQuery, setTreeQuery] = useState('');
 
+  const [liveModels, setLiveModels] = useState<Record<BrowserModelId, BrowserModel>>(browserModels);
+  const [liveTree, setLiveTree] = useState<TreeRow[]>(modelTree);
+  const [apiGraph, setApiGraph] = useState<api.ModelGraph | null>(null);
+  const [apiSourceCache, setApiSourceCache] = useState<Record<string, api.SourceFile>>({});
+  const [liveRepositories, setLiveRepositories] = useState<RepositoryCard[]>(repositories);
+  const [liveContexts, setLiveContexts] = useState<ContextCard[]>(openContexts);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -904,12 +912,91 @@ function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (backendStatus !== 'connected') return;
+
+    async function loadApiData() {
+      const [graph, source, diff, multiView] = await Promise.all([
+        api.fetchFixtureGraph('phase-1-browser', 'main', false),
+        api.fetchFixtureSource('phase-1-browser', 'model/root.sysml'),
+        api.fetchBranchDivergenceDiff(),
+        api.fetchBranchDivergenceMultiContextView(),
+      ]);
+
+      if (graph) {
+        setApiGraph(graph);
+        const modelMap: Record<BrowserModelId, BrowserModel> = { ...browserModels };
+        const treeRows: TreeRow[] = [];
+
+        for (const node of graph.nodes) {
+          const file = graph.files.find((f) => f.path === node.sourceFile);
+          const edges = graph.edges.filter((e) => e.sourceId === node.stableId || e.targetId === node.stableId);
+          const traces = graph.traceLinks.filter(
+            (t) => t.sourceId === node.stableId || t.targetId === node.stableId,
+          );
+          const id = node.name.toLowerCase().replace(/\s+/g, '-');
+
+          if (!modelMap[id]) {
+            modelMap[id] = {
+              id,
+              label: node.name,
+              kind: node.kind,
+              repository: graph.context.repositoryAlias,
+              branch: graph.context.branch,
+              owner: node.qualifiedName.split('::').slice(-2, -1)[0] || graph.context.repositoryAlias,
+              file: node.sourceFile,
+              qualifiedName: node.qualifiedName,
+              summary: `${node.kind} element in ${node.sourceFile}`,
+              attributes: Object.entries(node.attributes),
+              ports: [],
+              parts: [],
+              connections: edges.map((e) => `${e.kind}: ${e.sourceId} -> ${e.targetId}`),
+              traces: traces.map((t) => [t.relationship, t.targetId ?? ''] as const),
+              sourceLines: [],
+              comparisonSummary: '',
+              comparisonLines: [],
+              diffLines: [],
+            };
+          }
+
+          treeRows.push({
+            id,
+            label: node.name,
+            kind: node.kind,
+            depth: node.owningPackageId ? 2 : 0,
+            selectable: true,
+          });
+        }
+
+        if (treeRows.length > 0) {
+          setLiveModels(modelMap);
+          setLiveTree(treeRows);
+        }
+      }
+
+      if (source) {
+        setApiSourceCache((prev) => ({ ...prev, [source.path]: source }));
+        setLiveModels((prev) => {
+          const updated = { ...prev };
+          for (const [id, model] of Object.entries(prev)) {
+            if (model.file === source.path) {
+              updated[id] = { ...model, sourceLines: source.content.split('\n') };
+            }
+          }
+          return updated;
+        });
+      }
+    }
+
+    loadApiData();
+  }, [backendStatus]);
+
   const setMode = (key: PaneKey, mode: PaneMode) => {
     setPaneModes((current) => ({ ...current, [key]: mode }));
   };
-  const selectedModel = browserModels[selectedModelId] ?? browserModels['battery-system'];
+  const selectedModel = liveModels[selectedModelId] ?? liveModels['battery-system'] ?? browserModels['battery-system'];
   const activeBranchContext = branchContexts[activeBranch];
-  const visibleTree = modelTree.filter((node) => {
+  const visibleTree = liveTree.filter((node) => {
     const query = treeQuery.trim().toLowerCase();
     if (!query) {
       return true;
@@ -941,7 +1028,7 @@ function App() {
 
         <div className="topbar-row topbar-row-tools">
           <div className="context-strip" aria-label="Open contexts">
-            {openContexts.map((context) => (
+            {liveContexts.map((context) => (
               <ContextPill
                 key={context.id}
                 label={`${context.repository}/${context.branch}`}
@@ -987,7 +1074,7 @@ function App() {
             <SectionHeader title="Repositories" meta="3 open" />
             <input className="search-box" type="search" placeholder="Search repositories..." />
             <div className="repo-list">
-              {repositories.map((repo) => (
+              {liveRepositories.map((repo) => (
                 <article key={repo.name} className="repo-card">
                   <div className="repo-card__header">
                     <div>
@@ -1084,6 +1171,7 @@ function App() {
               onSelectModel={setSelectedModelId}
               draftTimeline={draftTimeline}
               onDraftAction={dispatchDraft}
+              allModels={liveModels}
             />
           </WorkbenchPane>
 
@@ -1098,6 +1186,7 @@ function App() {
               model={selectedModel}
               onSelectModel={setSelectedModelId}
               activeBranch={activeBranch}
+              allModels={liveModels}
             />
           </WorkbenchPane>
 
@@ -1111,6 +1200,7 @@ function App() {
               mode={paneModes.source}
               model={selectedModel}
               onSelectModel={setSelectedModelId}
+              allModels={liveModels}
             />
           </WorkbenchPane>
 
@@ -1125,6 +1215,7 @@ function App() {
               model={selectedModel}
               onSelectModel={setSelectedModelId}
               activeBranch={activeBranch}
+              allModels={liveModels}
             />
           </WorkbenchPane>
         </section>
@@ -1316,6 +1407,7 @@ function PaneBody({
   draftTimeline,
   onDraftAction,
   activeBranch = 'head',
+  allModels,
 }: {
   kind: PaneSpec['kind'];
   mode: PaneMode;
@@ -1324,7 +1416,10 @@ function PaneBody({
   draftTimeline?: DraftTimeline;
   onDraftAction?: DraftDispatch;
   activeBranch?: BranchKey;
+  allModels?: Record<BrowserModelId, BrowserModel>;
 }) {
+  const models = allModels ?? browserModels;
+
   if (kind === 'architecture') {
     const activeDraftTimeline = draftTimeline ?? initialDraftTimeline;
     const activeDraftAction = onDraftAction ?? (() => {});
@@ -1342,9 +1437,9 @@ function PaneBody({
         onDragOver={(event) => event.preventDefault()}
         onDrop={placeDraftFromDrop}
       >
-        {mode === 'Visual' ? <ArchitectureDiagram model={model} onSelectModel={onSelectModel} /> : null}
+        {mode === 'Visual' ? <ArchitectureDiagram model={model} onSelectModel={onSelectModel} allModels={models} /> : null}
         {mode === 'Text' ? <CodeEditor title={model.file} lines={model.sourceLines} /> : null}
-        {mode === 'Split' ? <SplitArchitecture model={model} onSelectModel={onSelectModel} draftTimeline={activeDraftTimeline} onDraftAction={activeDraftAction} /> : null}
+        {mode === 'Split' ? <SplitArchitecture model={model} onSelectModel={onSelectModel} draftTimeline={activeDraftTimeline} onDraftAction={activeDraftAction} allModels={models} /> : null}
       </div>
     );
   }
@@ -1352,9 +1447,9 @@ function PaneBody({
   if (kind === 'comparison') {
     return (
       <div className={`surface surface--${mode.toLowerCase()}`}>
-        {mode === 'Visual' ? <ComparisonDiagram model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} /> : null}
+        {mode === 'Visual' ? <ComparisonDiagram model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} allModels={models} /> : null}
         {mode === 'Text' ? <ComparisonText model={model} activeBranch={activeBranch} /> : null}
-        {mode === 'Split' ? <SplitComparison model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} /> : null}
+        {mode === 'Split' ? <SplitComparison model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} allModels={models} /> : null}
       </div>
     );
   }
@@ -1381,15 +1476,19 @@ function PaneBody({
 function ArchitectureDiagram({
   model,
   onSelectModel,
+  allModels,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
+  allModels: Record<BrowserModelId, BrowserModel>;
 }) {
+  const m = allModels;
+
   return (
     <div className="diagram diagram--architecture">
       <DiagramNode
-        label={browserModels.vehicle.label}
-        kind={browserModels.vehicle.kind}
+        label={m.vehicle?.label ?? browserModels.vehicle.label}
+        kind={m.vehicle?.kind ?? browserModels.vehicle.kind}
         tone="muted"
         wide
         selected={model.id === 'vehicle'}
@@ -1398,8 +1497,8 @@ function ArchitectureDiagram({
       <DiagramConnector label="contains" />
       <div className="diagram__row">
         <DiagramNode
-          label={browserModels.powertrain.label}
-          kind={browserModels.powertrain.kind}
+          label={m.powertrain?.label ?? browserModels.powertrain.label}
+          kind={m.powertrain?.kind ?? browserModels.powertrain.kind}
           tone="accent"
           selected={model.id === 'powertrain'}
           onClick={() => onSelectModel('powertrain')}
@@ -1412,22 +1511,22 @@ function ArchitectureDiagram({
       <DiagramConnector label="selected" />
       <div className="diagram__stack">
         <DiagramNode
-          label={browserModels['battery-system'].label}
-          kind={browserModels['battery-system'].kind}
+          label={m['battery-system']?.label ?? browserModels['battery-system'].label}
+          kind={m['battery-system']?.kind ?? browserModels['battery-system'].kind}
           tone="success"
           selected={model.id === 'battery-system'}
           onClick={() => onSelectModel('battery-system')}
         />
         <DiagramNode
-          label={browserModels.inverter.label}
-          kind={browserModels.inverter.kind}
+          label={m.inverter?.label ?? browserModels.inverter.label}
+          kind={m.inverter?.kind ?? browserModels.inverter.kind}
           tone="muted"
           selected={model.id === 'inverter'}
           onClick={() => onSelectModel('inverter')}
         />
         <DiagramNode
-          label={browserModels['electric-motor'].label}
-          kind={browserModels['electric-motor'].kind}
+          label={m['electric-motor']?.label ?? browserModels['electric-motor'].label}
+          kind={m['electric-motor']?.kind ?? browserModels['electric-motor'].kind}
           tone="muted"
           selected={model.id === 'electric-motor'}
           onClick={() => onSelectModel('electric-motor')}
@@ -1447,12 +1546,15 @@ function ComparisonDiagram({
   model,
   onSelectModel,
   activeBranch,
+  allModels,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
   activeBranch: BranchKey;
+  allModels: Record<BrowserModelId, BrowserModel>;
 }) {
   const activeContext = branchContexts[activeBranch];
+  const m = allModels;
 
   return (
     <div className="diagram diagram--comparison">
@@ -1474,8 +1576,8 @@ function ComparisonDiagram({
         </div>
       </div>
       <DiagramNode
-        label={browserModels.vehicle.label}
-        kind={browserModels.vehicle.kind}
+        label={m.vehicle?.label ?? browserModels.vehicle.label}
+        kind={m.vehicle?.kind ?? browserModels.vehicle.kind}
         tone="muted"
         wide
         selected={model.id === 'vehicle'}
@@ -1484,15 +1586,15 @@ function ComparisonDiagram({
       <DiagramConnector label="branch delta" />
       <div className="diagram__row">
         <DiagramNode
-          label={browserModels.powertrain.label}
-          kind={browserModels.powertrain.kind}
+          label={m.powertrain?.label ?? browserModels.powertrain.label}
+          kind={m.powertrain?.kind ?? browserModels.powertrain.kind}
           tone="accent"
           selected={model.id === 'powertrain'}
           onClick={() => onSelectModel('powertrain')}
         />
         <DiagramNode
-          label={browserModels['battery-system'].label}
-          kind={browserModels['battery-system'].kind}
+          label={m['battery-system']?.label ?? browserModels['battery-system'].label}
+          kind={m['battery-system']?.kind ?? browserModels['battery-system'].kind}
           tone="warning"
           selected={model.id === 'battery-system'}
           onClick={() => onSelectModel('battery-system')}
@@ -1670,18 +1772,20 @@ function SplitArchitecture({
   onSelectModel,
   draftTimeline,
   onDraftAction,
+  allModels,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
   draftTimeline: DraftTimeline;
   onDraftAction: DraftDispatch;
+  allModels: Record<BrowserModelId, BrowserModel>;
 }) {
   const generatedLines = buildGeneratedSource(model.sourceLines, draftTimeline.present.elements);
   const selectedDraftElement = draftTimeline.present.elements.find((element) => element.id === draftTimeline.present.selectedElementId) ?? null;
 
   return (
     <div className="split-view">
-      <ArchitectureDiagram model={model} onSelectModel={onSelectModel} />
+      <ArchitectureDiagram model={model} onSelectModel={onSelectModel} allModels={allModels} />
       <DraftWorkbench
         model={model}
         draftTimeline={draftTimeline}
@@ -1833,14 +1937,16 @@ function SplitComparison({
   model,
   onSelectModel,
   activeBranch,
+  allModels,
 }: {
   model: BrowserModel;
   onSelectModel: (id: BrowserModelId) => void;
   activeBranch: BranchKey;
+  allModels: Record<BrowserModelId, BrowserModel>;
 }) {
   return (
     <div className="split-view">
-      <ComparisonDiagram model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} />
+      <ComparisonDiagram model={model} onSelectModel={onSelectModel} activeBranch={activeBranch} allModels={allModels} />
       <CodeEditor
         title="Semantic diff"
         lines={[

@@ -779,7 +779,171 @@ public sealed class SysmlMvpService
             throw new InvalidOperationException($"git {string.Join(" ", arguments)} failed: {stderr.Trim()}");
         }
 
-        return new GitCommandResult(stdout, stderr, process.ExitCode);
+return new GitCommandResult(stdout, stderr, process.ExitCode);
+    }
+
+    private readonly Dictionary<string, WorkspaceContextDto> _workspaceContexts = new(StringComparer.Ordinal);
+    private readonly Dictionary<string, SavedViewDto> _savedViews = new(StringComparer.Ordinal);
+    private readonly object _contextLock = new();
+
+    public OpenRepositoryResponseDto OpenRepository(string rootPath, string? explicitBranch = null)
+    {
+        if (!Directory.Exists(rootPath))
+            throw new InvalidOperationException($"Repository path '{rootPath}' does not exist.");
+        var alias = Path.GetFileName(rootPath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+        var branch = explicitBranch ?? GetGitBranch(rootPath);
+        var repositoryId = $"repo-{alias}";
+        var workspaceId = $"workspace-{alias}-{branch}";
+        var writable = IsWritable(rootPath, branch);
+        var graph = ParseGitRepository(rootPath, branch, writable);
+        lock (_contextLock)
+        {
+            _workspaceContexts[workspaceId] = new WorkspaceContextDto(
+                workspaceId, repositoryId, alias, rootPath, branch,
+                TryGetCommitSha(rootPath), writable,
+                writable ? "Current working tree is writable." : "Context is read-only.",
+                DateTime.UtcNow);
+        }
+        return new OpenRepositoryResponseDto(repositoryId, workspaceId, rootPath, branch, writable, graph);
+    }
+
+    public WorkspaceListDto ListWorkspaceContexts()
+    {
+        lock (_contextLock) { return new WorkspaceListDto(_workspaceContexts.Values.OrderBy(c => c.OpenedAt).ToList()); }
+    }
+
+    public bool CloseWorkspaceContext(string workspaceId)
+    {
+        lock (_contextLock) { return _workspaceContexts.Remove(workspaceId); }
+    }
+
+    public WorkspaceContextDto? GetWorkspaceContext(string workspaceId)
+    {
+        lock (_contextLock) { return _workspaceContexts.TryGetValue(workspaceId, out var ctx) ? ctx : null; }
+    }
+
+    public ModelGraphDto? GetWorkspaceGraph(string workspaceId)
+    {
+        WorkspaceContextDto? ctx;
+        lock (_contextLock) { if (!_workspaceContexts.TryGetValue(workspaceId, out ctx)) return null; }
+        return Directory.Exists(ctx.RootPath) ? ParseGitRepository(ctx.RootPath, ctx.Branch, ctx.IsWritable) : null;
+    }
+
+    public SourceFileDto? GetWorkspaceSourceFile(string workspaceId, string path)
+    {
+        WorkspaceContextDto? ctx;
+        lock (_contextLock) { if (!_workspaceContexts.TryGetValue(workspaceId, out ctx)) return null; }
+        var fullPath = Path.GetFullPath(Path.Combine(ctx.RootPath, path));
+        if (!fullPath.StartsWith(Path.GetFullPath(ctx.RootPath), StringComparison.Ordinal) || !File.Exists(fullPath)) return null;
+        var content = File.ReadAllText(fullPath);
+        return new SourceFileDto(path, content, DetectLineEnding(content), Sha256(content));
+    }
+
+    public WorktreeResponseDto CreateWorktree(string repositoryId, string branch, string worktreePath, bool createBranch)
+    {
+        WorkspaceContextDto? sourceCtx;
+        lock (_contextLock) { sourceCtx = _workspaceContexts.Values.FirstOrDefault(c => c.RepositoryId == repositoryId); }
+        if (sourceCtx is null)
+            return new WorktreeResponseDto("", "", "", "", false, "Repository not open.",
+                [Diagnostic("RepositoryNotOpen", "Repository is not open.", "", 1, 1, 1, 1)]);
+        try
+        {
+            if (Directory.Exists(worktreePath))
+                return new WorktreeResponseDto("", "", "", "", false, "Path exists.",
+                    [Diagnostic("PathExists", "Worktree path already exists.", "", 1, 1, 1, 1)]);
+            var alias = Path.GetFileName(worktreePath.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
+            var workspaceId = $"workspace-{alias}-{branch}";
+            if (createBranch) RunGit(sourceCtx.RootPath, "branch", branch);
+            RunGit(sourceCtx.RootPath, "worktree", "add", worktreePath, branch);
+            lock (_contextLock)
+            {
+                _workspaceContexts[workspaceId] = new WorkspaceContextDto(
+                    workspaceId, repositoryId, alias, worktreePath, branch,
+                    TryGetCommitSha(worktreePath), true, "Backed by a distinct writable worktree.", DateTime.UtcNow);
+            }
+            return new WorktreeResponseDto(workspaceId, repositoryId, worktreePath, branch, true,
+                "Backed by a distinct writable worktree.", []);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return new WorktreeResponseDto("", repositoryId, worktreePath, branch, false, ex.Message,
+                [Diagnostic("WorktreeFailed", ex.Message, "", 1, 1, 1, 1)]);
+        }
+    }
+
+    public SavedViewDto CreateSavedView(SavedViewCreateDto request)
+    {
+        var viewId = $"view-{Guid.NewGuid():N}";
+        var now = DateTime.UtcNow;
+        var view = new SavedViewDto(viewId, request.Name, request.Kind, request.WorkspaceId,
+            request.RepositoryId, request.Branch,
+            request.IncludedNodeIds ?? [], request.ExcludedNodeIds ?? [],
+            request.Filters ?? [], request.Attributes ?? [],
+            request.StorageMode, now, now);
+        _savedViews[viewId] = view;
+        return view;
+    }
+
+    public SavedViewListDto ListSavedViews() =>
+        new SavedViewListDto(_savedViews.Values.OrderByDescending(v => v.UpdatedAt).ToList());
+
+    public SavedViewDto? GetSavedView(string viewId) =>
+        _savedViews.TryGetValue(viewId, out var view) ? view : null;
+
+    public SavedViewDto? UpdateSavedView(string viewId, SavedViewUpdateDto request)
+    {
+        if (!_savedViews.TryGetValue(viewId, out var view)) return null;
+        var updated = view with
+        {
+            Name = request.Name ?? view.Name,
+            IncludedNodeIds = request.IncludedNodeIds ?? view.IncludedNodeIds,
+            ExcludedNodeIds = request.ExcludedNodeIds ?? view.ExcludedNodeIds,
+            Filters = request.Filters ?? view.Filters,
+            Attributes = request.Attributes ?? view.Attributes,
+            UpdatedAt = DateTime.UtcNow
+        };
+        _savedViews[viewId] = updated;
+        return updated;
+    }
+
+    public bool DeleteSavedView(string viewId) => _savedViews.Remove(viewId);
+
+    public TraceMatrixDto BuildTraceMatrix(string workspaceId)
+    {
+        WorkspaceContextDto? ctx;
+        lock (_contextLock) { if (!_workspaceContexts.TryGetValue(workspaceId, out ctx)) return new TraceMatrixDto("", "TraceMatrix", "", workspaceId, [], [], []); }
+        var graph = ParseGitRepository(ctx.RootPath, ctx.Branch, ctx.IsWritable);
+        var cells = new List<TraceMatrixCellDto>();
+        foreach (var edge in graph.Edges)
+            cells.Add(new TraceMatrixCellDto(edge.SourceId, edge.TargetId ?? "", edge.Kind, edge.StableId, edge.SourceFile, true));
+        foreach (var link in graph.TraceLinks)
+        {
+            if (link.Kind != "ItemToItem" && link.Kind != "ItemToFile") continue;
+            if (cells.Any(c => c.SourceId == link.SourceId && c.TargetId == (link.TargetId ?? "") && c.Relationship == link.Relationship)) continue;
+            cells.Add(new TraceMatrixCellDto(link.SourceId, link.TargetId ?? "", link.Relationship, link.StableId, link.SourceFile, false));
+        }
+        return new TraceMatrixDto($"matrix-{workspaceId}", "TraceMatrix",
+            $"Trace Matrix - {ctx.RepositoryAlias}/{ctx.Branch}", workspaceId,
+            graph.Nodes.Select(n => n.StableId).ToList(),
+            graph.Nodes.Select(n => n.StableId).ToList(), cells);
+    }
+
+    private static string GetGitBranch(string repositoryRoot)
+    {
+        try { return RunGit(repositoryRoot, "branch", "--show-current").StdOut.Trim(); }
+        catch { return "main"; }
+    }
+
+    private static string? TryGetCommitSha(string repositoryRoot)
+    {
+        try { return RunGit(repositoryRoot, "rev-parse", "HEAD").StdOut.Trim(); }
+        catch { return null; }
+    }
+
+    private static bool IsWritable(string repositoryRoot, string branch)
+    {
+        try { return string.Equals(GetGitBranch(repositoryRoot), branch, StringComparison.Ordinal); }
+        catch { return false; }
     }
 
     private sealed record GitCommandResult(string StdOut, string StdErr, int ExitCode);

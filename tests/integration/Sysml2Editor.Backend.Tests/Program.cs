@@ -239,6 +239,218 @@ Run("merge_conflict_preview_detects_conflict", () =>
     }
 });
 
+Run("open_repository_creates_workspace_context", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        AssertEqual($"repo-{Path.GetFileName(repoRoot)}", result.RepositoryId);
+        AssertTrue(result.IsWritable);
+        AssertTrue(result.Graph.Nodes.Count > 0);
+
+        var contexts = service.ListWorkspaceContexts();
+        AssertTrue(contexts.Contexts.Any(c => c.RepositoryId == result.RepositoryId));
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("close_workspace_context_removes_from_list", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        var before = service.ListWorkspaceContexts();
+        AssertTrue(before.Contexts.Any(c => c.WorkspaceId == result.WorkspaceId));
+
+        var closed = service.CloseWorkspaceContext(result.WorkspaceId);
+        AssertTrue(closed);
+
+        var after = service.ListWorkspaceContexts();
+        AssertTrue(after.Contexts.All(c => c.WorkspaceId != result.WorkspaceId));
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("get_workspace_graph_returns_parsed_repo", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        var graph = service.GetWorkspaceGraph(result.WorkspaceId);
+        AssertTrue(graph is not null);
+        AssertEqual(result.WorkspaceId, graph!.Context.WorkspaceId);
+        AssertTrue(graph.Nodes.Count > 0);
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("saved_view_crud", () =>
+{
+    var create = service.CreateSavedView(new SavedViewCreateDto(
+        "Safety Lens", "CustomWorkspaceView",
+        "workspace-main", "repo-vehicle", "main",
+        [], [], null, new Dictionary<string, string>
+        {
+            ["includeTypes"] = "Requirement,Part",
+            ["layout"] = "hierarchical"
+        },
+        "shared"));
+    AssertEqual("Safety Lens", create.Name);
+    AssertEqual("shared", create.StorageMode);
+
+    var list = service.ListSavedViews();
+    AssertTrue(list.Views.Any(v => v.ViewId == create.ViewId));
+
+    var got = service.GetSavedView(create.ViewId);
+    AssertEqual("Safety Lens", got!.Name);
+
+    var updated = service.UpdateSavedView(create.ViewId, new SavedViewUpdateDto(
+        "Safety Lens v2", null, null, null, null));
+    AssertEqual("Safety Lens v2", updated!.Name);
+
+    var deleted = service.DeleteSavedView(create.ViewId);
+    AssertTrue(deleted);
+
+    var afterDelete = service.ListSavedViews();
+    AssertTrue(afterDelete.Views.All(v => v.ViewId != create.ViewId));
+});
+
+Run("build_trace_matrix", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        var matrix = service.BuildTraceMatrix(result.WorkspaceId);
+        AssertEqual("TraceMatrix", matrix.Kind);
+        AssertTrue(matrix.SourceNodeIds.Count > 0);
+        AssertTrue(matrix.TargetNodeIds.Count > 0);
+        AssertTrue(matrix.Cells.Count > 0);
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("open_repository_creates_workspace_context", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        AssertEqual($"repo-{Path.GetFileName(repoRoot)}", result.RepositoryId);
+        AssertTrue(result.IsWritable);
+        AssertTrue(result.Graph.Nodes.Count > 0);
+
+        var contexts = service.ListWorkspaceContexts();
+        AssertTrue(contexts.Contexts.Any(c => c.RepositoryId == result.RepositoryId));
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("close_workspace_context_removes_from_list", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        var before = service.ListWorkspaceContexts();
+        AssertTrue(before.Contexts.Any(c => c.WorkspaceId == result.WorkspaceId));
+
+        var closed = service.CloseWorkspaceContext(result.WorkspaceId);
+        AssertTrue(closed);
+
+        var after = service.ListWorkspaceContexts();
+        AssertTrue(after.Contexts.All(c => c.WorkspaceId != result.WorkspaceId));
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("get_workspace_graph_returns_parsed_repo", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        var graph = service.GetWorkspaceGraph(result.WorkspaceId);
+        AssertTrue(graph is not null);
+        AssertEqual(result.WorkspaceId, graph!.Context.WorkspaceId);
+        AssertTrue(graph.Nodes.Count > 0);
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
+Run("saved_view_crud", () =>
+{
+    var create = service.CreateSavedView(new SavedViewCreateDto(
+        "Safety Lens", "CustomWorkspaceView",
+        "workspace-main", "repo-vehicle", "main",
+        [], [], null, new Dictionary<string, string>
+        {
+            ["includeTypes"] = "Requirement,Part",
+            ["layout"] = "hierarchical"
+        },
+        "shared"));
+    AssertEqual("Safety Lens", create.Name);
+    AssertEqual("shared", create.StorageMode);
+
+    var list = service.ListSavedViews();
+    AssertTrue(list.Views.Any(v => v.ViewId == create.ViewId));
+
+    var got = service.GetSavedView(create.ViewId);
+    AssertEqual("Safety Lens", got!.Name);
+
+    var updated = service.UpdateSavedView(create.ViewId, new SavedViewUpdateDto(
+        "Safety Lens v2", null, null, null, null));
+    AssertEqual("Safety Lens v2", updated!.Name);
+
+    var deleted = service.DeleteSavedView(create.ViewId);
+    AssertTrue(deleted);
+
+    var afterDelete = service.ListSavedViews();
+    AssertTrue(afterDelete.Views.All(v => v.ViewId != create.ViewId));
+});
+
+Run("build_trace_matrix", () =>
+{
+    var repoRoot = CreateTemporaryGitRepo();
+    try
+    {
+        var result = service.OpenRepository(repoRoot);
+        var matrix = service.BuildTraceMatrix(result.WorkspaceId);
+        AssertEqual("TraceMatrix", matrix.Kind);
+        AssertTrue(matrix.SourceNodeIds.Count > 0);
+        AssertTrue(matrix.TargetNodeIds.Count > 0);
+        AssertTrue(matrix.Cells.Count > 0);
+    }
+    finally
+    {
+        Directory.Delete(repoRoot, recursive: true);
+    }
+});
+
 if (failures.Count > 0)
 {
     Console.Error.WriteLine("Backend tests failed:");

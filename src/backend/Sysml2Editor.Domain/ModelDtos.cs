@@ -124,3 +124,92 @@ public sealed record MergeConflictPreviewDto(
     bool HasConflicts,
     List<string> ConflictingFiles,
     string Summary);
+
+public sealed record WorkspaceContextDto(
+    string WorkspaceId,
+    string RepositoryId,
+    string RepositoryAlias,
+    string RootPath,
+    string Branch,
+    string? CommitSha,
+    bool IsWritable,
+    string WritableReason,
+    DateTime OpenedAt);
+
+public sealed record OpenRepositoryResponseDto(
+    string RepositoryId,
+    string WorkspaceId,
+    string RootPath,
+    string Branch,
+    bool IsWritable,
+    ModelGraphDto Graph);
+
+public sealed record WorkspaceListDto(List<WorkspaceContextDto> Contexts);
+
+public sealed record WorktreeRequestDto(
+    string RepositoryId,
+    string Branch,
+    string Path,
+    bool CreateBranch);
+
+public sealed record WorktreeResponseDto(
+    string WorkspaceId,
+    string RepositoryId,
+    string RootPath,
+    string Branch,
+    bool IsWritable,
+    string WritableReason,
+    List<DiagnosticDto> Diagnostics);
+
+public sealed record SavedViewDto(
+    string ViewId,
+    string Name,
+    string Kind,
+    string? WorkspaceId,
+    string? RepositoryId,
+    string? Branch,
+    List<string> IncludedNodeIds,
+    List<string> ExcludedNodeIds,
+    Dictionary<string, string> Filters,
+    Dictionary<string, string> Attributes,
+    string StorageMode,
+    DateTime CreatedAt,
+    DateTime UpdatedAt);
+
+public sealed record SavedViewListDto(List<SavedViewDto> Views);
+
+public sealed record SavedViewCreateDto(
+    string Name,
+    string Kind,
+    string? WorkspaceId,
+    string? RepositoryId,
+    string? Branch,
+    List<string>? IncludedNodeIds,
+    List<string>? ExcludedNodeIds,
+    Dictionary<string, string>? Filters,
+    Dictionary<string, string>? Attributes,
+    string StorageMode);
+
+public sealed record SavedViewUpdateDto(
+    string? Name,
+    List<string>? IncludedNodeIds,
+    List<string>? ExcludedNodeIds,
+    Dictionary<string, string>? Filters,
+    Dictionary<string, string>? Attributes);
+
+public sealed record TraceMatrixDto(
+    string ViewId,
+    string Kind,
+    string Title,
+    string WorkspaceId,
+    List<string> SourceNodeIds,
+    List<string> TargetNodeIds,
+    List<TraceMatrixCellDto> Cells);
+
+public sealed record TraceMatrixCellDto(
+    string SourceId,
+    string TargetId,
+    string Relationship,
+    string? TraceLinkId,
+    string SourceFile,
+    bool IsDirect);

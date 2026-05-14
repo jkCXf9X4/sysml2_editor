@@ -1,0 +1,11 @@
+{
+  "baseWorkspaceId": "workspace-merge-conflict-left",
+  "headWorkspaceId": "workspace-merge-conflict-right",
+  "baseBranch": "left",
+  "headBranch": "right",
+  "added": [],
+  "modified": [],
+  "removed": [],
+  "changedFiles": [],
+  "traceLinks": []
+}

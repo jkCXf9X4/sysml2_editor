@@ -37,6 +37,45 @@ See [src/backend/README.md](./src/backend/README.md), [src/frontend/README.md](.
 
 - Documentation index: [docs/README.md](./docs/README.md)
 
+## Quick Start
+
+Prerequisites:
+
+- Node.js 22 or newer
+- npm
+- .NET SDK/runtime 10
+
+Start the full development application from the repository root:
+
+```bash
+bash scripts/start.sh
+```
+
+The script starts:
+
+- Backend API: `http://127.0.0.1:5087`
+- Frontend app: `http://localhost:5173`
+
+Open `http://localhost:5173` in a browser.
+Press Ctrl-C in the script terminal to stop both processes.
+If services are already running or detached, stop them with:
+
+```bash
+bash scripts/stop.sh
+```
+
+To verify the backend is running:
+
+```bash
+curl -fsS http://127.0.0.1:5087/api/health
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
 ## Run The Application
 
 Prerequisites:
@@ -118,6 +157,12 @@ Optionally run the frontend dev-server smoke gate:
 
 ```bash
 bash tests/integration/frontend-smoke.sh
+```
+
+Run the browser-render smoke gate to catch JavaScript runtime errors during real page load:
+
+```bash
+bash tests/integration/frontend-browser-smoke.sh
 ```
 
 You can also start the backend manually and verify `/api/health` and `/swagger/v1/swagger.json` as shown above.
