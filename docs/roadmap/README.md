@@ -18,6 +18,7 @@ The current capability inventory lives in [Functionality index](../functionality
 Use these documents for detail behind the roadmap:
 
 - [Product vision](../../PRODUCT_VISION.md) for product intent and tradeoffs
+- [Systems engineering basis](../systems-engineering/README.md) for use cases, breakdowns, and requirements derived from the vision
 - [Functionality index](../functionality/README.md) for current and planned capability status
 - [UI design](../ui/design.md) for the target workbench experience
 - [Architecture overview](../architecture/README.md) for system decisions

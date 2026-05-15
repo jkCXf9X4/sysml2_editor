@@ -11,16 +11,15 @@ This folder contains all project documentation, organized by abstraction level t
 
 ## Folder Structure
 
-| Folder | Purpose |
-|--------|---------|
-| [architecture/](./architecture/) | High-level system design decisions, architectural overviews, and key tradeoffs. Summary of decisions in `architecture/README.md`, with details in subfiles. |
-| [functionality/](./functionality/) | Current and planned product capabilities, test evidence, stability level, and development plans. |
-| [implementation/](./implementation/) | Implementation contracts, API specs, parser rules, syntax examples, and current build direction. Contains `api/`, `graph/`, `parser-contract.md`, and `syntax-examples.md`. |
-| [roadmap/](./roadmap/) | Forward implementation plan from the current application state: milestones, gates, success criteria, and deferred work. |
-| [testing/](./testing/) | Supporting test strategy, MVP coverage, fixtures, CI guidance, and quality risks. Phase gates live in the roadmap. |
-| [ui/](./ui/) | User interface design, workflows, and feature specifications derived from the former `docs/design.md`. |
-| [ai/](./ai/) | Agent orientation, working rules, and context for AI-assisted development. |
-| [reference/](./reference/) | External standards (e.g., SysML v2) and source material. |
+- [architecture/](./architecture/) - High-level system design decisions, architectural overviews, and key tradeoffs. Summary of decisions in `architecture/README.md`, with details in subfiles.
+- [systems-engineering/](./systems-engineering/) - Use cases, functional breakdown, product breakdown, and product requirements derived from the product vision.
+- [functionality/](./functionality/) - Current and planned product capabilities, test evidence, stability level, and development plans.
+- [implementation/](./implementation/) - Implementation contracts, API specs, parser rules, syntax examples, and current build direction. Contains `api/`, `graph/`, `parser-contract.md`, and `syntax-examples.md`.
+- [roadmap/](./roadmap/) - Forward implementation plan from the current application state: milestones, gates, success criteria, and deferred work.
+- [testing/](./testing/) - Supporting test strategy, MVP coverage, fixtures, CI guidance, and quality risks. Phase gates live in the roadmap.
+- [ui/](./ui/) - User interface design, workflows, and feature specifications derived from the former `docs/design.md`.
+- [ai/](./ai/) - Agent orientation, working rules, and context for AI-assisted development.
+- [reference/](./reference/) - External standards (e.g., SysML v2) and source material.
 
 The `decisions` and `setup` folders are intentionally deferred. Add them only when they contain real project material; do not create empty documentation folders.
 

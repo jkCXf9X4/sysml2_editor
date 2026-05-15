@@ -67,3 +67,7 @@ If a decision does not support a vision pillar, the decision should either be ch
 ## Current Strategic Choice
 
 Phase 1 in the [implementation roadmap](docs/roadmap/roadmap.md) prioritizes a read-only Git-backed model browser before visual editing. This does not change the product vision; it reduces delivery risk by proving repository access, parsing, source mapping, and model projection before writes are exposed.
+
+## Analytical Basis
+
+The use-case catalogue, functional breakdown, product breakdown, and product requirements derived from this vision live in [docs/systems-engineering/README.md](docs/systems-engineering/README.md). Use that layer when you need to decompose the vision into implementation-ready behavior and verification targets.

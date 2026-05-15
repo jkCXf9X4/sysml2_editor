@@ -7,6 +7,7 @@ Current and planned capability inventory, stability, and test evidence live in [
 Supporting references:
 
 - Product intent: [Product vision](../../PRODUCT_VISION.md)
+- Systems engineering basis: [systems-engineering](../systems-engineering/README.md)
 - Current capability inventory: [Functionality index](../functionality/README.md)
 - UI target: [UI Design](../ui/design.md)
 - Runtime guarantees: [runtime.md](../architecture/runtime.md)
