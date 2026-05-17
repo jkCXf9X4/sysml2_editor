@@ -45,7 +45,7 @@ Bottom status bar:
   indentation, encoding, SysML version
 ```
 
-This is the long-term visual target. Early roadmap phases may use fixture-backed mock data, but every visible surface should preserve the same concepts: context identity, source ownership, model traceability, validation state, and safe write targets.
+This is the long-term visual target. Fixture-backed mock data may be used in prototypes or documentation examples, but every visible surface should preserve the same concepts: context identity, source ownership, model traceability, validation state, and safe write targets.
 
 #### Visual Success Criteria
 

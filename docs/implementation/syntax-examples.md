@@ -1,6 +1,6 @@
 # Syntax Examples
 
-The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the MVP subset. They are implementation fixtures, not a claim of full SysML v2 conformance.
+The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the supported syntax subset. They are documentation fixtures, not a claim of full SysML v2 conformance.
 
 Vision trace:
 
@@ -11,7 +11,7 @@ Vision trace:
 
 Stable IDs are stored as SysML-native metadata annotations on every editable model element, including packages. File-level imports and relationship edges may use deterministic derived IDs in the initial design.
 
-The MVP parser recognizes this project metadata:
+The parser recognizes this project metadata:
 
 ```sysml
 metadata def Sysml2EditorIdentity {

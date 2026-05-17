@@ -4,9 +4,9 @@
 
 The editor should use deterministic file ownership rules so that a save changes only the intended files.
 
-The write policy is part of the implementation contract, not an afterthought.
+The write policy is part of the product contract, not an afterthought.
 
-This policy is accepted for the initial design but is not implemented in the first read-only slice. No save endpoint or UI save action should exist until the Phase 2 writer gates in [Implementation roadmap](../roadmap/roadmap.md) are active.
+This policy applies whenever save is available. No save endpoint or UI save action should exist unless the write pipeline can round-trip the model safely and preserve deterministic ownership.
 
 Vision trace:
 
@@ -68,7 +68,7 @@ Initial design:
 5. The backend marks a context read-only when the root path is not writable, the branch is detached, the branch is already open in another writable root without a distinct worktree, or the context was created only for comparison.
 6. Closing a context does not delete a worktree. Worktree deletion is a separate explicit operation.
 
-Recommended context operations for the first editable multi-branch roadmap phase:
+Recommended context operations:
 
 - `POST /repositories/open`: open an existing repository or worktree path.
 - `POST /workspace-contexts/worktrees`: create a new worktree for a branch and open it as a workspace context.

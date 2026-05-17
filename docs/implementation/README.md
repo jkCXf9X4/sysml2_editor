@@ -1,6 +1,6 @@
 # Implementation
 
-Implementation contracts, API specs, parser rules, syntax examples, and current build direction. Derived from the former `docs/design.md`.
+Implementation contracts, API specs, parser rules, syntax examples, and current product scope. Derived from the former `docs/design.md`.
 
 ### API Contracts (`api/`)
 
@@ -29,8 +29,8 @@ Implementation contracts, API specs, parser rules, syntax examples, and current 
 - Runtime: local web app
 - Backend: ASP.NET Core on `localhost`
 - Frontend: React + TypeScript
-- Parser: MVP custom subset parser
-- Syntax origin: OMG SysML v2 reference, scoped by local MVP examples
+- Parser: supported SysML subset parser
+- Syntax origin: OMG SysML v2 reference, scoped by the supported syntax examples
 - Git integration: backend-owned Git CLI wrapper
 - Model: stable graph of nodes, edges, files, source ranges, and lifecycle state
 - Save policy: deterministic owning-file writes only

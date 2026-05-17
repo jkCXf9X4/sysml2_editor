@@ -17,7 +17,7 @@ The strategy covers the product areas described in [docs/README.md](../README.md
 - Repository open/clone/status/checkout flows
 - SysML file discovery, parsing, indexing, and validation
 - Hierarchical browsing, graph views, inspector data, and search
-- Visual editing of the MVP subset
+- Visual editing of the supported SysML subset
 - Text editing and round-trip persistence
 - Git-native workflows such as diff, branch compare, commit, and conflict handling
 - Saved views, layouts, and traceability artifacts

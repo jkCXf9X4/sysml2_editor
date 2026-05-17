@@ -2,13 +2,13 @@
 
 ## Decision
 
-For Phase 1 in the [implementation roadmap](../roadmap/roadmap.md), `sysml2_editor` runs as a local web app:
+`sysml2_editor` runs as a local web app:
 
 - React frontend in the browser
 - ASP.NET Core backend on `localhost`
 - Backend serves the API and static frontend assets
 - Backend owns repository access, file IO, and Git process spawning
-- No Electron or Avalonia wrapper in Phase 1
+- No Electron or Avalonia wrapper by default
 
 ## Why This Is The Starting Point
 
@@ -20,7 +20,7 @@ For Phase 1 in the [implementation roadmap](../roadmap/roadmap.md), `sysml2_edit
 Vision trace:
 
 - Supports: textual SysML in Git as the durable source of truth; Git operations as visible modeling workflow; visual editing backed by backend-owned model state; multiple repository and branch contexts in one local workspace.
-- Tradeoff: defers desktop packaging so early roadmap phases can prove parsing, source mapping, and Git-backed workflows.
+- Tradeoff: defers desktop packaging so the web-first workflow can prove parsing, source mapping, and Git-backed modeling before a shell is added.
 
 ## Operational Model
 
@@ -82,11 +82,11 @@ Why this fits:
 Vision trace:
 
 - Supports: visual workbench interaction through React; precise backend-owned model state through .NET; Git-native review through Git CLI integration.
-- Tradeoff: starts as a local web app and MVP parser instead of full desktop packaging or full SysML v2 grammar.
+- Tradeoff: starts as a local web app with the supported parser subset instead of full desktop packaging or full SysML v2 grammar.
 
 ## Desktop Packaging Options
 
-Implementation phases are defined only in [Implementation roadmap](../roadmap/roadmap.md). Runtime packaging options are:
+Runtime packaging options are:
 
 - Start as a local web app during development.
 - Package with Electron if quickest cross-platform delivery matters.
@@ -112,8 +112,7 @@ Implementation phases are defined only in [Implementation roadmap](../roadmap/ro
 
 Git integration should start with the `git` CLI wrapper.
 
-SysML parsing should start with the MVP custom subset parser described in [parser-contract.md](../implementation/parser-contract.md). External parser or language-server integrations can come later if the product needs broader language coverage.
-Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](../implementation/syntax-examples.md) as the local implementation subset.
+SysML parsing should start with the supported project subset parser. Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](../implementation/syntax-examples.md) as the local syntax subset.
 
 ## CORS Policy
 

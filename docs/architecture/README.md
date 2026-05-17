@@ -8,7 +8,7 @@ This folder contains high-level system decisions and their rationale. Architectu
 
 ## Key High-Level Decisions
 
-1. **Local Web App Runtime**: Phase 1 in the [implementation roadmap](../roadmap/roadmap.md) uses React frontend + ASP.NET Core backend on `localhost` (no Electron wrapper yet).
+1. **Local Web App Runtime**: The product uses a React frontend + ASP.NET Core backend on `localhost` (no Electron wrapper by default).
 Details in [runtime.md](./runtime.md).
 
 2. **Stable Model Graph**: System uses a context-aware graph schema with nodes, edges, files, and trace links. All UI projections derive from this single graph. 

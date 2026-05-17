@@ -12,19 +12,19 @@ As checked on 2026-05-13, the OMG specification page identifies SysML 2.0 as a f
 
 ## How This Project Uses The Spec
 
-The first implementation does not attempt full SysML v2 conformance.
+The product does not attempt full SysML v2 conformance.
 
 Instead:
 
 - Use the OMG SysML v2 specification as the origin for terminology and examples.
-- Implement only the MVP subset documented in [parser-contract.md](../implementation/parser-contract.md).
+- Use the supported syntax subset documented in [syntax-examples.md](../implementation/syntax-examples.md).
 - Keep fixture syntax close to SysML v2 textual notation where practical.
 - Mark deliberate simplifications in [syntax-examples.md](../implementation/syntax-examples.md).
 
 Vision trace:
 
 - Supports: textual SysML files in Git as the durable source of truth; precise semantics grounded in the external SysML language source.
-- Tradeoff: local MVP examples intentionally limit coverage while preserving a path back to formal SysML v2.
+- Tradeoff: the supported examples intentionally limit coverage while preserving a path back to formal SysML v2.
 
 ## Identity Metadata Decision
 
@@ -38,7 +38,7 @@ metadata def Sysml2EditorIdentity {
 }
 ```
 
-The MVP parser recognizes `@Sysml2EditorIdentity { id = "..."; }` immediately above editable element definitions. This keeps identity in the model text using the SysML metadata mechanism while leaving room to migrate if a standard SysML identity metadata definition is adopted later.
+The parser recognizes `@Sysml2EditorIdentity { id = "..."; }` immediately above editable element definitions. This keeps identity in the model text using the SysML metadata mechanism while leaving room to migrate if a standard SysML identity metadata definition is adopted later.
 
 Vision trace:
 
