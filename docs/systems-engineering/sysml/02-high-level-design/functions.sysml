@@ -6,31 +6,22 @@ package Sysml2EditorFunctions {
   import Sysml2EditorUseCases::*;
 
   part def FunctionalBreakdown {
-    part contextAndCoreModel : ContextAndCoreModelFunctions;
-    part browsingAndTraceViews : BrowsingAndTraceViewFunctions;
-    part editingAndPersistence : EditingAndPersistenceFunctions;
-    part projectionsAndExpansion : ProjectionAndExpansionFunctions;
-  }
-
-  part def ContextAndCoreModelFunctions {
+    // Context and core model
     part workspaceAndContextManagement : FB_01_WorkspaceAndContextManagement;
     part modelIngestionAndIndexing : FB_02_ModelIngestionAndIndexing;
     part diagnosticsAndRecovery : FB_11_DiagnosticsAndRecovery;
-  }
 
-  part def BrowsingAndTraceViewFunctions {
+    // Browsing and trace views
     part browsingAndSelectionSync : FB_03_BrowsingAndSelectionSync;
     part traceabilityProjection : FB_04_TraceabilityProjection;
     part analysisAndQuery : FB_09_AnalysisAndQuery;
-  }
 
-  part def EditingAndPersistenceFunctions {
+    // Editing and persistence
     part editingAndDrafting : FB_05_EditingAndDrafting;
     part writePolicyAndPersistence : FB_06_WritePolicyAndPersistence;
     part gitWorkflow : FB_07_GitWorkflow;
-  }
 
-  part def ProjectionAndExpansionFunctions {
+    // Projections and expansion
     part savedViewsAndProjections : FB_08_SavedViewsAndProjections;
     part advancedSysMLSupport : FB_10_AdvancedSysMLSupport;
   }

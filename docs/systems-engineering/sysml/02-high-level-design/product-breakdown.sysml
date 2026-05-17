@@ -6,34 +6,23 @@ package Sysml2EditorProductBreakdown {
   import Sysml2EditorFunctions::*;
 
   part def ProductBreakdown {
-    part shellAndCoordination : ShellAndCoordinationBlocks;
-    part modelAndInspection : ModelAndInspectionBlocks;
-    part editingAndPersistence : EditingAndPersistenceBlocks;
-    part gitAndAnalysis : GitAndAnalysisBlocks;
-    part viewsAndExtensibility : ViewsAndExtensibilityBlocks;
-  }
-
-  part def ShellAndCoordinationBlocks {
+    // Shell and coordination
     part workbenchShellAndContextChrome : PB_01_WorkbenchShellAndContextChrome;
     part workspaceAndRepositoryCoordinator : PB_02_WorkspaceAndRepositoryCoordinator;
-  }
 
-  part def ModelAndInspectionBlocks {
+    // Model and inspection
     part modelCoreService : PB_03_ModelCoreService;
     part browsingAndInspectionSurfaces : PB_04_BrowsingAndInspectionSurfaces;
-  }
 
-  part def EditingAndPersistenceBlocks {
+    // Editing and persistence
     part visualEditingSurface : PB_05_VisualEditingSurface;
     part persistenceAndWritePolicyService : PB_06_PersistenceAndWritePolicyService;
-  }
 
-  part def GitAndAnalysisBlocks {
+    // Git and analysis
     part gitWorkflowService : PB_07_GitWorkflowService;
     part traceabilityAndAnalysisService : PB_08_TraceabilityAndAnalysisService;
-  }
 
-  part def ViewsAndExtensibilityBlocks {
+    // Views and extensibility
     part savedViewsAndProjectionService : PB_09_SavedViewsAndProjectionService;
     part advancedSysMLCapabilityPack : PB_10_AdvancedSysMLCapabilityPack;
     part sharedContractsAndIdentityPolicy : PB_11_SharedContractsAndIdentityPolicy;

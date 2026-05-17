@@ -41,4 +41,6 @@ When the source docs change materially, update the matching SysML package in the
 - Product requirement changes update `requirements.sysml`.
 - Verification strategy or evidence changes update `verification.sysml`.
 
+Prefer contextual owned usages for file-local concepts that do not need their own standalone definition. Leave only cross-file leaf concepts at package scope.
+
 Keep the SysML model at overview level. Do not copy every implementation detail into this folder, and do not treat the SysML files as more authoritative than the markdown source definitions.

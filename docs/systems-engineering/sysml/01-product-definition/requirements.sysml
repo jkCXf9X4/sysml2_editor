@@ -15,21 +15,14 @@ package Sysml2EditorRequirements {
   }
 
   part def ProductRequirementSet {
-    part contextModelAndBrowsing : ContextModelAndBrowsingRequirements;
-    part traceabilityEditingAndWriteSafety : TraceabilityEditingAndWriteSafetyRequirements;
-    part gitMultiContextAndViews : GitMultiContextAndViewsRequirements;
-    part validationExtensibilityAndQuality : ValidationExtensibilityAndQualityRequirements;
-  }
-
-  part def ContextModelAndBrowsingRequirements {
+    // Context model and browsing
     requirement openLocalGitRepository : PR_01_OpenLocalGitRepository;
     requirement visibleContextIdentity : PR_02_VisibleContextIdentity;
     requirement parseToStableGraphWithDiagnostics : PR_03_ParseToStableGraphWithDiagnostics;
     requirement browseWithoutWriteAccess : PR_04_BrowseWithoutWriteAccess;
     requirement synchronizedSelectionViews : PR_05_SynchronizedSelectionViews;
-  }
 
-  part def TraceabilityEditingAndWriteSafetyRequirements {
+    // Traceability, editing, and write safety
     requirement exposeTraceability : PR_06_ExposeTraceability;
     requirement sourceOwnershipAndImpactVisible : PR_07_SourceOwnershipAndImpactVisible;
     requirement visualStructuralEditing : PR_08_VisualStructuralEditing;
@@ -37,17 +30,15 @@ package Sysml2EditorRequirements {
     requirement saveOnlyToOwningWritableContext : PR_10_SaveOnlyToOwningWritableContext;
     requirement rejectWritesWithoutIdentityOrOwnership : PR_11_RejectWritesWithoutIdentityOrOwnership;
     requirement preserveStableIdentity : PR_12_PreserveStableIdentity;
-  }
 
-  part def GitMultiContextAndViewsRequirements {
+    // Git, multi-context, and views
     requirement gitStatusDiffCommitAndMergePreview : PR_13_GitStatusDiffCommitAndMergePreview;
     requirement sideBySideRepositoryAndBranchContexts : PR_14_SideBySideRepositoryAndBranchContexts;
     requirement explicitSaveAndCommitTarget : PR_15_ExplicitSaveAndCommitTarget;
     requirement restoreSavedViewsByStableIdentity : PR_16_RestoreSavedViewsByStableIdentity;
     requirement impactAndDependencyQueries : PR_17_ImpactAndDependencyQueries;
-  }
 
-  part def ValidationExtensibilityAndQualityRequirements {
+    // Validation, extensibility, and quality
     requirement visibleValidationState : PR_18_VisibleValidationState;
     requirement advancedSysMLRequiresCoverage : PR_19_AdvancedSysMLRequiresCoverage;
     requirement deterministicReviewableTextChanges : PR_20_DeterministicReviewableTextChanges;

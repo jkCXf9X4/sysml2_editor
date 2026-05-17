@@ -4,26 +4,19 @@ package Sysml2EditorUseCases {
   */
 
   part def ProductUseCaseModel {
-    part workspaceBrowsingAndTraceability : WorkspaceBrowsingAndTraceabilityUseCases;
-    part editingComparisonAndGit : EditingComparisonAndGitUseCases;
-    part multiContextViewsAndExpansion : MultiContextViewsAndExpansionUseCases;
-  }
-
-  part def WorkspaceBrowsingAndTraceabilityUseCases {
+    // Workspace browsing and traceability
     part openRepositoryWorkspace : UC_01_OpenRepositoryWorkspace;
     part browseAndInspectModelStructure : UC_02_BrowseAndInspectModelStructure;
     part traceFromElementToSourceAndOwnership : UC_03_TraceFromElementToSourceAndOwnership;
     part diagnoseInvalidOrPartialInput : UC_04_DiagnoseInvalidOrPartialInput;
-  }
 
-  part def EditingComparisonAndGitUseCases {
+    // Editing, comparison, and Git
     part compareBranchesAndRepositories : UC_05_CompareBranchesAndRepositories;
     part createAndModifySupportedModelElements : UC_06_CreateAndModifySupportedModelElements;
     part saveChangesSafelyToSourceText : UC_07_SaveChangesSafelyToSourceText;
     part commitAndReviewChangesThroughGit : UC_08_CommitAndReviewChangesThroughGit;
-  }
 
-  part def MultiContextViewsAndExpansionUseCases {
+    // Multi-context views and expansion
     part keepMultipleContextsOpenSideBySide : UC_09_KeepMultipleContextsOpenSideBySide;
     part createRestoreAndShareSavedViews : UC_10_CreateRestoreAndShareSavedViews;
     part analyzeImpactAndDependencyPaths : UC_11_AnalyzeImpactAndDependencyPaths;
