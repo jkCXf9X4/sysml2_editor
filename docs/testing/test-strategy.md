@@ -142,16 +142,6 @@ Add performance coverage for workflows that can degrade on real repositories:
 - Branch diff generation
 - File save and refresh latency
 
-## Related Documents
-
-| Document | Content |
-| --- | --- |
-| [MVP coverage](./mvp-coverage.md) | Supported elements, round-trip cases, negative cases |
-| [Implementation roadmap](../roadmap/roadmap.md) | Combined phase rollout, test focus, fixtures, and exit criteria |
-| [Test fixtures](./fixtures.md) | Fixture catalog and rules |
-| [Automation and CI](./automation-ci.md) | Per-commit, PR, and nightly gates |
-| [Quality and risk](./quality-and-risk.md) | Cross-platform, non-functional, risk priorities, exit criteria |
-
 ## Summary
 
 The most important test discipline for `sysml2_editor` is to keep the text model, the internal graph, and the UI synchronized without losing Git fidelity.

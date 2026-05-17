@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <RootNamespace>Sysml2Editor.Domain</RootNamespace>
-    <AssemblyName>Sysml2Editor.Domain</AssemblyName>
-  </PropertyGroup>
-</Project>

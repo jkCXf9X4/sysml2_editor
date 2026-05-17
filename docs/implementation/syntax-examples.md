@@ -1,6 +1,4 @@
-# MVP Syntax Examples
-
-These examples define the exact textual subset used by Phase 1 in the [implementation roadmap](../roadmap/roadmap.md).
+# Syntax Examples
 
 The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the MVP subset. They are implementation fixtures, not a claim of full SysML v2 conformance.
 
@@ -120,7 +118,7 @@ Expected graph:
 - Node `Connection` named `powerPath`
 - Edge `ConnectsTo` from `BatteryPack::powerOut` to `Inverter::powerIn`
 
-## Invalid MVP Syntax
+## Invalid Syntax
 
 ```sysml
 @Sysml2EditorIdentity { id = "00000000-0000-4000-8000-000000000001"; }
@@ -135,11 +133,3 @@ Expected diagnostic:
 - Message includes missing element name
 - File, line, and column are present
 - No write operation is allowed for this file
-
-## Out-Of-Scope For First Slice
-
-- Behavioral modeling
-- State/action semantics
-- Full expression parsing
-- Type specialization beyond simple references
-- Complete SysML v2 grammar coverage

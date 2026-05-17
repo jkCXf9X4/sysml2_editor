@@ -2,21 +2,6 @@
 
 The repo should maintain a small fixture library that grows with the product.
 
-## Fixture categories
-
-- `tiny-single-file`: one package, a few supported elements
-- `multi-file-modular`: packages and cross-file references
-- `branch-divergence`: two branches with semantic differences
-- `merge-conflict`: overlapping edits and a resolvable conflict
-- `invalid-input`: syntax errors and partial writes
-- `large-model`: enough data to exercise search and layout performance
-- `cross-platform-paths`: spaces, Unicode, and line-ending sensitive paths
-- `phase-0-workbench`: visual workbench shell and multi-context UI snapshots
-- `phase-1-browser`: read-only model browser state and traceability snapshots
-- `phase-2-editing`: visual editing session snapshots and generated SysML previews
-
-Concrete fixtures live under [fixtures](../fixtures).
-
 ## Fixture rules
 
 - Keep fixtures deterministic and small unless the test is explicitly performance-oriented

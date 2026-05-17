@@ -34,8 +34,6 @@ Users should be able to:
 - Edit supported models in more than one writable context when each context has a distinct safe write location.
 - Keep branch, repository, file, and model-item identity visible in every view, trace, diff, and save operation.
 
-Implementation may start with one read-only repository context, but architecture and contracts must preserve a path to concurrent branch and repository contexts.
-
 ## Traceability Scope
 
 Traceability is a product capability, not just a relationship type.
@@ -48,26 +46,3 @@ The product should help users visualize and navigate:
 - Branch-to-branch links, showing how model elements and files changed between alternatives.
 - Repo-to-repo links, when a system model depends on libraries, supplier models, shared views, or related engineering repositories.
 
-Early slices should prove item-to-item and item-to-file traceability first. Repo-to-repo traceability may be deferred, but decisions should preserve a path to it.
-
-## Design Decision Trace Rule
-
-Every material product, architecture, implementation, or UX decision must trace back to this vision.
-
-Use this format in decision documents:
-
-```text
-Vision trace:
-- Supports: <one or more vision pillars>
-- Tradeoff: <what this decision intentionally optimizes or defers>
-```
-
-If a decision does not support a vision pillar, the decision should either be changed or explicitly documented as a temporary implementation constraint.
-
-## Current Strategic Choice
-
-Phase 1 in the [implementation roadmap](docs/roadmap/roadmap.md) prioritizes a read-only Git-backed model browser before visual editing. This does not change the product vision; it reduces delivery risk by proving repository access, parsing, source mapping, and model projection before writes are exposed.
-
-## Analytical Basis
-
-The use-case catalogue, functional breakdown, product breakdown, and product requirements derived from this vision live in [docs/systems-engineering/README.md](docs/systems-engineering/README.md). Use that layer when you need to decompose the vision into implementation-ready behavior and verification targets.

@@ -9,3 +9,5 @@ Define success criteria. Loop until verified.
 Do not take shortcuts, ensure that the solution is clean and easy to follow and understand
 
 Keep solutions as simple as possible
+
+Keep text compact and readable
