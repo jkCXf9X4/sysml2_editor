@@ -1,4 +1,4 @@
-# PDEC-002: Visual Editing As Model Projection
+# PCOM-002: Visual Editing As Model Projection
 
 Status: Accepted
 

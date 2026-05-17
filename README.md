@@ -9,7 +9,7 @@ Git-native SysML v2 viewer and editor.
 Traceability includes links between model items, source files, branches, and related repositories.
 The workbench is intended to support multiple branches of the same repository and multiple repositories open side by side, with explicit context on every view and edit.
 
-All material design and implementation decisions should trace back to the product vision.
+Product commitments, system architecture, and technical decisions should trace back to the product vision.
 
 ## Repository Layout
 

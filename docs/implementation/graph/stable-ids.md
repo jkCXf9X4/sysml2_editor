@@ -2,7 +2,7 @@
 
 ## Governing Implementation Decision
 
-- [IDEC-005: SysML-native identity metadata](../../implementation-decisions/IDEC-005-sysml-native-identity-metadata.md)
+- [TDEC-005: SysML-native identity metadata](../../technical-decisions/TDEC-005-sysml-native-identity-metadata.md)
 
 Stable IDs for supported semantic elements are persisted in the source text using a SysML-native metadata annotation immediately above the element definition.
 

@@ -1,4 +1,4 @@
-# PDEC-001: Git-Native Source Of Truth
+# PCOM-001: Git-Native Source Of Truth
 
 Status: Accepted
 

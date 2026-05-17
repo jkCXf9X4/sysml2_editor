@@ -1,4 +1,4 @@
-# IDEC-005: SysML-Native Identity Metadata
+# TDEC-005: SysML-Native Identity Metadata
 
 Status: Accepted
 

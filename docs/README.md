@@ -4,19 +4,20 @@ This folder contains the project documentation, organized by abstraction level t
 
 ## Trace Layers
 
-Trace links point upward only:
+The documentation chain moves from intent to proof:
 
 ```text
-Product Vision <- Product Decisions <- Architecture <- Implementation Decisions <- Implementation <- Testing
+Intent -> Product Commitments -> System Architecture -> Technical Decisions -> Implementation -> Verification
 ```
 
-Higher layers describe intent and constraints without linking down into lower-level implementation details. Lower layers name the decisions or contracts they satisfy.
+Trace links point backward to the layer being satisfied. Higher layers describe intent and constraints without linking down into lower-level implementation details.
 
 ## Principles
 
-- Product vision is the source for product decisions
-- Architecture describes stable system guarantees, not implementation mechanics
-- Implementation decisions bridge architecture to build details
+- Product vision captures intent
+- Product commitments translate intent into durable product promises
+- System architecture describes stable guarantees, concepts, and boundaries
+- Technical decisions bridge architecture to build details
 - Frontend and backend boundaries are explicit
 - Domain logic is separate from transport and UI
 - Tests live close to the behavior they verify
@@ -24,11 +25,11 @@ Higher layers describe intent and constraints without linking down into lower-le
 
 ## Folder Structure
 
-- [product-decisions/](./product-decisions/) - Accepted decisions that translate product vision into architecture.
-- [architecture/](./architecture/) - Stable system concepts, boundaries, invariants, and guarantees.
-- [implementation-decisions/](./implementation-decisions/) - Accepted decisions that translate architecture into concrete build choices.
-- [implementation/](./implementation/) - Contracts, parser rules, graph specs, and syntax examples governed by implementation decisions.
-- [testing/](./testing/) - Test strategy, fixtures, and end-to-end coverage focused on text fidelity, visual editing, and Git behavior.
+- [product-commitments/](./product-commitments/) - Accepted commitments that translate product vision into architecture.
+- [architecture/](./architecture/) - System architecture: stable concepts, boundaries, invariants, and guarantees.
+- [technical-decisions/](./technical-decisions/) - Accepted technical decisions that translate architecture into concrete build choices.
+- [implementation/](./implementation/) - Contracts, parser rules, graph specs, and syntax examples governed by technical decisions.
+- [testing/](./testing/) - Verification strategy, fixtures, and end-to-end coverage focused on text fidelity, visual editing, and Git behavior.
 - [ui/](./ui/) - User interface design, workflows, and feature specifications.
 - [reference/](./reference/) - External standards and language references.
 

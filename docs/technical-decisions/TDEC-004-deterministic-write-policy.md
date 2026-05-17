@@ -1,4 +1,4 @@
-# IDEC-004: Deterministic Write Policy
+# TDEC-004: Deterministic Write Policy
 
 Status: Accepted
 

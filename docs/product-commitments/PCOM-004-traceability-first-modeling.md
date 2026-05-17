@@ -1,4 +1,4 @@
-# PDEC-004: Traceability-First Modeling
+# PCOM-004: Traceability-First Modeling
 
 Status: Accepted
 

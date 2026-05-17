@@ -1,4 +1,4 @@
-# IDEC-002: Supported SysML Subset
+# TDEC-002: Supported SysML Subset
 
 Status: Accepted
 

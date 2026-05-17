@@ -1,14 +1,14 @@
 # Implementation
 
-Implementation contracts, parser rules, syntax examples, and current product scope. Implementation documents link upward to implementation decisions.
+Implementation contracts, parser rules, syntax examples, and current product scope. Implementation documents link upward to technical decisions.
 
-## Governing Implementation Decisions
+## Governing Technical Decisions
 
-- [IDEC-001: Local web runtime](../implementation-decisions/IDEC-001-local-web-runtime.md)
-- [IDEC-002: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
-- [IDEC-003: Stable model graph schema](../implementation-decisions/IDEC-003-stable-model-graph-schema.md)
-- [IDEC-004: Deterministic write policy](../implementation-decisions/IDEC-004-deterministic-write-policy.md)
-- [IDEC-005: SysML-native identity metadata](../implementation-decisions/IDEC-005-sysml-native-identity-metadata.md)
+- [TDEC-001: Local web runtime](../technical-decisions/TDEC-001-local-web-runtime.md)
+- [TDEC-002: Supported SysML subset](../technical-decisions/TDEC-002-supported-sysml-subset.md)
+- [TDEC-003: Stable model graph schema](../technical-decisions/TDEC-003-stable-model-graph-schema.md)
+- [TDEC-004: Deterministic write policy](../technical-decisions/TDEC-004-deterministic-write-policy.md)
+- [TDEC-005: SysML-native identity metadata](../technical-decisions/TDEC-005-sysml-native-identity-metadata.md)
 
 ## Documents
 

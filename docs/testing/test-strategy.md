@@ -1,11 +1,11 @@
-# Test Strategy for `sysml2_editor`
+# Verification Strategy for `sysml2_editor`
 
 ## Verified Contracts
 
 - [Architecture: Model graph](../architecture/model-graph.md)
 - [Architecture: Write policy](../architecture/write-policy.md)
-- [Implementation decision: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
-- [Implementation decision: Deterministic write policy](../implementation-decisions/IDEC-004-deterministic-write-policy.md)
+- [Technical decision: Supported SysML subset](../technical-decisions/TDEC-002-supported-sysml-subset.md)
+- [Technical decision: Deterministic write policy](../technical-decisions/TDEC-004-deterministic-write-policy.md)
 
 ## Purpose
 

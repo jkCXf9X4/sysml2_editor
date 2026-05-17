@@ -1,4 +1,4 @@
-# IDEC-003: Stable Model Graph Schema
+# TDEC-003: Stable Model Graph Schema
 
 Status: Accepted
 

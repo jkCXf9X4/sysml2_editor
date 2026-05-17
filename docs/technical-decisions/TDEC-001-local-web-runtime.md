@@ -1,4 +1,4 @@
-# IDEC-001: Local Web Runtime
+# TDEC-001: Local Web Runtime
 
 Status: Accepted
 

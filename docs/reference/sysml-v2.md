@@ -1,9 +1,9 @@
 # SysML v2 Reference Source
 
-## Governing Implementation Decisions
+## Governing Technical Decisions
 
-- [IDEC-002: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
-- [IDEC-005: SysML-native identity metadata](../implementation-decisions/IDEC-005-sysml-native-identity-metadata.md)
+- [TDEC-002: Supported SysML subset](../technical-decisions/TDEC-002-supported-sysml-subset.md)
+- [TDEC-005: SysML-native identity metadata](../technical-decisions/TDEC-005-sysml-native-identity-metadata.md)
 
 This project treats the OMG SysML v2 specification as the authoritative language reference.
 

@@ -1,9 +1,9 @@
 # Write Policy
 
-## Governing Product Decisions
+## Governing Product Commitments
 
-- [PDEC-001: Git-native source of truth](../product-decisions/PDEC-001-git-native-source-of-truth.md)
-- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
+- [PCOM-001: Git-native source of truth](../product-commitments/PCOM-001-git-native-source-of-truth.md)
+- [PCOM-003: Multi-context workspace](../product-commitments/PCOM-003-multi-context-workspace.md)
 
 ## Write Guarantee
 

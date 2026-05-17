@@ -2,11 +2,11 @@
 
 UI-specific design for `sysml2_editor`, derived from the former `docs/design.md`.
 
-## Governing Product Decisions
+## Governing Product Commitments
 
-- [PDEC-002: Visual editing as model projection](../product-decisions/PDEC-002-visual-editing-as-model-projection.md)
-- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
-- [PDEC-004: Traceability-first modeling](../product-decisions/PDEC-004-traceability-first-modeling.md)
+- [PCOM-002: Visual editing as model projection](../product-commitments/PCOM-002-visual-editing-as-model-projection.md)
+- [PCOM-003: Multi-context workspace](../product-commitments/PCOM-003-multi-context-workspace.md)
+- [PCOM-004: Traceability-first modeling](../product-commitments/PCOM-004-traceability-first-modeling.md)
 
 Design summary: `sysml2_editor` should be a Git-native SysML v2 architecture workbench where the diagram is easy to manipulate like PowerPoint, but the model remains precise, traceable, reviewable, and version-controlled as text.
 

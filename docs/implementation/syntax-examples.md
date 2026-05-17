@@ -1,9 +1,9 @@
 # Syntax Examples
 
-## Governing Implementation Decisions
+## Governing Technical Decisions
 
-- [IDEC-002: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
-- [IDEC-005: SysML-native identity metadata](../implementation-decisions/IDEC-005-sysml-native-identity-metadata.md)
+- [TDEC-002: Supported SysML subset](../technical-decisions/TDEC-002-supported-sysml-subset.md)
+- [TDEC-005: SysML-native identity metadata](../technical-decisions/TDEC-005-sysml-native-identity-metadata.md)
 
 The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the supported syntax subset. They are documentation fixtures, not a claim of full SysML v2 conformance.
 
