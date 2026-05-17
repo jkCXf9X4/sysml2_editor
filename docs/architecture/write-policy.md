@@ -1,17 +1,17 @@
 # Write Policy
 
-## Decision
+## Governing Product Decisions
+
+- [PDEC-001: Git-native source of truth](../product-decisions/PDEC-001-git-native-source-of-truth.md)
+- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
+
+## Write Guarantee
 
 The editor should use deterministic file ownership rules so that a save changes only the intended files.
 
 The write policy is part of the product contract, not an afterthought.
 
 This policy applies whenever save is available. No save endpoint or UI save action should exist unless the write pipeline can round-trip the model safely and preserve deterministic ownership.
-
-Vision trace:
-
-- Supports: textual SysML files in Git as the durable source of truth; reviewable generated changes; visual editing that preserves identity, semantics, repository context, and branch context.
-- Tradeoff: save behavior is blocked until parser and writer gates prove that edits can be persisted without unrelated file churn.
 
 ## File Convention
 

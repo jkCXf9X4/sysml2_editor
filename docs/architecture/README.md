@@ -1,18 +1,17 @@
 # Architecture
 
-This folder contains high-level system decisions and their rationale. Architecture documents answer *what* the system guarantees and *why*, avoiding implementation-level detail unless needed to explain a tradeoff.
+This folder contains the stable system model for `sysml2_editor`: boundaries, concepts, invariants, and guarantees. Architecture documents link upward to product decisions and avoid implementation mechanics.
 
-## Overall design 
+## Governing Product Decisions
+
+- [PDEC-001: Git-native source of truth](../product-decisions/PDEC-001-git-native-source-of-truth.md)
+- [PDEC-002: Visual editing as model projection](../product-decisions/PDEC-002-visual-editing-as-model-projection.md)
+- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
+- [PDEC-004: Traceability-first modeling](../product-decisions/PDEC-004-traceability-first-modeling.md)
+
+## Architecture Documents
 
 - [Overall design](./overall_design.md)
-
-## Key High-Level Decisions
-
-1. **Local Web App Runtime**: The product uses a React frontend + ASP.NET Core backend on `localhost` (no Electron wrapper by default).
-Details in [runtime.md](./runtime.md).
-
-2. **Stable Model Graph**: System uses a context-aware graph schema with nodes, edges, files, and trace links. All UI projections derive from this single graph. 
-Details in [model-graph.md](./model-graph.md) (architecture overview) and [model-graph.md](../implementation/graph/model-graph.md) (field-level specs, C# shapes, ID rules).
-
-3. **Deterministic Write Policy**: Edits target exactly one writable context, preserve file ownership, and never rewrite unrelated content. 
-Details in [write-policy.md](./write-policy.md).
+- [Runtime](./runtime.md)
+- [Model graph](./model-graph.md)
+- [Write policy](./write-policy.md)

@@ -1,6 +1,11 @@
-# Runtime Decision
+# Runtime
 
-## Decision
+## Governing Product Decisions
+
+- [PDEC-001: Git-native source of truth](../product-decisions/PDEC-001-git-native-source-of-truth.md)
+- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
+
+## Runtime Guarantees
 
 `sysml2_editor` runs as a local web app:
 
@@ -9,18 +14,6 @@
 - Backend serves the API and static frontend assets
 - Backend owns repository access, file IO, and Git process spawning
 - No Electron or Avalonia wrapper by default
-
-## Why This Is The Starting Point
-
-- It is the lowest-risk cross-platform path.
-- It keeps Git and filesystem operations in one place.
-- It avoids committing to desktop packaging before the product behavior is proven.
-- It lets the frontend iterate quickly while the backend stays authoritative for model state.
-
-Vision trace:
-
-- Supports: textual SysML in Git as the durable source of truth; Git operations as visible modeling workflow; visual editing backed by backend-owned model state; multiple repository and branch contexts in one local workspace.
-- Tradeoff: defers desktop packaging so the web-first workflow can prove parsing, source mapping, and Git-backed modeling before a shell is added.
 
 ## Operational Model
 
@@ -47,51 +40,6 @@ The runtime must distinguish repository identity from workspace context identity
 - `ModelGraphDto` remains a single-context graph. Side-by-side branch or repository screens use `MultiContextViewDto`.
 - Save and commit actions are disabled from combined views until the selected change resolves to exactly one writable `workspaceId`.
 
-## Development Command Shape
-
-The initial local-web runtime should standardize on a simple launch model:
-
-- Backend project: `src/backend/Sysml2Editor.Api`
-- Backend command: `dotnet run --project src/backend/Sysml2Editor.Api`
-- Backend URL: `http://localhost:5087`
-- Frontend project: `src/frontend`
-- Frontend command: `npm run dev`
-- Frontend URL: `http://localhost:5173`
-- Frontend API proxy: `/api` proxies to `http://localhost:5087/api`
-
-During development, Vite may serve the frontend. For packaged local-web use, the ASP.NET Core backend may serve built static frontend assets.
-
-## Recommended Stack
-
-- React
-- TypeScript
-- C# / .NET backend
-- Monaco Editor (text editing)
-- React Flow (canvas/graph views)
-- Git CLI
-
-Why this fits:
-
-- C# experience reduces backend risk.
-- .NET runs well on Windows and Linux.
-- Git and filesystem operations are straightforward from C#.
-- The parser/model index can be implemented as strongly typed C# domain code.
-- The React UI remains flexible for graph/canvas-heavy interaction.
-- Git CLI is reliable and avoids premature complexity.
-
-Vision trace:
-
-- Supports: visual workbench interaction through React; precise backend-owned model state through .NET; Git-native review through Git CLI integration.
-- Tradeoff: starts as a local web app with the supported parser subset instead of full desktop packaging or full SysML v2 grammar.
-
-## Desktop Packaging Options
-
-Runtime packaging options are:
-
-- Start as a local web app during development.
-- Package with Electron if quickest cross-platform delivery matters.
-- Use Avalonia/.NET if a more native C# desktop shell becomes more important than web-based canvas flexibility.
-
 ## Backend Responsibilities
 
 - Repository open/clone/status operations
@@ -109,22 +57,3 @@ Runtime packaging options are:
 - Visual editing gestures
 - Inspector and validation presentation
 - Change overlays and traceability navigation across items, files, branches, and repositories
-
-Git integration should start with the `git` CLI wrapper.
-
-SysML parsing should start with the supported project subset parser. Use [sysml-v2.md](../reference/sysml-v2.md) as the external language reference and [syntax-examples.md](../implementation/syntax-examples.md) as the local syntax subset.
-
-## CORS Policy
-
-During development, the backend should allow `http://localhost:5173`.
-
-Production/local packaged mode should not require broad CORS because frontend assets are served by the backend.
-
-## Deferred Choices
-
-The following are deferred until the product behavior is stable:
-
-- Electron packaging
-- Native desktop shell packaging
-- Offline installer flow
-- Multi-window desktop process management

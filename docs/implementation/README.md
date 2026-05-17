@@ -1,27 +1,18 @@
 # Implementation
 
-Implementation contracts, API specs, parser rules, syntax examples, and current product scope. Derived from the former `docs/design.md`.
+Implementation contracts, parser rules, syntax examples, and current product scope. Implementation documents link upward to implementation decisions.
 
-### API Contracts (`api/`)
+## Governing Implementation Decisions
 
-- [API Contract](./api/api-contract.md) — Contract overview, ownership, path and status rules
-- [Core DTOs](./api/core-dtos.md) — All DTO definitions with JSON examples
-- [Session and context models](./api/session-models.md) — Repository session, workspace context, multi-context view model
-- [Endpoints](./api/endpoints.md) — Full endpoint contracts with behavior and errors
-- [Deferred contracts](./api/deferred-contracts.md) — Future DTOs and endpoints reserved for later slices
+- [IDEC-001: Local web runtime](../implementation-decisions/IDEC-001-local-web-runtime.md)
+- [IDEC-002: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
+- [IDEC-003: Stable model graph schema](../implementation-decisions/IDEC-003-stable-model-graph-schema.md)
+- [IDEC-004: Deterministic write policy](../implementation-decisions/IDEC-004-deterministic-write-policy.md)
+- [IDEC-005: SysML-native identity metadata](../implementation-decisions/IDEC-005-sysml-native-identity-metadata.md)
 
-### Model Graph (`graph/`)
+## Documents
 
-- [Model graph](./graph/model-graph.md) — Entry point with links to sub-documents
-- [Graph entities](./graph/graph-entities.md) — Core entity field specs (context, node, edge, source range, trace link, multi-context view)
-- [Graph code generation](./graph/graph-codegen.md) — JSON serialization, C# records, TypeScript interfaces
 - [Stable IDs](./graph/stable-ids.md) — ID annotation format, persistence rules, derived fallback IDs
-- [Graph traceability](./graph/graph-traceability.md) — Trace link derivation rules
-- [Graph supplemental](./graph/graph-supplemental.md) — File records, opaque spans, diagnostics, lifecycle state, derived views
-
-### Other
-
-- [Parser Contract](./parser-contract.md)
 - [Syntax Examples](./syntax-examples.md)
 
 ## Current Implementation Direction

@@ -1,5 +1,12 @@
 # Test Strategy for `sysml2_editor`
 
+## Verified Contracts
+
+- [Architecture: Model graph](../architecture/model-graph.md)
+- [Architecture: Write policy](../architecture/write-policy.md)
+- [Implementation decision: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
+- [Implementation decision: Deterministic write policy](../implementation-decisions/IDEC-004-deterministic-write-policy.md)
+
 ## Purpose
 
 This document defines how to test `sysml2_editor` as a Git-native SysML v2 workbench.

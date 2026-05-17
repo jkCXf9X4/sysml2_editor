@@ -1,9 +1,11 @@
 # Overall design
 
-## Vision Trace
+## Governing Product Decisions
 
-All implementation decisions must trace back to [PRODUCT_VISION.md](../../PRODUCT_VISION.md). If a decision optimizes for implementation speed, parser scope, or runtime simplicity, the tradeoff must be explicit and must not weaken the core product promise: visual modeling backed by precise, traceable, reviewable SysML text in Git.
-
+- [PDEC-001: Git-native source of truth](../product-decisions/PDEC-001-git-native-source-of-truth.md)
+- [PDEC-002: Visual editing as model projection](../product-decisions/PDEC-002-visual-editing-as-model-projection.md)
+- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
+- [PDEC-004: Traceability-first modeling](../product-decisions/PDEC-004-traceability-first-modeling.md)
 
 ## Git and Branch Model
 
@@ -27,7 +29,7 @@ Recommended architecture:
 Git repo -> Textual SysML files -> Parser service -> Internal model graph -> View model -> Canvas / tree / table / editor UI
 ```
 
-The source of truth should be the textual SysML files in Git. Do not make the canvas the model — the canvas is just one projection.
+The source of truth should be the textual SysML files in Git. Do not make the canvas the model; the canvas is just one projection.
 
 For multi-context work, each model graph belongs to an explicit context:
 
@@ -56,4 +58,3 @@ Traceability should appear in node badges, inspector, hover cards, source owners
 
 ### 6. Make context explicit
 Every visible model item, source file, trace link, diff, save action, and commit action should make repository and branch context clear.
-

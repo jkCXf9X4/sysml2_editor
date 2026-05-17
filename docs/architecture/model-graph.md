@@ -1,13 +1,14 @@
 # Model Graph
 
-## Decision
+## Governing Product Decisions
+
+- [PDEC-002: Visual editing as model projection](../product-decisions/PDEC-002-visual-editing-as-model-projection.md)
+- [PDEC-003: Multi-context workspace](../product-decisions/PDEC-003-multi-context-workspace.md)
+- [PDEC-004: Traceability-first modeling](../product-decisions/PDEC-004-traceability-first-modeling.md)
+
+## Graph Guarantee
 
 Use a stable graph schema with explicit context, node, edge, file, trace-link, and source-range concepts. The UI, diff engine, inspector, and traceability features all read from the same graph.
-
-Vision trace:
-
-- Supports: every model element remains precise, traceable, reviewable, and tied back to source text; item, file, branch, repository, and workspace-context traceability can be projected from one shared model.
-- Tradeoff: the schema carries explicit source and lifecycle metadata from the start, even when early UI slices only consume part of it.
 
 ## Core Entities
 
@@ -75,4 +76,4 @@ All UI projections derive from the same graph:
 
 ## Detailed Specs
 
-Field-level requirements, C# shapes, TypeScript types, ID derivation rules, and serialization conventions are defined in [model-graph.md](../implementation/graph/model-graph.md).
+Field-level requirements, code shapes, ID derivation rules, and serialization conventions belong in the implementation layer.

@@ -1,11 +1,11 @@
 # Syntax Examples
 
+## Governing Implementation Decisions
+
+- [IDEC-002: Supported SysML subset](../implementation-decisions/IDEC-002-supported-sysml-subset.md)
+- [IDEC-005: SysML-native identity metadata](../implementation-decisions/IDEC-005-sysml-native-identity-metadata.md)
+
 The examples are derived from the OMG SysML v2 textual notation reference source in [sysml-v2.md](../reference/sysml-v2.md), but they intentionally cover only the supported syntax subset. They are documentation fixtures, not a claim of full SysML v2 conformance.
-
-Vision trace:
-
-- Supports: precise source-backed model semantics and reviewable fixtures for parser, graph, and writer behavior.
-- Tradeoff: uses a narrow syntax subset to prove the visual-to-text workflow before broad language support.
 
 ## Supported Identity Metadata
 

@@ -1,6 +1,6 @@
 # Testing
 
-This folder contains the test strategy, fixture guidance, and end-to-end coverage for `sysml2_editor`.
+This folder contains the test strategy, fixture guidance, and end-to-end coverage for `sysml2_editor`. Testing documents link upward to the architecture or implementation contracts they verify.
 
 ## Documents
 
